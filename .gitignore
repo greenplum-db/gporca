@@ -16,6 +16,9 @@
 .obj.*
 
 # Local excludes in root directory
+.autotools
+.cproject
+.project
 build
 server/minidumps/
 ivy-*.xml
