@@ -1,0 +1,1252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+see sql/BitmapIndexScan.sql
+-->
+<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+  <dxl:Thread Id="0">
+    <dxl:OptimizerConfig>
+      <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:CTEConfig CTEInliningCutoff="0"/>
+      <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="64"/>
+      <dxl:Hint MinNumOfPartsToRequireSortOnInsert="4294967295"/>
+      <dxl:TraceFlags Value="101013,102024,102029,102120,103001,103014,103015,103022,104004,104005,105000"/>
+    </dxl:OptimizerConfig>
+    <dxl:Metadata SystemIds="0.GPDB">
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.16" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="3.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.9" Name="flex_value_meaning" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.8" Name="source_lang" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.1" Name="language" Width="4.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.0" Name="flex_value_id" Width="9.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:Type Mdid="0.16.1.0" Name="bool" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="1" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.91.1.0"/>
+        <dxl:InequalityOp Mdid="0.85.1.0"/>
+        <dxl:LessThanOp Mdid="0.58.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.1694.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.59.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.1695.1.0"/>
+        <dxl:ComparisonOp Mdid="0.1693.1.0"/>
+        <dxl:ArrayType Mdid="0.1000.1.0"/>
+        <dxl:MinAgg Mdid="0.0.0.0"/>
+        <dxl:MaxAgg Mdid="0.0.0.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:RelationStatistics Mdid="2.21648.1.1" Name="inner_table" Rows="1.000000" EmptyRelation="false"/>
+      <dxl:Type Mdid="0.1043.1.0" Name="varchar" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="false" PassByValue="false">
+        <dxl:EqualityOp Mdid="0.98.1.0"/>
+        <dxl:InequalityOp Mdid="0.531.1.0"/>
+        <dxl:LessThanOp Mdid="0.664.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.665.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.666.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.667.1.0"/>
+        <dxl:ComparisonOp Mdid="0.360.1.0"/>
+        <dxl:ArrayType Mdid="0.1015.1.0"/>
+        <dxl:MinAgg Mdid="0.0.0.0"/>
+        <dxl:MaxAgg Mdid="0.0.0.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Relation Mdid="0.21648.1.0" Name="inner_table" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Column-oriented" DistributionPolicy="Hash" DistributionColumns="0,1" Keys="75,73" NumberLeafPartitions="0">
+        <dxl:Columns>
+          <dxl:Column Name="flex_value_set_id" Attno="1" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="flex_value_id" Attno="2" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="flex_value" Attno="3" Mdid="0.1043.1.0" Nullable="true" ColWidth="150">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_date" Attno="4" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_updated_by" Attno="5" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="creation_date" Attno="6" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="created_by" Attno="7" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_login" Attno="8" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="enabled_flag" Attno="9" Mdid="0.1043.1.0" Nullable="true" ColWidth="1">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="summary_flag" Attno="10" Mdid="0.1043.1.0" Nullable="true" ColWidth="1">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="start_date_active" Attno="11" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="end_date_active" Attno="12" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="parent_flex_value_low" Attno="13" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="parent_flex_value_high" Attno="14" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="structured_hierarchy_level" Attno="15" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="hierarchy_level" Attno="16" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="compiled_value_attributes" Attno="17" Mdid="0.1043.1.0" Nullable="true" ColWidth="2000">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="value_category" Attno="18" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute1" Attno="19" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute2" Attno="20" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute3" Attno="21" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute4" Attno="22" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute5" Attno="23" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute6" Attno="24" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute7" Attno="25" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute8" Attno="26" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute9" Attno="27" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute10" Attno="28" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute11" Attno="29" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute12" Attno="30" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute13" Attno="31" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute14" Attno="32" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute15" Attno="33" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute16" Attno="34" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute17" Attno="35" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute18" Attno="36" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute19" Attno="37" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute20" Attno="38" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute21" Attno="39" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute22" Attno="40" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute23" Attno="41" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute24" Attno="42" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute25" Attno="43" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute26" Attno="44" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute27" Attno="45" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute28" Attno="46" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute29" Attno="47" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute30" Attno="48" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute31" Attno="49" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute32" Attno="50" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute33" Attno="51" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute34" Attno="52" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute35" Attno="53" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute36" Attno="54" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute37" Attno="55" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute38" Attno="56" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute39" Attno="57" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute40" Attno="58" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute41" Attno="59" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute42" Attno="60" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute43" Attno="61" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute44" Attno="62" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute45" Attno="63" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute46" Attno="64" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute47" Attno="65" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute48" Attno="66" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute49" Attno="67" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute50" Attno="68" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute_sort_order" Attno="69" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legalhold" Attno="70" Mdid="0.1043.1.0" Nullable="true" ColWidth="5">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legaldescription" Attno="71" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="dataowner" Attno="72" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="purgedate" Attno="73" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+        </dxl:Columns>
+        <dxl:Indexes>
+          <dxl:Index Mdid="0.21680.1.0"/>
+        </dxl:Indexes>
+        <dxl:Triggers/>
+        <dxl:CheckConstraints/>
+      </dxl:Relation>
+      <dxl:Relation Mdid="0.21648.1.1" Name="inner_table" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Column-oriented" DistributionPolicy="Hash" DistributionColumns="0,1" Keys="75,73" NumberLeafPartitions="0">
+        <dxl:Columns>
+          <dxl:Column Name="flex_value_set_id" Attno="1" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="flex_value_id" Attno="2" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="flex_value" Attno="3" Mdid="0.1043.1.0" Nullable="true" ColWidth="150">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_date" Attno="4" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_updated_by" Attno="5" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="creation_date" Attno="6" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="created_by" Attno="7" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_login" Attno="8" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="enabled_flag" Attno="9" Mdid="0.1043.1.0" Nullable="true" ColWidth="1">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="summary_flag" Attno="10" Mdid="0.1043.1.0" Nullable="true" ColWidth="1">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="start_date_active" Attno="11" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="end_date_active" Attno="12" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="parent_flex_value_low" Attno="13" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="parent_flex_value_high" Attno="14" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="structured_hierarchy_level" Attno="15" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="hierarchy_level" Attno="16" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="compiled_value_attributes" Attno="17" Mdid="0.1043.1.0" Nullable="true" ColWidth="2000">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="value_category" Attno="18" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute1" Attno="19" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute2" Attno="20" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute3" Attno="21" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute4" Attno="22" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute5" Attno="23" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute6" Attno="24" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute7" Attno="25" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute8" Attno="26" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute9" Attno="27" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute10" Attno="28" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute11" Attno="29" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute12" Attno="30" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute13" Attno="31" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute14" Attno="32" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute15" Attno="33" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute16" Attno="34" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute17" Attno="35" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute18" Attno="36" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute19" Attno="37" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute20" Attno="38" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute21" Attno="39" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute22" Attno="40" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute23" Attno="41" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute24" Attno="42" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute25" Attno="43" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute26" Attno="44" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute27" Attno="45" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute28" Attno="46" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute29" Attno="47" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute30" Attno="48" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute31" Attno="49" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute32" Attno="50" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute33" Attno="51" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute34" Attno="52" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute35" Attno="53" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute36" Attno="54" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute37" Attno="55" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute38" Attno="56" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute39" Attno="57" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute40" Attno="58" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute41" Attno="59" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute42" Attno="60" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute43" Attno="61" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute44" Attno="62" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute45" Attno="63" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute46" Attno="64" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute47" Attno="65" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute48" Attno="66" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute49" Attno="67" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute50" Attno="68" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="attribute_sort_order" Attno="69" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legalhold" Attno="70" Mdid="0.1043.1.0" Nullable="true" ColWidth="5">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legaldescription" Attno="71" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="dataowner" Attno="72" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="purgedate" Attno="73" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+        </dxl:Columns>
+        <dxl:Indexes>
+          <dxl:Index Mdid="0.21680.1.0"/>
+        </dxl:Indexes>
+        <dxl:Triggers/>
+        <dxl:CheckConstraints/>
+      </dxl:Relation>
+      <dxl:Type Mdid="0.23.1.0" Name="int4" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.96.1.0"/>
+        <dxl:InequalityOp Mdid="0.518.1.0"/>
+        <dxl:LessThanOp Mdid="0.97.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.523.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.521.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.525.1.0"/>
+        <dxl:ComparisonOp Mdid="0.351.1.0"/>
+        <dxl:ArrayType Mdid="0.1007.1.0"/>
+        <dxl:MinAgg Mdid="0.2132.1.0"/>
+        <dxl:MaxAgg Mdid="0.2116.1.0"/>
+        <dxl:AvgAgg Mdid="0.2101.1.0"/>
+        <dxl:SumAgg Mdid="0.2108.1.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Type Mdid="0.25.1.0" Name="text" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="false" PassByValue="false">
+        <dxl:EqualityOp Mdid="0.98.1.0"/>
+        <dxl:InequalityOp Mdid="0.531.1.0"/>
+        <dxl:LessThanOp Mdid="0.664.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.665.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.666.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.667.1.0"/>
+        <dxl:ComparisonOp Mdid="0.360.1.0"/>
+        <dxl:ArrayType Mdid="0.1009.1.0"/>
+        <dxl:MinAgg Mdid="0.2145.1.0"/>
+        <dxl:MaxAgg Mdid="0.2129.1.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.3" Name="cmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.2" Name="xmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.73" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.72" Name="purgedate" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.65" Name="attribute48" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.64" Name="attribute47" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.57" Name="attribute40" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.56" Name="attribute39" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.49" Name="attribute32" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.48" Name="attribute31" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.41" Name="attribute24" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.40" Name="attribute23" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.33" Name="attribute16" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.32" Name="attribute15" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.25" Name="attribute8" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.24" Name="attribute7" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.17" Name="value_category" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.16" Name="compiled_value_attributes" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.9" Name="summary_flag" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.8" Name="enabled_flag" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.1" Name="flex_value_id" Width="9.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.0" Name="flex_value_set_id" Width="9.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:Type Mdid="0.26.1.0" Name="oid" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.607.1.0"/>
+        <dxl:InequalityOp Mdid="0.608.1.0"/>
+        <dxl:LessThanOp Mdid="0.609.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.611.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.610.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.612.1.0"/>
+        <dxl:ComparisonOp Mdid="0.356.1.0"/>
+        <dxl:ArrayType Mdid="0.1028.1.0"/>
+        <dxl:MinAgg Mdid="0.2118.1.0"/>
+        <dxl:MaxAgg Mdid="0.2134.1.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Type Mdid="0.27.1.0" Name="tid" IsRedistributable="true" IsHashable="false" IsComposite="false" IsFixedLength="true" Length="6" PassByValue="false">
+        <dxl:EqualityOp Mdid="0.387.1.0"/>
+        <dxl:InequalityOp Mdid="0.402.1.0"/>
+        <dxl:LessThanOp Mdid="0.2799.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.2801.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.2800.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.2802.1.0"/>
+        <dxl:ComparisonOp Mdid="0.2794.1.0"/>
+        <dxl:ArrayType Mdid="0.1010.1.0"/>
+        <dxl:MinAgg Mdid="0.2798.1.0"/>
+        <dxl:MaxAgg Mdid="0.2797.1.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Type Mdid="0.29.1.0" Name="cid" IsRedistributable="false" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.385.1.0"/>
+        <dxl:InequalityOp Mdid="0.0.0.0"/>
+        <dxl:LessThanOp Mdid="0.0.0.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.0.0.0"/>
+        <dxl:GreaterThanOp Mdid="0.0.0.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.0.0.0"/>
+        <dxl:ComparisonOp Mdid="0.0.0.0"/>
+        <dxl:ArrayType Mdid="0.1012.1.0"/>
+        <dxl:MinAgg Mdid="0.0.0.0"/>
+        <dxl:MaxAgg Mdid="0.0.0.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Type Mdid="0.28.1.0" Name="xid" IsRedistributable="false" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.352.1.0"/>
+        <dxl:InequalityOp Mdid="0.0.0.0"/>
+        <dxl:LessThanOp Mdid="0.0.0.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.0.0.0"/>
+        <dxl:GreaterThanOp Mdid="0.0.0.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.0.0.0"/>
+        <dxl:ComparisonOp Mdid="0.0.0.0"/>
+        <dxl:ArrayType Mdid="0.1011.1.0"/>
+        <dxl:MinAgg Mdid="0.0.0.0"/>
+        <dxl:MaxAgg Mdid="0.0.0.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:Type Mdid="0.1700.1.0" Name="numeric" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="false" PassByValue="false">
+        <dxl:EqualityOp Mdid="0.1752.1.0"/>
+        <dxl:InequalityOp Mdid="0.1753.1.0"/>
+        <dxl:LessThanOp Mdid="0.1754.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.1755.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.1756.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.1757.1.0"/>
+        <dxl:ComparisonOp Mdid="0.1769.1.0"/>
+        <dxl:ArrayType Mdid="0.1231.1.0"/>
+        <dxl:MinAgg Mdid="0.2146.1.0"/>
+        <dxl:MaxAgg Mdid="0.2130.1.0"/>
+        <dxl:AvgAgg Mdid="0.2103.1.0"/>
+        <dxl:SumAgg Mdid="0.2114.1.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.11" Name="legaldescription" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.10" Name="legalhold" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.3" Name="last_updated_by" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.2" Name="last_update_date" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:Index Mdid="0.21680.1.0" Name="inner_table_idx" RelationMdid="0.21648.1.0" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="1" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75">
+        <dxl:OpClasses>
+          <dxl:OpClass Mdid="0.1988.1.0"/>
+        </dxl:OpClasses>
+      </dxl:Index>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.1" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.0" Name="fid" Width="9.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.75" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="3.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.74" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.67" Name="attribute50" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.66" Name="attribute49" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.59" Name="attribute42" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.58" Name="attribute41" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.51" Name="attribute34" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.50" Name="attribute33" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.43" Name="attribute26" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.42" Name="attribute25" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.35" Name="attribute18" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.34" Name="attribute17" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.27" Name="attribute10" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.26" Name="attribute9" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.19" Name="attribute2" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.18" Name="attribute1" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.11" Name="end_date_active" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.10" Name="start_date_active" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.3" Name="last_update_date" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.2" Name="flex_value" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:Type Mdid="0.1082.1.0" Name="date" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
+        <dxl:EqualityOp Mdid="0.1093.1.0"/>
+        <dxl:InequalityOp Mdid="0.1094.1.0"/>
+        <dxl:LessThanOp Mdid="0.1095.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.1096.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.1097.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.1098.1.0"/>
+        <dxl:ComparisonOp Mdid="0.1092.1.0"/>
+        <dxl:ArrayType Mdid="0.1182.1.0"/>
+        <dxl:MinAgg Mdid="0.2138.1.0"/>
+        <dxl:MaxAgg Mdid="0.2122.1.0"/>
+        <dxl:AvgAgg Mdid="0.0.0.0"/>
+        <dxl:SumAgg Mdid="0.0.0.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
+      <dxl:MDCast Mdid="3.1043.1.0;25.1.0" Name="text" BinaryCoercible="true" SourceTypeId="0.1043.1.0" DestinationTypeId="0.25.1.0" CastFuncId="0.0.0.0"/>
+      <dxl:RelationStatistics Mdid="2.21701.1.1" Name="foo" Rows="1.000000" EmptyRelation="false"/>
+      <dxl:Relation Mdid="0.21701.1.1" Name="foo" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,1" NumberLeafPartitions="0">
+        <dxl:Columns>
+          <dxl:Column Name="fid" Attno="1" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+        </dxl:Columns>
+        <dxl:Indexes/>
+        <dxl:Triggers/>
+        <dxl:CheckConstraints/>
+      </dxl:Relation>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.13" Name="purgedate" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.12" Name="dataowner" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.5" Name="created_by" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.4" Name="creation_date" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:GPDBScalarOp Mdid="0.1752.1.0" Name="=" ComparisonType="Eq" ReturnsNullOnNullInput="true">
+        <dxl:LeftType Mdid="0.1700.1.0"/>
+        <dxl:RightType Mdid="0.1700.1.0"/>
+        <dxl:ResultType Mdid="0.16.1.0"/>
+        <dxl:OpFunc Mdid="0.1718.1.0"/>
+        <dxl:Commutator Mdid="0.1752.1.0"/>
+        <dxl:InverseOp Mdid="0.1753.1.0"/>
+        <dxl:OpClasses>
+          <dxl:OpClass Mdid="0.1988.1.0"/>
+          <dxl:OpClass Mdid="0.1998.1.0"/>
+          <dxl:OpClass Mdid="0.3032.1.0"/>
+        </dxl:OpClasses>
+      </dxl:GPDBScalarOp>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.7" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="3.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.6" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.69" Name="legalhold" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.68" Name="attribute_sort_order" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.61" Name="attribute44" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.60" Name="attribute43" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.53" Name="attribute36" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.52" Name="attribute35" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.45" Name="attribute28" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.44" Name="attribute27" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.37" Name="attribute20" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.36" Name="attribute19" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.29" Name="attribute12" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.28" Name="attribute11" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.21" Name="attribute4" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.20" Name="attribute3" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.13" Name="parent_flex_value_high" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.12" Name="parent_flex_value_low" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.5" Name="creation_date" Width="4.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.4" Name="last_updated_by" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:GPDBScalarOp Mdid="0.98.1.0" Name="=" ComparisonType="Eq" ReturnsNullOnNullInput="true">
+        <dxl:LeftType Mdid="0.25.1.0"/>
+        <dxl:RightType Mdid="0.25.1.0"/>
+        <dxl:ResultType Mdid="0.16.1.0"/>
+        <dxl:OpFunc Mdid="0.67.1.0"/>
+        <dxl:Commutator Mdid="0.98.1.0"/>
+        <dxl:InverseOp Mdid="0.531.1.0"/>
+        <dxl:OpClasses>
+          <dxl:OpClass Mdid="0.1994.1.0"/>
+          <dxl:OpClass Mdid="0.1995.1.0"/>
+          <dxl:OpClass Mdid="0.3035.1.0"/>
+        </dxl:OpClasses>
+      </dxl:GPDBScalarOp>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.15" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.14" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="1.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.7" Name="description" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21618.1.1.6" Name="last_update_login" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:RelationStatistics Mdid="2.21618.1.1" Name="outer_table" Rows="1.000000" EmptyRelation="false"/>
+      <dxl:Relation Mdid="0.21618.1.1" Name="outer_table" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Column-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="16,14" NumberLeafPartitions="0">
+        <dxl:Columns>
+          <dxl:Column Name="flex_value_id" Attno="1" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="language" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="4">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_date" Attno="3" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_updated_by" Attno="4" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="creation_date" Attno="5" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="created_by" Attno="6" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="last_update_login" Attno="7" Mdid="0.1700.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="description" Attno="8" Mdid="0.1043.1.0" Nullable="true" ColWidth="240">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="source_lang" Attno="9" Mdid="0.1043.1.0" Nullable="true" ColWidth="4">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="flex_value_meaning" Attno="10" Mdid="0.1043.1.0" Nullable="true" ColWidth="150">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legalhold" Attno="11" Mdid="0.1043.1.0" Nullable="true" ColWidth="5">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="legaldescription" Attno="12" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="dataowner" Attno="13" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="purgedate" Attno="14" Mdid="0.1082.1.0" Nullable="true">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+          <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false">
+            <dxl:DefaultValue/>
+          </dxl:Column>
+        </dxl:Columns>
+        <dxl:Indexes/>
+        <dxl:Triggers/>
+        <dxl:CheckConstraints/>
+      </dxl:Relation>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.5" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+      <dxl:ColumnStatistics Mdid="1.21701.1.1.4" Name="xmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.71" Name="dataowner" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.70" Name="legaldescription" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.63" Name="attribute46" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.62" Name="attribute45" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.55" Name="attribute38" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.54" Name="attribute37" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.47" Name="attribute30" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.46" Name="attribute29" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.39" Name="attribute22" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.38" Name="attribute21" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.31" Name="attribute14" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.30" Name="attribute13" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.23" Name="attribute6" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.22" Name="attribute5" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.15" Name="hierarchy_level" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.14" Name="structured_hierarchy_level" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.7" Name="last_update_login" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+      <dxl:ColumnStatistics Mdid="1.21648.1.1.6" Name="created_by" Width="0.000000" NullFreq="1.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false"/>
+    </dxl:Metadata>
+    <dxl:Query>
+      <dxl:OutputColumns>
+        <dxl:Ident ColId="94" ColName="fid" TypeMdid="0.1700.1.0"/>
+      </dxl:OutputColumns>
+      <dxl:CTEList/>
+      <dxl:LogicalJoin JoinType="Inner">
+        <dxl:LogicalJoin JoinType="Inner">
+          <dxl:LogicalGet>
+            <dxl:TableDescriptor Mdid="0.21648.1.1" TableName="inner_table">
+              <dxl:Columns>
+                <dxl:Column ColId="1" Attno="1" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="2" Attno="2" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="3" Attno="3" ColName="flex_value" TypeMdid="0.1043.1.0" ColWidth="150"/>
+                <dxl:Column ColId="4" Attno="4" ColName="last_update_date" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="5" Attno="5" ColName="last_updated_by" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="6" Attno="6" ColName="creation_date" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="7" Attno="7" ColName="created_by" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="8" Attno="8" ColName="last_update_login" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="9" Attno="9" ColName="enabled_flag" TypeMdid="0.1043.1.0" ColWidth="1"/>
+                <dxl:Column ColId="10" Attno="10" ColName="summary_flag" TypeMdid="0.1043.1.0" ColWidth="1"/>
+                <dxl:Column ColId="11" Attno="11" ColName="start_date_active" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="12" Attno="12" ColName="end_date_active" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="13" Attno="13" ColName="parent_flex_value_low" TypeMdid="0.1043.1.0" ColWidth="60"/>
+                <dxl:Column ColId="14" Attno="14" ColName="parent_flex_value_high" TypeMdid="0.1043.1.0" ColWidth="60"/>
+                <dxl:Column ColId="15" Attno="15" ColName="structured_hierarchy_level" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="16" Attno="16" ColName="hierarchy_level" TypeMdid="0.1043.1.0" ColWidth="30"/>
+                <dxl:Column ColId="17" Attno="17" ColName="compiled_value_attributes" TypeMdid="0.1043.1.0" ColWidth="2000"/>
+                <dxl:Column ColId="18" Attno="18" ColName="value_category" TypeMdid="0.1043.1.0" ColWidth="30"/>
+                <dxl:Column ColId="19" Attno="19" ColName="attribute1" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="20" Attno="20" ColName="attribute2" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="21" Attno="21" ColName="attribute3" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="22" Attno="22" ColName="attribute4" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="23" Attno="23" ColName="attribute5" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="24" Attno="24" ColName="attribute6" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="25" Attno="25" ColName="attribute7" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="26" Attno="26" ColName="attribute8" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="27" Attno="27" ColName="attribute9" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="28" Attno="28" ColName="attribute10" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="29" Attno="29" ColName="attribute11" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="30" Attno="30" ColName="attribute12" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="31" Attno="31" ColName="attribute13" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="32" Attno="32" ColName="attribute14" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="33" Attno="33" ColName="attribute15" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="34" Attno="34" ColName="attribute16" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="35" Attno="35" ColName="attribute17" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="36" Attno="36" ColName="attribute18" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="37" Attno="37" ColName="attribute19" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="38" Attno="38" ColName="attribute20" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="39" Attno="39" ColName="attribute21" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="40" Attno="40" ColName="attribute22" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="41" Attno="41" ColName="attribute23" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="42" Attno="42" ColName="attribute24" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="43" Attno="43" ColName="attribute25" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="44" Attno="44" ColName="attribute26" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="45" Attno="45" ColName="attribute27" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="46" Attno="46" ColName="attribute28" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="47" Attno="47" ColName="attribute29" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="48" Attno="48" ColName="attribute30" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="49" Attno="49" ColName="attribute31" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="50" Attno="50" ColName="attribute32" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="51" Attno="51" ColName="attribute33" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="52" Attno="52" ColName="attribute34" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="53" Attno="53" ColName="attribute35" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="54" Attno="54" ColName="attribute36" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="55" Attno="55" ColName="attribute37" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="56" Attno="56" ColName="attribute38" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="57" Attno="57" ColName="attribute39" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="58" Attno="58" ColName="attribute40" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="59" Attno="59" ColName="attribute41" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="60" Attno="60" ColName="attribute42" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="61" Attno="61" ColName="attribute43" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="62" Attno="62" ColName="attribute44" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="63" Attno="63" ColName="attribute45" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="64" Attno="64" ColName="attribute46" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="65" Attno="65" ColName="attribute47" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="66" Attno="66" ColName="attribute48" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="67" Attno="67" ColName="attribute49" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="68" Attno="68" ColName="attribute50" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="69" Attno="69" ColName="attribute_sort_order" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="70" Attno="70" ColName="legalhold" TypeMdid="0.1043.1.0" ColWidth="5"/>
+                <dxl:Column ColId="71" Attno="71" ColName="legaldescription" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                <dxl:Column ColId="72" Attno="72" ColName="dataowner" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                <dxl:Column ColId="73" Attno="73" ColName="purgedate" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="74" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+                <dxl:Column ColId="75" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+                <dxl:Column ColId="76" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+              </dxl:Columns>
+            </dxl:TableDescriptor>
+          </dxl:LogicalGet>
+          <dxl:LogicalGet>
+            <dxl:TableDescriptor Mdid="0.21618.1.1" TableName="outer_table">
+              <dxl:Columns>
+                <dxl:Column ColId="77" Attno="1" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="78" Attno="2" ColName="language" TypeMdid="0.1043.1.0" ColWidth="4"/>
+                <dxl:Column ColId="79" Attno="3" ColName="last_update_date" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="80" Attno="4" ColName="last_updated_by" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="81" Attno="5" ColName="creation_date" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="82" Attno="6" ColName="created_by" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="83" Attno="7" ColName="last_update_login" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="84" Attno="8" ColName="description" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                <dxl:Column ColId="85" Attno="9" ColName="source_lang" TypeMdid="0.1043.1.0" ColWidth="4"/>
+                <dxl:Column ColId="86" Attno="10" ColName="flex_value_meaning" TypeMdid="0.1043.1.0" ColWidth="150"/>
+                <dxl:Column ColId="87" Attno="11" ColName="legalhold" TypeMdid="0.1043.1.0" ColWidth="5"/>
+                <dxl:Column ColId="88" Attno="12" ColName="legaldescription" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                <dxl:Column ColId="89" Attno="13" ColName="dataowner" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                <dxl:Column ColId="90" Attno="14" ColName="purgedate" TypeMdid="0.1082.1.0"/>
+                <dxl:Column ColId="91" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+                <dxl:Column ColId="92" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+                <dxl:Column ColId="93" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+              </dxl:Columns>
+            </dxl:TableDescriptor>
+          </dxl:LogicalGet>
+          <dxl:And>
+            <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
+              <dxl:Ident ColId="2" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+              <dxl:Ident ColId="77" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+            </dxl:Comparison>
+            <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.98.1.0">
+              <dxl:Cast TypeMdid="0.25.1.0" FuncId="0.0.0.0">
+                <dxl:Ident ColId="78" ColName="language" TypeMdid="0.1043.1.0"/>
+              </dxl:Cast>
+              <dxl:ConstValue TypeMdid="0.25.1.0" IsNull="false" IsByValue="false" Value="AAAAB1pIUw==" LintValue="686711588"/>
+            </dxl:Comparison>
+          </dxl:And>
+        </dxl:LogicalJoin>
+        <dxl:LogicalGet>
+          <dxl:TableDescriptor Mdid="0.21701.1.1" TableName="foo">
+            <dxl:Columns>
+              <dxl:Column ColId="94" Attno="1" ColName="fid" TypeMdid="0.1700.1.0"/>
+              <dxl:Column ColId="95" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+              <dxl:Column ColId="96" Attno="-3" ColName="xmin" TypeMdid="0.28.1.0"/>
+              <dxl:Column ColId="97" Attno="-4" ColName="cmin" TypeMdid="0.29.1.0"/>
+              <dxl:Column ColId="98" Attno="-5" ColName="xmax" TypeMdid="0.28.1.0"/>
+              <dxl:Column ColId="99" Attno="-6" ColName="cmax" TypeMdid="0.29.1.0"/>
+              <dxl:Column ColId="100" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+              <dxl:Column ColId="101" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+            </dxl:Columns>
+          </dxl:TableDescriptor>
+        </dxl:LogicalGet>
+        <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
+          <dxl:Ident ColId="94" ColName="fid" TypeMdid="0.1700.1.0"/>
+          <dxl:Ident ColId="1" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+        </dxl:Comparison>
+      </dxl:LogicalJoin>
+    </dxl:Query>
+    <dxl:Plan Id="0" SpaceSize="36">
+      <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
+        <dxl:Properties>
+          <dxl:Cost StartupCost="0" TotalCost="5172.025240" Rows="1.000000" Width="9"/>
+        </dxl:Properties>
+        <dxl:ProjList>
+          <dxl:ProjElem ColId="93" Alias="fid">
+            <dxl:Ident ColId="93" ColName="fid" TypeMdid="0.1700.1.0"/>
+          </dxl:ProjElem>
+        </dxl:ProjList>
+        <dxl:Filter/>
+        <dxl:SortingColumnList/>
+        <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false">
+          <dxl:Properties>
+            <dxl:Cost StartupCost="0" TotalCost="5172.025219" Rows="1.000000" Width="9"/>
+          </dxl:Properties>
+          <dxl:ProjList>
+            <dxl:ProjElem ColId="93" Alias="fid">
+              <dxl:Ident ColId="93" ColName="fid" TypeMdid="0.1700.1.0"/>
+            </dxl:ProjElem>
+          </dxl:ProjList>
+          <dxl:Filter/>
+          <dxl:JoinFilter>
+            <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
+              <dxl:Ident ColId="0" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+              <dxl:Ident ColId="93" ColName="fid" TypeMdid="0.1700.1.0"/>
+            </dxl:Comparison>
+          </dxl:JoinFilter>
+          <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
+            <dxl:Properties>
+              <dxl:Cost StartupCost="0" TotalCost="431.006016" Rows="64.000000" Width="9"/>
+            </dxl:Properties>
+            <dxl:ProjList>
+              <dxl:ProjElem ColId="0" Alias="flex_value_set_id">
+                <dxl:Ident ColId="0" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+              </dxl:ProjElem>
+            </dxl:ProjList>
+            <dxl:Filter/>
+            <dxl:SortingColumnList/>
+            <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="true">
+              <dxl:Properties>
+                <dxl:Cost StartupCost="0" TotalCost="431.005997" Rows="1.000000" Width="9"/>
+              </dxl:Properties>
+              <dxl:ProjList>
+                <dxl:ProjElem ColId="0" Alias="flex_value_set_id">
+                  <dxl:Ident ColId="0" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+                </dxl:ProjElem>
+              </dxl:ProjList>
+              <dxl:Filter/>
+              <dxl:JoinFilter>
+                <dxl:ConstValue TypeMdid="0.16.1.0" IsNull="false" IsByValue="true" Value="true"/>
+              </dxl:JoinFilter>
+              <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
+                <dxl:Properties>
+                  <dxl:Cost StartupCost="0" TotalCost="431.001303" Rows="64.000000" Width="9"/>
+                </dxl:Properties>
+                <dxl:ProjList>
+                  <dxl:ProjElem ColId="76" Alias="flex_value_id">
+                    <dxl:Ident ColId="76" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                  </dxl:ProjElem>
+                </dxl:ProjList>
+                <dxl:Filter/>
+                <dxl:SortingColumnList/>
+                <dxl:TableScan>
+                  <dxl:Properties>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000079" Rows="1.000000" Width="9"/>
+                  </dxl:Properties>
+                  <dxl:ProjList>
+                    <dxl:ProjElem ColId="76" Alias="flex_value_id">
+                      <dxl:Ident ColId="76" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                    </dxl:ProjElem>
+                  </dxl:ProjList>
+                  <dxl:Filter>
+                    <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.98.1.0">
+                      <dxl:Cast TypeMdid="0.25.1.0" FuncId="0.0.0.0">
+                        <dxl:Ident ColId="77" ColName="language" TypeMdid="0.1043.1.0"/>
+                      </dxl:Cast>
+                      <dxl:ConstValue TypeMdid="0.25.1.0" IsNull="false" IsByValue="false" Value="AAAAB1pIUw==" LintValue="686711588"/>
+                    </dxl:Comparison>
+                  </dxl:Filter>
+                  <dxl:TableDescriptor Mdid="0.21618.1.1" TableName="outer_table">
+                    <dxl:Columns>
+                      <dxl:Column ColId="76" Attno="1" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                      <dxl:Column ColId="77" Attno="2" ColName="language" TypeMdid="0.1043.1.0" ColWidth="4"/>
+                      <dxl:Column ColId="78" Attno="3" ColName="last_update_date" TypeMdid="0.1082.1.0"/>
+                      <dxl:Column ColId="79" Attno="4" ColName="last_updated_by" TypeMdid="0.1700.1.0"/>
+                      <dxl:Column ColId="80" Attno="5" ColName="creation_date" TypeMdid="0.1082.1.0"/>
+                      <dxl:Column ColId="81" Attno="6" ColName="created_by" TypeMdid="0.1700.1.0"/>
+                      <dxl:Column ColId="82" Attno="7" ColName="last_update_login" TypeMdid="0.1700.1.0"/>
+                      <dxl:Column ColId="83" Attno="8" ColName="description" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                      <dxl:Column ColId="84" Attno="9" ColName="source_lang" TypeMdid="0.1043.1.0" ColWidth="4"/>
+                      <dxl:Column ColId="85" Attno="10" ColName="flex_value_meaning" TypeMdid="0.1043.1.0" ColWidth="150"/>
+                      <dxl:Column ColId="86" Attno="11" ColName="legalhold" TypeMdid="0.1043.1.0" ColWidth="5"/>
+                      <dxl:Column ColId="87" Attno="12" ColName="legaldescription" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                      <dxl:Column ColId="88" Attno="13" ColName="dataowner" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                      <dxl:Column ColId="89" Attno="14" ColName="purgedate" TypeMdid="0.1082.1.0"/>
+                      <dxl:Column ColId="90" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+                      <dxl:Column ColId="91" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+                      <dxl:Column ColId="92" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+                    </dxl:Columns>
+                  </dxl:TableDescriptor>
+                </dxl:TableScan>
+              </dxl:BroadcastMotion>
+              <dxl:BitmapTableScan>
+                <dxl:Properties>
+                  <dxl:Cost StartupCost="0" TotalCost="0.004687" Rows="1.000000" Width="9"/>
+                </dxl:Properties>
+                <dxl:ProjList>
+                  <dxl:ProjElem ColId="0" Alias="flex_value_set_id">
+                    <dxl:Ident ColId="0" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+                  </dxl:ProjElem>
+                  <dxl:ProjElem ColId="1" Alias="flex_value_id">
+                    <dxl:Ident ColId="1" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                  </dxl:ProjElem>
+                </dxl:ProjList>
+                <dxl:Filter/>
+                <dxl:RecheckCond>
+                  <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
+                    <dxl:Ident ColId="1" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                    <dxl:Ident ColId="76" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                  </dxl:Comparison>
+                </dxl:RecheckCond>
+                <dxl:BitmapIndexProbe>
+                  <dxl:IndexCondList>
+                    <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
+                      <dxl:Ident ColId="1" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                      <dxl:Ident ColId="76" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                    </dxl:Comparison>
+                  </dxl:IndexCondList>
+                  <dxl:IndexDescriptor Mdid="0.21680.1.0" IndexName="inner_table_idx"/>
+                </dxl:BitmapIndexProbe>
+                <dxl:TableDescriptor Mdid="0.21648.1.1" TableName="inner_table">
+                  <dxl:Columns>
+                    <dxl:Column ColId="0" Attno="1" ColName="flex_value_set_id" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="1" Attno="2" ColName="flex_value_id" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="2" Attno="3" ColName="flex_value" TypeMdid="0.1043.1.0" ColWidth="150"/>
+                    <dxl:Column ColId="3" Attno="4" ColName="last_update_date" TypeMdid="0.1082.1.0"/>
+                    <dxl:Column ColId="4" Attno="5" ColName="last_updated_by" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="5" Attno="6" ColName="creation_date" TypeMdid="0.1082.1.0"/>
+                    <dxl:Column ColId="6" Attno="7" ColName="created_by" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="7" Attno="8" ColName="last_update_login" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="8" Attno="9" ColName="enabled_flag" TypeMdid="0.1043.1.0" ColWidth="1"/>
+                    <dxl:Column ColId="9" Attno="10" ColName="summary_flag" TypeMdid="0.1043.1.0" ColWidth="1"/>
+                    <dxl:Column ColId="10" Attno="11" ColName="start_date_active" TypeMdid="0.1082.1.0"/>
+                    <dxl:Column ColId="11" Attno="12" ColName="end_date_active" TypeMdid="0.1082.1.0"/>
+                    <dxl:Column ColId="12" Attno="13" ColName="parent_flex_value_low" TypeMdid="0.1043.1.0" ColWidth="60"/>
+                    <dxl:Column ColId="13" Attno="14" ColName="parent_flex_value_high" TypeMdid="0.1043.1.0" ColWidth="60"/>
+                    <dxl:Column ColId="14" Attno="15" ColName="structured_hierarchy_level" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="15" Attno="16" ColName="hierarchy_level" TypeMdid="0.1043.1.0" ColWidth="30"/>
+                    <dxl:Column ColId="16" Attno="17" ColName="compiled_value_attributes" TypeMdid="0.1043.1.0" ColWidth="2000"/>
+                    <dxl:Column ColId="17" Attno="18" ColName="value_category" TypeMdid="0.1043.1.0" ColWidth="30"/>
+                    <dxl:Column ColId="18" Attno="19" ColName="attribute1" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="19" Attno="20" ColName="attribute2" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="20" Attno="21" ColName="attribute3" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="21" Attno="22" ColName="attribute4" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="22" Attno="23" ColName="attribute5" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="23" Attno="24" ColName="attribute6" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="24" Attno="25" ColName="attribute7" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="25" Attno="26" ColName="attribute8" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="26" Attno="27" ColName="attribute9" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="27" Attno="28" ColName="attribute10" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="28" Attno="29" ColName="attribute11" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="29" Attno="30" ColName="attribute12" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="30" Attno="31" ColName="attribute13" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="31" Attno="32" ColName="attribute14" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="32" Attno="33" ColName="attribute15" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="33" Attno="34" ColName="attribute16" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="34" Attno="35" ColName="attribute17" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="35" Attno="36" ColName="attribute18" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="36" Attno="37" ColName="attribute19" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="37" Attno="38" ColName="attribute20" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="38" Attno="39" ColName="attribute21" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="39" Attno="40" ColName="attribute22" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="40" Attno="41" ColName="attribute23" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="41" Attno="42" ColName="attribute24" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="42" Attno="43" ColName="attribute25" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="43" Attno="44" ColName="attribute26" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="44" Attno="45" ColName="attribute27" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="45" Attno="46" ColName="attribute28" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="46" Attno="47" ColName="attribute29" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="47" Attno="48" ColName="attribute30" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="48" Attno="49" ColName="attribute31" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="49" Attno="50" ColName="attribute32" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="50" Attno="51" ColName="attribute33" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="51" Attno="52" ColName="attribute34" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="52" Attno="53" ColName="attribute35" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="53" Attno="54" ColName="attribute36" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="54" Attno="55" ColName="attribute37" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="55" Attno="56" ColName="attribute38" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="56" Attno="57" ColName="attribute39" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="57" Attno="58" ColName="attribute40" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="58" Attno="59" ColName="attribute41" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="59" Attno="60" ColName="attribute42" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="60" Attno="61" ColName="attribute43" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="61" Attno="62" ColName="attribute44" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="62" Attno="63" ColName="attribute45" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="63" Attno="64" ColName="attribute46" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="64" Attno="65" ColName="attribute47" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="65" Attno="66" ColName="attribute48" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="66" Attno="67" ColName="attribute49" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="67" Attno="68" ColName="attribute50" TypeMdid="0.1043.1.0" ColWidth="240"/>
+                    <dxl:Column ColId="68" Attno="69" ColName="attribute_sort_order" TypeMdid="0.1700.1.0"/>
+                    <dxl:Column ColId="69" Attno="70" ColName="legalhold" TypeMdid="0.1043.1.0" ColWidth="5"/>
+                    <dxl:Column ColId="70" Attno="71" ColName="legaldescription" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                    <dxl:Column ColId="71" Attno="72" ColName="dataowner" TypeMdid="0.1043.1.0" ColWidth="255"/>
+                    <dxl:Column ColId="72" Attno="73" ColName="purgedate" TypeMdid="0.1082.1.0"/>
+                    <dxl:Column ColId="73" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+                    <dxl:Column ColId="74" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+                    <dxl:Column ColId="75" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+                  </dxl:Columns>
+                </dxl:TableDescriptor>
+              </dxl:BitmapTableScan>
+            </dxl:NestedLoopJoin>
+          </dxl:BroadcastMotion>
+          <dxl:TableScan>
+            <dxl:Properties>
+              <dxl:Cost StartupCost="0" TotalCost="431.000021" Rows="1.000000" Width="9"/>
+            </dxl:Properties>
+            <dxl:ProjList>
+              <dxl:ProjElem ColId="93" Alias="fid">
+                <dxl:Ident ColId="93" ColName="fid" TypeMdid="0.1700.1.0"/>
+              </dxl:ProjElem>
+            </dxl:ProjList>
+            <dxl:Filter/>
+            <dxl:TableDescriptor Mdid="0.21701.1.1" TableName="foo">
+              <dxl:Columns>
+                <dxl:Column ColId="93" Attno="1" ColName="fid" TypeMdid="0.1700.1.0"/>
+                <dxl:Column ColId="94" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
+                <dxl:Column ColId="95" Attno="-3" ColName="xmin" TypeMdid="0.28.1.0"/>
+                <dxl:Column ColId="96" Attno="-4" ColName="cmin" TypeMdid="0.29.1.0"/>
+                <dxl:Column ColId="97" Attno="-5" ColName="xmax" TypeMdid="0.28.1.0"/>
+                <dxl:Column ColId="98" Attno="-6" ColName="cmax" TypeMdid="0.29.1.0"/>
+                <dxl:Column ColId="99" Attno="-7" ColName="tableoid" TypeMdid="0.26.1.0"/>
+                <dxl:Column ColId="100" Attno="-8" ColName="gp_segment_id" TypeMdid="0.23.1.0"/>
+              </dxl:Columns>
+            </dxl:TableDescriptor>
+          </dxl:TableScan>
+        </dxl:NestedLoopJoin>
+      </dxl:GatherMotion>
+    </dxl:Plan>
+  </dxl:Thread>
+</dxl:DXLMessage>
