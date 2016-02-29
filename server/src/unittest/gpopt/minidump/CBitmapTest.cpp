@@ -35,6 +35,7 @@ ULONG CBitmapTest::m_ulBitmapTestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszBitmapFileNames[] =
 	{
+	"../data/dxl/minidump/BitmapIndexScan.mdp",
 	"../data/dxl/minidump/BitmapTableScan-AO.mdp",
 	"../data/dxl/minidump/BitmapTableScan-Basic.mdp",
 	"../data/dxl/minidump/BitmapTableScan-ColumnOnRightSide.mdp",

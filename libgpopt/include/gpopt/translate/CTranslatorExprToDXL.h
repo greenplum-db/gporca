@@ -783,6 +783,17 @@ namespace gpopt
 			static
 			EdxlSubPlanType Edxlsubplantype(CExpression *pexprCorrelatedNLJoin);
 
+			// add used columns in the bitmap recheck and remaining filter condition to the
+			// required output column
+			static
+			void AddBitmapFilterColumns
+				(
+				IMemoryPool *pmp,
+				CPhysicalBitmapTableScan *pop,
+				CExpression *pexprRecheckCond,
+				CExpression *pexprScalar,
+				CColRefSet *pcrsReqdOutput
+				);
 	public:
 			// ctor
 			CTranslatorExprToDXL

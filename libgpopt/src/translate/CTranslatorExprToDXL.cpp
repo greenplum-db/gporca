@@ -18,6 +18,7 @@
 
 #include "gpos/common/CAutoTimer.h"
 #include "gpos/common/CHashMap.h"
+#include "gpos/error/CAutoTrace.h"
 
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDFunction.h"
@@ -742,6 +743,57 @@ CTranslatorExprToDXL::PdxlnBitmapTableScan
 			);
 }
 
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CTranslatorExprToDXL::AddBitmapFilterColumns
+//
+//	@doc:
+//		Add used columns in the bitmap recheck and remaining filter condition
+//		 to the required output column
+//---------------------------------------------------------------------------
+void
+CTranslatorExprToDXL::AddBitmapFilterColumns
+	(
+	IMemoryPool *pmp,
+	CPhysicalBitmapTableScan *pop,
+	CExpression *pexprRecheckCond,
+	CExpression *pexprScalar,
+	CColRefSet *pcrsReqdOutput
+	)
+{
+	GPOS_ASSERT(NULL != pop);
+	GPOS_ASSERT(NULL != pcrsReqdOutput);
+
+	// compute what additional columns are need in the project list
+	CColRefSet *pcrsAdditional =  GPOS_NEW(pmp) CColRefSet(pmp);
+
+	if (NULL != pexprRecheckCond)
+	{
+		// add the columns needed in the recheck condition
+		pcrsAdditional->Include(CDrvdPropScalar::Pdpscalar(pexprRecheckCond->PdpDerive())->PcrsUsed());
+	}
+
+	if (NULL != pexprScalar)
+	{
+		// add the columns needed in the filter condition
+		pcrsAdditional->Include(CDrvdPropScalar::Pdpscalar(pexprScalar->PdpDerive())->PcrsUsed());
+	}
+
+	CColRefSet *pcrsBitmap =  GPOS_NEW(pmp) CColRefSet(pmp);
+	pcrsBitmap->Include(pop->PdrgpcrOutput());
+	pcrsAdditional->Intersection(pcrsBitmap);
+	if (0 < pcrsAdditional->CElements())
+	{
+		pcrsReqdOutput->Include(pcrsAdditional);
+	}
+
+	// clean up
+	pcrsAdditional->Release();
+	pcrsBitmap->Release();
+}
+
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CTranslatorExprToDXL::PdxlnBitmapTableScan
@@ -784,7 +836,6 @@ CTranslatorExprToDXL::PdxlnBitmapTableScan
 	{
 		pcrsOutput = pexprBitmapTableScan->Prpp()->PcrsRequired();
 	}
-	CDXLNode *pdxlnProjList = PdxlnProjList(pcrsOutput, pdrgpcr);
 
 	// translate scalar predicate into DXL filter only if it is not redundant
 	CExpression *pexprRecheckCond = (*pexprBitmapTableScan)[0];
@@ -795,6 +846,7 @@ CTranslatorExprToDXL::PdxlnBitmapTableScan
 	{
 		pdxlnCond = PdxlnScalar(pexprScalar);
 	}
+
 	CDXLNode *pdxlnFilter = PdxlnFilter(pdxlnCond);
 
 	CDXLNode *pdxlnRecheckCond = PdxlnScalar(pexprRecheckCond);
@@ -804,6 +856,10 @@ CTranslatorExprToDXL::PdxlnBitmapTableScan
 						m_pmp,
 						GPOS_NEW(m_pmp) CDXLScalarRecheckCondFilter(m_pmp), pdxlnRecheckCond
 						);
+
+	AddBitmapFilterColumns(m_pmp, pop, pexprRecheckCond, pexprScalar, pcrsOutput);
+
+	CDXLNode *pdxlnProjList = PdxlnProjList(pcrsOutput, pdrgpcr);
 
 	// translate bitmap access path
 	CDXLNode *pdxlnBitmapIndexPath = PdxlnScalar((*pexprBitmapTableScan)[1]);
@@ -1402,8 +1458,15 @@ CTranslatorExprToDXL::PdxlnResult
 		{
 			pdxlprop->AddRef();
 
-			return PdxlnBitmapTableScan(
-					pexprRelational, pcrsOutput, NULL /*pdrgpcr*/, pdrgpdsBaseTables, pexprScalar, pdxlprop);
+			return PdxlnBitmapTableScan
+					(
+					pexprRelational,
+					pcrsOutput,
+					NULL /*pdrgpcr*/,
+					pdrgpdsBaseTables,
+					pexprScalar,
+					pdxlprop
+					);
 		}
 		case COperator::EopPhysicalConstTableGet:
 		{
