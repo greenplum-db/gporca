@@ -18,7 +18,6 @@
 
 #include "gpos/common/CAutoTimer.h"
 #include "gpos/common/CHashMap.h"
-#include "gpos/error/CAutoTrace.h"
 
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDFunction.h"
