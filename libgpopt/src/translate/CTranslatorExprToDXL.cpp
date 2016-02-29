@@ -756,7 +756,7 @@ void
 CTranslatorExprToDXL::AddBitmapFilterColumns
 	(
 	IMemoryPool *pmp,
-	CPhysicalBitmapTableScan *pop,
+	CPhysicalScan *pop,
 	CExpression *pexprRecheckCond,
 	CExpression *pexprScalar,
 	CColRefSet *pcrsReqdOutput
@@ -1059,8 +1059,8 @@ CTranslatorExprToDXL::PdxlnDynamicBitmapTableScan
 	pdxlnScan->SetProperties(pdxlprop);
 
 	// build projection list
+
 	CColRefSet *pcrsOutput = pexprScan->Prpp()->PcrsRequired();
-	CDXLNode *pdxlnProjList = PdxlnProjList(pcrsOutput, pdrgpcr);
 
 	// translate predicates into DXL filter
 	CDXLNode *pdxlnCond = NULL;
@@ -1070,13 +1070,17 @@ CTranslatorExprToDXL::PdxlnDynamicBitmapTableScan
 	}
 	CDXLNode *pdxlnFilter = PdxlnFilter(pdxlnCond);
 
-	CDXLNode *pdxlnRecheckCond = PdxlnScalar((*pexprScan)[0]);
+	CExpression *pexprRecheckCond = (*pexprScan)[0];
+	CDXLNode *pdxlnRecheckCond = PdxlnScalar(pexprRecheckCond);
 	CDXLNode *pdxlnRecheckCondFilter =
 			GPOS_NEW(m_pmp) CDXLNode(m_pmp, GPOS_NEW(m_pmp) CDXLScalarRecheckCondFilter(m_pmp));
 	pdxlnRecheckCondFilter->AddChild(pdxlnRecheckCond);
 
 	// translate bitmap access path
 	CDXLNode *pdxlnBitmapAccessPath = PdxlnScalar((*pexprScan)[1]);
+
+	AddBitmapFilterColumns(m_pmp, pop, pexprRecheckCond, pexprScalar, pcrsOutput);
+	CDXLNode *pdxlnProjList = PdxlnProjList(pcrsOutput, pdrgpcr);
 
 	pdxlnScan->AddChild(pdxlnProjList);
 	pdxlnScan->AddChild(pdxlnFilter);

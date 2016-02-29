@@ -789,7 +789,7 @@ namespace gpopt
 			void AddBitmapFilterColumns
 				(
 				IMemoryPool *pmp,
-				CPhysicalBitmapTableScan *pop,
+				CPhysicalScan *pop,
 				CExpression *pexprRecheckCond,
 				CExpression *pexprScalar,
 				CColRefSet *pcrsReqdOutput
