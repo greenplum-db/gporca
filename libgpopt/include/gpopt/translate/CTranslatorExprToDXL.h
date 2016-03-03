@@ -783,7 +783,7 @@ namespace gpopt
 			static
 			EdxlSubPlanType Edxlsubplantype(CExpression *pexprCorrelatedNLJoin);
 
-			// add used columns in the bitmap re-check and remainder filter condition to the
+			// add used columns in the bitmap re-check and the remaining scalar filter condition to the
 			// required output column
 			static
 			void AddBitmapFilterColumns
@@ -792,7 +792,7 @@ namespace gpopt
 				CPhysicalScan *pop,
 				CExpression *pexprRecheckCond,
 				CExpression *pexprScalar,
-				CColRefSet *pcrsReqdOutput
+				CColRefSet *pcrsReqdOutput // append the required column reference
 				);
 	public:
 			// ctor

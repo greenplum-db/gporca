@@ -748,8 +748,8 @@ CTranslatorExprToDXL::PdxlnBitmapTableScan
 //		CTranslatorExprToDXL::AddBitmapFilterColumns
 //
 //	@doc:
-//		Add used columns in the bitmap recheck and remainder filter condition
-//		to the required output column
+//		Add used columns in the bitmap recheck and the remaining scalar filter
+//		condition to the required output column
 //---------------------------------------------------------------------------
 void
 CTranslatorExprToDXL::AddBitmapFilterColumns
@@ -758,7 +758,7 @@ CTranslatorExprToDXL::AddBitmapFilterColumns
 	CPhysicalScan *pop,
 	CExpression *pexprRecheckCond,
 	CExpression *pexprScalar,
-	CColRefSet *pcrsReqdOutput
+	CColRefSet *pcrsReqdOutput // append the required column reference
 	)
 {
 	GPOS_ASSERT(NULL != pop);
