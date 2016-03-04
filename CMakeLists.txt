@@ -16,7 +16,9 @@ set(GPORCA_VERSION_STRING ${GPORCA_VERSION_MAJOR}.${GPORCA_VERSION_MINOR})
 set(GPORCA_ABI_VERSION 3)
 
 # Configure CCache if available
-find_program(CCACHE_FOUND ccache)
+find_program(CCACHE_FOUND ccache
+  PATHS /bin /usr/bin/ /usr/local/bin ENV PATH NO_DEFAULT_PATH
+)
 if(CCACHE_FOUND)
        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
