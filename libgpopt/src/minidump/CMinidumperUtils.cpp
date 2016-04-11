@@ -421,8 +421,8 @@ CMinidumperUtils::PdxlnExecuteMinidump
 	BOOL fConstantExpressionEvaluator = true;
 	if (NULL == pceeval)
 	{
-		// disable constant expression evaluation when running minidump since we
-		// may now have an executor to compute the scalar expression
+		// disable constant expression evaluation when running minidump since
+		// there no executor to compute the scalar expression
 		fConstantExpressionEvaluator = false;
 	}
 
@@ -515,8 +515,8 @@ CMinidumperUtils::PdxlnExecuteMinidump
 	BOOL fConstantExpressionEvaluator = true;
 	if (NULL == pceeval)
 	{
-		// disable constant expression evaluation when running minidump since we
-		// may now have an executor to compute the scalar expression
+		// disable constant expression evaluation when running minidump since
+		// there no executor to compute the scalar expression
 		fConstantExpressionEvaluator = false;
 	}
 
