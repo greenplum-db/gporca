@@ -575,7 +575,7 @@ CPhysicalDML::PosComputeRequired
 //		CPhysicalDML::FInsertSortOnParquet
 //
 //	@doc:
-//		Compute a set of columns required by local members
+//		Do we need to sort on parquet table
 //
 //---------------------------------------------------------------------------
 BOOL
@@ -590,7 +590,7 @@ CPhysicalDML::FInsertSortOnParquet()
 //		CPhysicalDML::FInsertSortOnRows
 //
 //	@doc:
-//		Compute a set of columns required by local members
+//		Do we need to sort on insert
 //
 //---------------------------------------------------------------------------
 BOOL
