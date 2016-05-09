@@ -3799,7 +3799,7 @@ CTranslatorExprToDXL::PdxlnHashJoin
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CTranslatorExprToDXL::PdxlnMotion
+//		CTranslatorExprToDXL::CheckValidity
 //
 //	@doc:
 //		Check if the motion node is valid
