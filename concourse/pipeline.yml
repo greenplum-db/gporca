@@ -10,6 +10,7 @@ groups:
   - orca_centos6_release
   - build_gpdb_centos6
   - gpdb_icg
+  - gpdb_icg_optfun
   - gpos_publish_tag
   - orca_publish_tag
 - name: xerces
@@ -31,6 +32,7 @@ groups:
   - orca_centos6_release
   - build_gpdb_centos6
   - gpdb_icg
+  - gpdb_icg_optfun
 
 #############
 # RESOURCES #
@@ -677,6 +679,36 @@ jobs:
       - gp_xerces
   - task: test_with_orca
     file: gpdb_src/concourse/test_with_orca.yml
+    on_failure:
+      aggregate:
+      - put: regression_diffs
+        params:
+          from: icg_output/regression.diffs
+      - put: regression_out
+        params:
+          from: icg_output/regression.out
+- name: gpdb_icg_optfun
+  max_in_flight: 1
+  plan:
+  - aggregate:
+    - get: gpdb_src
+      params:
+        submodules: none
+    - get: bin_gpdb_with_orca_centos6
+      passed:
+      - build_gpdb_centos6
+      trigger: true
+    - get: bin_gpos_centos6_release
+      passed:
+      - gpos_centos6_release
+    - get: bin_orca_centos6_release
+      passed:
+      - orca_centos6_release
+    - get: bin_xerces_centos6
+      passed:
+      - gp_xerces
+  - task: test_optfun_with_orca
+    file: gpdb_src/concourse/test_optfun_with_orca.yml
     on_failure:
       aggregate:
       - put: regression_diffs
