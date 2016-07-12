@@ -2895,6 +2895,10 @@ CXformUtils::PexprBuildIndexPlan
 		pdrgpexprIndex->Release();
 		CRefCount::SafeRelease(ppartcnstrIndex);
 
+		{
+			CAutoTrace at(pmp);
+			at.Os() << "HERE IT IS";
+		}
 		return NULL;
 	}
 	GPOS_ASSERT(pdrgpexprConds->UlLength() == pdrgpexprResidual->UlLength() + pdrgpexprIndex->UlLength());

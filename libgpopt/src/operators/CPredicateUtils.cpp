@@ -2274,12 +2274,17 @@ CPredicateUtils::PexprIndexLookup
 	GPOS_ASSERT(NULL != pexprScalar);
 	GPOS_ASSERT(NULL != pdrgpcrIndex);
 
-	if (!CUtils::FScalarCmp(pexprScalar))
+	IMDType::ECmpType cmptype = IMDType::EcmptOther;
+
+	if (CUtils::FScalarCmp(pexprScalar))
 	{
-		return NULL;
+		cmptype = CScalarCmp::PopConvert(pexprScalar->Pop())->Ecmpt();
+	}
+	else if (CUtils::FScalarArrayCmp(pexprScalar))
+	{
+		cmptype = CUtils::Ecmpt(CScalarArrayCmp::PopConvert(pexprScalar->Pop())->PmdidOp());
 	}
 
-	IMDType::ECmpType cmptype = CScalarCmp::PopConvert(pexprScalar->Pop())->Ecmpt();
 	if (cmptype == IMDType::EcmptNEq ||
 		cmptype == IMDType::EcmptIDF ||
 		cmptype == IMDType::EcmptOther)

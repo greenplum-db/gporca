@@ -28,6 +28,7 @@ ULONG CIndexTest::m_ulIndexTestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszIndexFileNames[] =
 	{
+	"../data/dxl/minidump/ArrayOpIndex.mdp",
 	"../data/dxl/minidump/DynamicIndexScan-Homogenous.mdp",
 	"../data/dxl/minidump/DynamicIndexScan-BoolTrue.mdp",
 	"../data/dxl/minidump/DynamicIndexScan-BoolFalse.mdp",
