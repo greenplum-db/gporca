@@ -1859,18 +1859,34 @@ CPredicateUtils::PexprExtractPredicatesOnPartKeys
 		return NULL;
 	}
 
-	// if we have any Array Comparisons, we expand them into conjunctions/disjunctions
-	// of comparison predicates and then reconstruct scalar expression
-	DrgPexpr *pdrgpexprConjuncts = PdrgpexprConjuncts(pmp, pexprScalar);
-	DrgPexpr *pdrgpexprExpandedConjuncts = PdrgpexprExpandConjuncts(pmp, pdrgpexprConjuncts);
-	pdrgpexprConjuncts->Release();
-	CExpression *pexprExpandedScalar = PexprConjunction(pmp, pdrgpexprExpandedConjuncts);
-	pdrgpexprConjuncts = PdrgpexprConjuncts(pmp, pexprExpandedScalar);
-
+	DrgPexpr *pdrgpexprConjuncts = NULL;
 	DrgPcrs *pdrgpcrsChild = NULL;
-	CConstraint *pcnstr = CConstraint::PcnstrFromScalarExpr(pmp, pexprExpandedScalar, &pdrgpcrsChild);
-	CRefCount::SafeRelease(pdrgpcrsChild);
-	pexprExpandedScalar->Release();
+	CConstraint *pcnstr = NULL;
+	if(GPOS_FTRACE(EopttraceEnableArrayDerive))
+	{
+		// previously, we expanded array expressions. However, there is now code to handle array
+		// constraints in the DXL translator and therefore, it is unnecessary work to expanded arrays
+		// into disjunctions so we skip that step.
+		pdrgpexprConjuncts = PdrgpexprConjuncts(pmp, pexprScalar);
+
+		pcnstr = CConstraint::PcnstrFromScalarExpr(pmp, pexprScalar, &pdrgpcrsChild);
+		CRefCount::SafeRelease(pdrgpcrsChild);
+	}
+	else
+	{
+		// if we have any Array Comparisons, we expand them into conjunctions/disjunctions
+		// of comparison predicates and then reconstruct scalar expression
+		pdrgpexprConjuncts = PdrgpexprConjuncts(pmp, pexprScalar);
+		DrgPexpr *pdrgpexprExpandedConjuncts = PdrgpexprExpandConjuncts(pmp, pdrgpexprConjuncts);
+		pdrgpexprConjuncts->Release();
+		CExpression *pexprExpandedScalar = PexprConjunction(pmp, pdrgpexprExpandedConjuncts);
+		pdrgpexprConjuncts = PdrgpexprConjuncts(pmp, pexprExpandedScalar);
+
+		pcnstr = CConstraint::PcnstrFromScalarExpr(pmp, pexprExpandedScalar, &pdrgpcrsChild);
+		CRefCount::SafeRelease(pdrgpcrsChild);
+		pexprExpandedScalar->Release();
+	}
+
 
 	// check if expanded scalar leads to a contradiction in computed constraint
 	BOOL fContradiction = (NULL != pcnstr && pcnstr->FContradiction());

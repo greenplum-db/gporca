@@ -173,6 +173,10 @@ namespace gpopt
 				const CColRefSet *pcrsReqd
 				);
 
+			// determines if the expression is likely convertible to an array expression
+			static BOOL
+			PexprConvert2InIsConvertable(CExpression *pexpr, ULONG parentOpType);
+
 			// private ctor
 			CExpressionPreprocessor();
 
@@ -196,6 +200,10 @@ namespace gpopt
 			// derive constraints on given expression
 			static
 			CExpression *PexprAddPredicatesFromConstraints(IMemoryPool *pmp, CExpression *pexpr);
+
+			// convert series of AND or OR comparisons into array IN expressions
+			static
+			CExpression *PexprConvert2In(IMemoryPool *pmp, CExpression *pexpr);
 
 	}; // class CExpressionPreprocessor
 }

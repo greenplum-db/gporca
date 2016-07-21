@@ -4423,6 +4423,7 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorFilter
 	CDXLNode *pdxlnPrLChild = (*pdxlnChild)[0];
 
 	CDrvdPropRelational *pdprel = CDrvdPropRelational::Pdprel(pexprChild->Pdp(CDrvdProp::EptRelational));
+
 	// we add a sequence if the scan id is found below the resolver
 	BOOL fNeedSequence = pdprel->Ppartinfo()->FContainsScanId(popSelector->UlScanId());
 
@@ -4667,6 +4668,7 @@ CTranslatorExprToDXL::ConstructLevelFiltersPartitionSelectorRange
 
 			for (ULONG ul = 0; ul < ulLength; ul++)
 			{
+				// array filters will be sent here
 				CDXLNode *pdxlnScCmp = PdxlnPredOnPartKey
 										(
 										(*pdrgpexprConjuncts)[ul],
@@ -4759,9 +4761,51 @@ CTranslatorExprToDXL::PdxlnPredOnPartKey
 		return PdxlnScNullTestPartKey(pmdidTypePartKey, ulPartLevel, false /*fIsNull*/);
 	}
 
+	if (CPredicateUtils::FCompareIdentToConstArray(pexprPred))
+	{
+		return PdxlArrayExprOnPartKey(pexprPred, pcrPartKey, pmdidTypePartKey, ulPartLevel, pfLTComparison, pfGTComparison, pfEQComparison);
+	}
+
 	GPOS_ASSERT(CPredicateUtils::FOr(pexprPred) || CPredicateUtils::FAnd(pexprPred));
-	
+
 	return PdxlnConjDisjOnPartKey(pexprPred, pcrPartKey, pmdidTypePartKey, ulPartLevel, pfLTComparison, pfGTComparison, pfEQComparison);
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CTranslatorExprToDXL::PdxlArrayInOnPartKey
+//
+//	@doc:
+//		Translates an array expression on a partition key to a disjunction
+//
+//---------------------------------------------------------------------------
+CDXLNode *
+CTranslatorExprToDXL::PdxlArrayExprOnPartKey
+	(
+	CExpression *pexprPred,
+	CColRef *pcrPartKey,
+	IMDId *pmdidTypePartKey,
+	ULONG ulPartLevel,
+	BOOL *pfLTComparison,	// input/output
+	BOOL *pfGTComparison,	// input/output
+	BOOL *pfEQComparison	// input/output
+	)
+{
+	GPOS_ASSERT(CUtils::FScalarArrayCmp(pexprPred));
+
+	CConstraintInterval* pcnstrinvl =
+			CConstraintInterval::PcnstrIntervalFromScalarArrayCmp(m_pmp, pexprPred, pcrPartKey);
+	GPOS_ASSERT(NULL != pcnstrinvl);
+
+	// convert the interval into a disjunction and call the existing disjunction method
+	CExpression *pexprdisj = pcnstrinvl->PexprConstructDisjunctionScalar(m_pmp);
+
+	CDXLNode* pdxln = PdxlnConjDisjOnPartKey(pexprdisj, pcrPartKey, pmdidTypePartKey, ulPartLevel, pfLTComparison, pfGTComparison, pfEQComparison);
+	pexprdisj->Release();
+	pcnstrinvl->Release();
+
+
+	return pdxln;
 }
 
 //---------------------------------------------------------------------------

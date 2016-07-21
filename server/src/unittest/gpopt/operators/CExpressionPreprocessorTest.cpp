@@ -14,6 +14,7 @@
 
 #include "gpos/io/COstreamString.h"
 #include "gpos/string/CWStringDynamic.h"
+#include "gpos/task/CAutoTraceFlag.h"
 
 #include "gpopt/base/CUtils.h"
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
@@ -62,7 +63,10 @@ CExpressionPreprocessorTest::EresUnittest()
 		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessOuterJoinMinidumps),
 		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessOrPrefilters),
 		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessOrPrefiltersPartialPush),
-		GPOS_UNITTEST_FUNC(EresUnittest_CollapseInnerJoin)
+		GPOS_UNITTEST_FUNC(EresUnittest_CollapseInnerJoin),
+		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessConvert2InPredicate),
+		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessConvertArrayWithEquals),
+		GPOS_UNITTEST_FUNC(EresUnittest_PreProcessConvert2InPredicateDeepExpressionTree)
 		};
 
 	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
@@ -1634,6 +1638,7 @@ CExpressionPreprocessorTest::EresUnittest_PreProcessOrPrefilters()
 {
 	CAutoMemoryPool amp;
 	IMemoryPool *pmp = amp.Pmp();
+	CAutoTraceFlag atf(EopttraceEnableArrayDerive, true /*fVal*/);
 
 	// reset metadata cache
 	CMDCache::Reset();
@@ -1758,22 +1763,26 @@ CExpressionPreprocessorTest::EresUnittest_PreProcessOrPrefilters()
 			"   |     |  +--CScalarCmp (=)\n"
 			"   |     |     |--CScalarIdent \"column_0002\" (5)\n"
 			"   |     |     +--CScalarConst (0)\n"
-			"   |     +--CScalarBoolOp (EboolopOr)\n"
-			"   |        |--CScalarCmp (=)\n"
-			"   |        |  |--CScalarIdent \"column_0000\" (3)\n"
-			"   |        |  +--CScalarConst (1)\n"
-			"   |        +--CScalarCmp (=)\n"
-			"   |           |--CScalarIdent \"column_0000\" (3)\n"
+			"   |     +--CScalarArrayCmp Any (=)\n"
+			"   |        |--CScalarIdent \"column_0000\" (3)\n"
+			"   |        +--CScalarArray: {eleMDId: (23,1.0), arrayMDId: (1007,1.0)}\n"
+			"   |           |--CScalarConst (1)\n"
 			"   |           +--CScalarConst (2)\n"
 			"   |--CLogicalSelect\n"
 			"   |  |--CLogicalGet \"BaseTableAlias\" (\"BaseTable\"), Columns: [\"column_0000\" (0), \"column_0001\" (1), \"column_0002\" (2)] Key sets: {[0]}\n"
-			"   |  +--CScalarBoolOp (EboolopOr)\n"
-			"   |     |--CScalarCmp (=)\n"
-			"   |     |  |--CScalarIdent \"column_0000\" (0)\n"
-			"   |     |  +--CScalarConst (1)\n"
-			"   |     +--CScalarCmp (=)\n"
+			"   |  +--CScalarBoolOp (EboolopAnd)\n"
+			"   |     |--CScalarBoolOp (EboolopOr)\n"
+			"   |     |  |--CScalarCmp (=)\n"
+			"   |     |  |  |--CScalarIdent \"column_0000\" (0)\n"
+			"   |     |  |  +--CScalarConst (2)\n"
+			"   |     |  +--CScalarCmp (=)\n"
+			"   |     |     |--CScalarIdent \"column_0000\" (0)\n"
+			"   |     |     +--CScalarConst (1)\n"
+			"   |     +--CScalarArrayCmp Any (=)\n"
 			"   |        |--CScalarIdent \"column_0000\" (0)\n"
-			"   |        +--CScalarConst (2)\n"
+			"   |        +--CScalarArray: {eleMDId: (23,1.0), arrayMDId: (1007,1.0)}\n"
+			"   |           |--CScalarConst (1)\n"
+			"   |           +--CScalarConst (2)\n"
 			"   +--CScalarBoolOp (EboolopAnd)\n"
 			"      |--CScalarBoolOp (EboolopOr)\n"
 			"      |  |--CScalarBoolOp (EboolopAnd)\n"
@@ -2164,6 +2173,223 @@ CExpressionPreprocessorTest::EresUnittest_CollapseInnerJoin()
 	{
 		rgpexpr[ul]->Release();
 	}
+
+	return GPOS_OK;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CExpressionPreprocessorTest
+//				::EresUnittest_PreProcessConvert2InPredicate
+//
+//	@doc:
+//		Tests that a expression with nested OR statements will convert them into
+//		an array IN statement. The statement we are testing looks is equivalent to
+//		+LogicalGet
+//			+-ScalarBoolOp (Or)
+//				+-ScalarBoolCmp
+//					+-ScalarId
+//					+-ScalarConst
+//				+-ScalarBoolCmp
+//					+-ScalarId
+//					+-ScalarConst
+//
+//---------------------------------------------------------------------------
+GPOS_RESULT
+CExpressionPreprocessorTest::EresUnittest_PreProcessConvert2InPredicate()
+{
+	CAutoTraceFlag atf(EopttraceEnableArrayDerive, true /*fVal*/);
+
+	CAutoMemoryPool amp;
+	IMemoryPool *pmp = amp.Pmp();
+
+	// reset metadata cache
+	CMDCache::Reset();
+
+	// setup a file-based provider
+	CMDProviderMemory *pmdp = CTestUtils::m_pmdpf;
+	pmdp->AddRef();
+	CMDAccessor mda(pmp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
+
+	CAutoOptCtxt aoc(pmp, &mda, NULL /*pceeval*/, CTestUtils::Pcm(pmp));
+
+	CExpression *pexprGet = CTestUtils::PexprLogicalGet(pmp);
+	COperator *popGet = pexprGet->Pop();
+	popGet->AddRef();
+
+	// Create a disjunct, add as a child
+	CColRef *pcrLeft = CDrvdPropRelational::Pdprel(pexprGet->PdpDerive())->PcrsOutput()->PcrAny();
+	CScalarBoolOp *pcsclrOp = GPOS_NEW(pmp) CScalarBoolOp(pmp, CScalarBoolOp::EboolopOr);
+	CExpression *pexprDisjunct =
+			GPOS_NEW(pmp) CExpression(
+									pmp,
+									pcsclrOp,
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 1 /*iVal*/)),
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 2 /*iVal*/)),
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, pcrLeft)
+									);
+
+	CExpression *pexprGetWithChildren = GPOS_NEW(pmp) CExpression(pmp, popGet, pexprDisjunct);
+	pexprGet->Release();
+
+	GPOS_ASSERT(3 == CUtils::FCountOperator(pexprGetWithChildren, COperator::EopScalarCmp));
+
+	CExpression *pexprConvert = CExpressionPreprocessor::PexprConvert2In(pmp, pexprGetWithChildren);
+
+	GPOS_ASSERT(1 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarArrayCmp));
+	GPOS_ASSERT(1 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarCmp));
+	// the OR node should not be removed because there should be an array expression and
+	// a scalar identity comparison
+	GPOS_ASSERT(1 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarBoolOp));
+
+	pexprGetWithChildren->Release();
+	pexprConvert->Release();
+
+	return GPOS_OK;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CExpressionPreprocessorTest
+//				::EresUnittest_PreProcessConvertArrayWithEquals
+//
+//	@doc:
+//		Test that an array expression like A IN (1,2,3,4,5) OR A = 6 OR A = 7
+//		converts to A IN (1,2,3,4,5,6,7).
+//
+//---------------------------------------------------------------------------
+GPOS_RESULT
+CExpressionPreprocessorTest::EresUnittest_PreProcessConvertArrayWithEquals()
+{
+	CAutoTraceFlag atf(EopttraceEnableArrayDerive, true /*fVal*/);
+
+	CAutoMemoryPool amp;
+	IMemoryPool *pmp = amp.Pmp();
+
+	// reset metadata cache
+	CMDCache::Reset();
+
+	// setup a file-based provider
+	CMDProviderMemory *pmdp = CTestUtils::m_pmdpf;
+	pmdp->AddRef();
+	CMDAccessor mda(pmp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
+
+	CAutoOptCtxt aoc(pmp, &mda, NULL /*pceeval*/, CTestUtils::Pcm(pmp));
+
+	CExpression *pexpr = CTestUtils::PexprLogicalSelectArrayCmp(pmp);
+	// get a ref to the comparison column
+	CColRef *pcrLeft = CDrvdPropRelational::Pdprel(pexpr->PdpDerive())->PcrsOutput()->PcrAny();
+
+	// remove the array child and then make an OR node with two equality comparisons
+	CExpression *pexprArrayComp = (*pexpr->PdrgPexpr())[1];
+	GPOS_ASSERT(CUtils::FScalarArrayCmp(pexprArrayComp));
+
+	DrgPexpr *prngexprDisjChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
+	prngexprDisjChildren->Append(pexprArrayComp);
+	prngexprDisjChildren->Append(CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 6 /*iVal*/)));
+	prngexprDisjChildren->Append(CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 7 /*iVal*/)));
+
+	CScalarBoolOp *pcsclrOp = GPOS_NEW(pmp) CScalarBoolOp(pmp, CScalarBoolOp::EboolopOr);
+	CExpression *pexprDisjunct = GPOS_NEW(pmp) CExpression(pmp, pcsclrOp, prngexprDisjChildren);
+	pexprArrayComp->AddRef(); // needed for Replace()
+	pexpr->PdrgPexpr()->Replace(1, pexprDisjunct);
+
+	GPOS_ASSERT(2 == CUtils::FCountOperator(pexpr, COperator::EopScalarCmp));
+
+	CExpression *pexprConvert = CExpressionPreprocessor::PexprConvert2In(pmp, pexprDisjunct);
+
+	GPOS_ASSERT(0 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarCmp));
+	GPOS_ASSERT(7 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarConst));
+	GPOS_ASSERT(1 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarArrayCmp));
+
+	pexpr->Release();
+	pexprConvert->Release();
+
+	return GPOS_OK;
+}
+
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CExpressionPreprocessorTest
+//				::EresUnittest_PreProcessConvert2InPredicateDeepExpressionTree
+//
+//	@doc:
+//		Test of preprocessing with a whole expression tree. The expression tree
+//		looks like this predicate (x = 1 OR x = 2 OR (x = y AND (y = 3 OR y = 4)))
+//		which should be converted to (x in (1,2) OR (x = y AND y IN (3,4)))
+//
+//---------------------------------------------------------------------------
+GPOS_RESULT
+CExpressionPreprocessorTest::EresUnittest_PreProcessConvert2InPredicateDeepExpressionTree()
+{
+	CAutoTraceFlag atf(EopttraceEnableArrayDerive, true /*fVal*/);
+
+	CAutoMemoryPool amp;
+	IMemoryPool *pmp = amp.Pmp();
+
+	// reset metadata cache
+	CMDCache::Reset();
+
+	// setup a file-based provider
+	CMDProviderMemory *pmdp = CTestUtils::m_pmdpf;
+	pmdp->AddRef();
+	CMDAccessor mda(pmp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
+
+	CAutoOptCtxt aoc(pmp, &mda, NULL /*pceeval*/, CTestUtils::Pcm(pmp));
+
+	CExpression *pexprGet = CTestUtils::PexprLogicalGet(pmp);
+	COperator *popGet = pexprGet->Pop();
+	popGet->AddRef();
+
+	// get a column ref from the outermost Get expression
+	DrgPcr *pdrgpcr = CDrvdPropRelational::Pdprel(pexprGet->PdpDerive())->PcrsOutput()->Pdrgpcr(pmp);
+	GPOS_ASSERT(1 < pdrgpcr->UlLength());
+	CColRef *pcrLeft = (*pdrgpcr)[0];
+	CColRef *pcrRight = (*pdrgpcr)[1];
+
+	// inner most OR
+	CScalarBoolOp *pcsclrOpOrInner = GPOS_NEW(pmp) CScalarBoolOp(pmp, CScalarBoolOp::EboolopOr);
+	CExpression *pexprDisjunctInner =
+			GPOS_NEW(pmp) CExpression(
+									pmp,
+									pcsclrOpOrInner,
+									CUtils::PexprScalarEqCmp(pmp, pcrRight, CUtils::PexprScalarConstInt4(pmp, 3 /*iVal*/)),
+									CUtils::PexprScalarEqCmp(pmp, pcrRight, CUtils::PexprScalarConstInt4(pmp, 4 /*iVal*/))
+									);
+	// middle and expression
+	CScalarBoolOp *pcsclrOpAnd = GPOS_NEW(pmp) CScalarBoolOp(pmp, CScalarBoolOp::EboolopAnd);
+	CExpression *pexprConjunct =
+			GPOS_NEW(pmp) CExpression(
+									pmp,
+									pcsclrOpAnd,
+									pexprDisjunctInner,
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, pcrRight)
+									);
+	// outer most OR
+	CScalarBoolOp *pcsclrOp = GPOS_NEW(pmp) CScalarBoolOp(pmp, CScalarBoolOp::EboolopOr);
+	CExpression *pexprDisjunct =
+			GPOS_NEW(pmp) CExpression(
+									pmp,
+									pcsclrOp,
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 1)),
+									CUtils::PexprScalarEqCmp(pmp, pcrLeft, CUtils::PexprScalarConstInt4(pmp, 2)),
+									pexprConjunct
+									);
+
+	CExpression *pexprGetWithChildren = GPOS_NEW(pmp) CExpression(pmp, popGet, pexprDisjunct);
+	pexprGet->Release();
+
+	GPOS_ASSERT(5 == CUtils::FCountOperator(pexprGetWithChildren, COperator::EopScalarCmp));
+
+	CExpression *pexprConvert = CExpressionPreprocessor::PexprConvert2In(pmp, pexprGetWithChildren);
+
+	GPOS_ASSERT(2 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarArrayCmp));
+	GPOS_ASSERT(1 == CUtils::FCountOperator(pexprConvert, COperator::EopScalarCmp));
+
+	pexprGetWithChildren->Release();
+	pexprConvert->Release();
+	pdrgpcr->Release();
 
 	return GPOS_OK;
 }
