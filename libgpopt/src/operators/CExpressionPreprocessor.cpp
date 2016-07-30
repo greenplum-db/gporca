@@ -662,6 +662,105 @@ CExpressionPreprocessor::PexprCollapseProjects
 	return pexprCollapsed;
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CExpressionPreprocessor::PexprProjBelowSubquery
+//
+//	@doc:
+//		Insert dummy project element below scalar subquery when the (1) the scalar
+//      subquery is below a project and (b) output column is an outer reference
+//---------------------------------------------------------------------------
+CExpression *
+CExpressionPreprocessor::PexprProjBelowSubquery
+	(
+	IMemoryPool *pmp,
+	CExpression *pexpr,
+	BOOL fUnderPrList
+	)
+{
+	// protect against stack overflow during recursion
+	GPOS_CHECK_STACK_SIZE;
+	GPOS_ASSERT(NULL != pmp);
+	GPOS_ASSERT(NULL != pexpr);
+
+	/*
+	 * Consider the following subquery:
+	 * SELECT (SELECT foo.b from bar) FROM foo
+	 * If bar is empty we should return null.
+	 *
+	 * For this query during DXL->Expr translation, the project element
+	 * (SELECT b FROM bar) is represented as scalar subquery that returns
+	 * an output column. To ensure that this scalar subquery under the project
+	 * operator is returned when bar (or an arbitary tree instead of bar)
+	 * we insert a dummy project element that points to FOO.b under the
+	 * scalar subquery. This dummy project element prevents its incorrect
+	 * transformation into a non-correlated plan.
+	 *
+	 * We want to limit the of such introduction dummy projects only when the
+	 * following conditions are all satisfied:
+	 * a)  The scalar subquery is in the project element scalar tree
+	 * Another use case: SELECT (SELECT foo.b from bar) + 1 FROM foo
+	 * b) The output of the scalar subquery is the column from the outer expression.
+	 * Consider the query: SELECT (SELECT foo.b + 5 from bar) FROM foo. In such cases,
+	 * since the foo.b + 5 is a new computed column inside the subquery with its own
+	 * project element, we do not need to add anything.
+	 */
+	BOOL fUnderPrListChild = fUnderPrList;
+	COperator *pop = pexpr->Pop();
+
+	if (pop->FLogical())
+	{
+		if (COperator::EopLogicalProject == pop->Eopid())
+		{
+			CExpression *pexprRel = (*pexpr)[0];
+			CExpression *pexprRelNew = PexprProjBelowSubquery(pmp, pexprRel, false /* fUnderPrList */);
+
+			CExpression *pexprPrList = (*pexpr)[1];
+			CExpression *pexprPrListNew = PexprProjBelowSubquery(pmp, pexprPrList, true /* fUnderPrList */);
+
+			return GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CLogicalProject(pmp), pexprRelNew, pexprPrListNew);
+		}
+
+		fUnderPrListChild = false;
+	}
+	else if (COperator::EopScalarSubquery == pop->Eopid() && fUnderPrList)
+	{
+		CExpression *pexprRel = (*pexpr)[0];
+		CExpression *pexprRelNew = PexprProjBelowSubquery(pmp, pexprRel, false /* fUnderPrList */);
+
+		const CColRefSet *prcsOutput = CDrvdPropRelational::Pdprel(pexprRelNew->PdpDerive())->PcrsOutput();
+		if (NULL != prcsOutput && !prcsOutput->FMember(CScalarSubquery::PopConvert(pop)->Pcr()))
+		{
+			const CColRef *pcrSubquery = CScalarSubquery::PopConvert(pop)->Pcr();
+			CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
+			CColRef *pcrNewSubquery = pcf->PcrCreate(pcrSubquery->Pmdtype());
+
+			CExpression *pexprPrEl = CUtils::PexprScalarProjectElement(pmp, pcrNewSubquery, CUtils::PexprScalarIdent(pmp, pcrSubquery));
+			CExpression *pexprProjList =  GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarProjectList(pmp), pexprPrEl);
+			CExpression *pexprProj = GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CLogicalProject(pmp), pexprRelNew, pexprProjList);
+
+			CScalarSubquery *popSubq = GPOS_NEW(pmp) CScalarSubquery(pmp, pcrNewSubquery, false /*fGeneratedByExist*/, false /*fGeneratedByQuantified*/);
+
+			CExpression *pexprResult = GPOS_NEW(pmp) CExpression(pmp, popSubq, pexprProj);
+			return pexprResult;
+		}
+
+		pop->AddRef();
+		return GPOS_NEW(pmp) CExpression(pmp, pop, pexprRelNew);
+	}
+
+	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
+
+	const ULONG ulArity = pexpr->UlArity();
+	for (ULONG ul = 0; ul < ulArity; ul++)
+	{
+		CExpression *pexprChild = PexprProjBelowSubquery(pmp, (*pexpr)[ul], fUnderPrListChild);
+		pdrgpexpr->Append(pexprChild);
+	}
+
+	pop->AddRef();
+	return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexpr);
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -1962,7 +2061,11 @@ CExpressionPreprocessor::PexprPreprocess
 	CExpression *pexprCollapsedProjects = PexprCollapseProjects(pmp, pexprPruned);
 	pexprPruned->Release();
 
-	return pexprCollapsedProjects;
+	// (23) insert projects
+	CExpression *pexprSubquery = PexprProjBelowSubquery(pmp, pexprCollapsedProjects, false /* fUnderPrList */);
+	pexprCollapsedProjects->Release();
+
+	return pexprSubquery;
 }
 
 // EOF
