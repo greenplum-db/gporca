@@ -691,7 +691,7 @@ CExpressionPreprocessor::PexprProjBelowSubquery
 	 * For this query during DXL->Expr translation, the project element
 	 * (SELECT b FROM bar) is represented as scalar subquery that returns
 	 * an output column. To ensure that this scalar subquery under the project
-	 * operator is returned when bar (or an arbitary tree instead of bar)
+	 * operator is returned when bar (or an arbitrary tree instead of bar)
 	 * we insert a dummy project element that points to FOO.b under the
 	 * scalar subquery. This dummy project element prevents its incorrect
 	 * transformation into a non-correlated plan.
