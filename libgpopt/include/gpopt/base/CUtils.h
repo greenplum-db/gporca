@@ -252,6 +252,10 @@ namespace gpopt
 			static
 			BOOL FHasCountAgg(CExpression *pexpr, CColRef **ppcrCount);
 
+			// check if given expression has a group by agg
+			static
+			BOOL FHasLogicalGbAgg(CExpression *pexpr, DrgPcr **pdrgpcr);
+
 			// generate a GbAgg with count(*) and sum(col) over the given expression
 			static
 			CExpression *PexprCountStarAndSum(IMemoryPool *pmp, const CColRef *pcr, CExpression *pexprLogical);

@@ -622,13 +622,17 @@ CSubqueryHandler::FCreateOuterApplyForScalarSubquery
 		return fSuccess;
 	}
 
+	DrgPcr *pdrgpcrGroupingCols = NULL;
+	BOOL fHasLogicalGbAgg = CUtils::FHasLogicalGbAgg((*pexprSubquery)[0], &pdrgpcrGroupingCols);;
+	BOOL fHasGroupCols = fHasLogicalGbAgg && (0 < pdrgpcrGroupingCols->UlLength());
+
 	// add projection for subquery column
 	CExpression *pexprPrj = CUtils::PexprAddProjection(pmp, pexprLeftOuterApply, CUtils::PexprScalarIdent(pmp, pcr));
 	const CColRef *pcrComputed = CScalarProjectElement::PopConvert((*(*pexprPrj)[1])[0]->Pop())->Pcr();
 	*ppexprNewOuter = pexprPrj;
 
 	BOOL fGeneratedByQuantified =  popSubquery->FGeneratedByQuantified();
-	if (fGeneratedByQuantified || pcrCount == pcr)
+	if (!fHasGroupCols && (fGeneratedByQuantified || pcrCount == pcr))
 	{
 		CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 		const IMDTypeInt8 *pmdtypeint8 = pmda->PtMDType<IMDTypeInt8>();

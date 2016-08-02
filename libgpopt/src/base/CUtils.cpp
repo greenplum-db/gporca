@@ -2493,6 +2493,43 @@ CUtils::FHasCountAgg
 	return fHasCountAgg;
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CUtils::FHasLogicalGbAgg
+//
+//	@doc:
+//		Check if the given expression has a group by agg,
+//		return the grouping columns
+//
+//---------------------------------------------------------------------------
+BOOL
+CUtils::FHasLogicalGbAgg
+	(
+	CExpression *pexpr,
+	DrgPcr **pdrgpcr // output: grouping columns
+	)
+{
+	GPOS_CHECK_STACK_SIZE;
+	GPOS_ASSERT(NULL != pdrgpcr);
+
+	if (COperator::EopLogicalGbAgg == pexpr->Pop()->Eopid())
+	{
+		DrgPcr *pdrgpcrGroupingCols = CLogicalGbAgg::PopConvert(pexpr->Pop())->Pdrgpcr();
+		*pdrgpcr = pdrgpcrGroupingCols;
+		return true;
+	}
+
+	// recursively process children
+	BOOL fHasLogicalGbAgg = false;
+	const ULONG ulArity = pexpr->UlArity();
+	for (ULONG ul = 0; !fHasLogicalGbAgg && ul < ulArity; ul++)
+	{
+		fHasLogicalGbAgg = FHasLogicalGbAgg((*pexpr)[ul], pdrgpcr);
+	}
+
+	return fHasLogicalGbAgg;
+}
+
 
 //---------------------------------------------------------------------------
 //	@function:
