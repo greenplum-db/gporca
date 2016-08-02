@@ -667,7 +667,7 @@ CExpressionPreprocessor::PexprCollapseProjects
 //		CExpressionPreprocessor::PexprProjBelowSubquery
 //
 //	@doc:
-//		Insert dummy project element below scalar subquery when the (1) the scalar
+//		Insert dummy project element below scalar subquery when the (a) the scalar
 //      subquery is below a project and (b) output column is an outer reference
 //---------------------------------------------------------------------------
 CExpression *
@@ -695,6 +695,10 @@ CExpressionPreprocessor::PexprProjBelowSubquery
 	 * we insert a dummy project element that points to FOO.b under the
 	 * scalar subquery. This dummy project element prevents its incorrect
 	 * transformation into a non-correlated plan.
+	 *
+	 * One of the reasons we add this dummy project is to force the subquery
+	 * handler transformation to not produce a de-correlated plan
+	 * for queries such as this.
 	 *
 	 * We want to limit the of such introduction dummy projects only when the
 	 * following conditions are all satisfied:
@@ -729,9 +733,9 @@ CExpressionPreprocessor::PexprProjBelowSubquery
 		CExpression *pexprRelNew = PexprProjBelowSubquery(pmp, pexprRel, false /* fUnderPrList */);
 
 		const CColRefSet *prcsOutput = CDrvdPropRelational::Pdprel(pexprRelNew->PdpDerive())->PcrsOutput();
-		if (NULL != prcsOutput && !prcsOutput->FMember(CScalarSubquery::PopConvert(pop)->Pcr()))
+		const CColRef *pcrSubquery = CScalarSubquery::PopConvert(pop)->Pcr();
+		if (NULL != prcsOutput && !prcsOutput->FMember(pcrSubquery))
 		{
-			const CColRef *pcrSubquery = CScalarSubquery::PopConvert(pop)->Pcr();
 			CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
 			CColRef *pcrNewSubquery = pcf->PcrCreate(pcrSubquery->Pmdtype());
 
@@ -2059,10 +2063,12 @@ CExpressionPreprocessor::PexprPreprocess
 
 	// (22) collapse cascade of projects
 	CExpression *pexprCollapsedProjects = PexprCollapseProjects(pmp, pexprPruned);
+	GPOS_CHECK_ABORT;
 	pexprPruned->Release();
 
-	// (23) insert projects
+	// (23) insert dummy project when the scalar subquery is under a project and returns an outer reference
 	CExpression *pexprSubquery = PexprProjBelowSubquery(pmp, pexprCollapsedProjects, false /* fUnderPrList */);
+	GPOS_CHECK_ABORT;
 	pexprCollapsedProjects->Release();
 
 	return pexprSubquery;
