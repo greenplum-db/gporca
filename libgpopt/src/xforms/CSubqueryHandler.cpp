@@ -614,7 +614,16 @@ CSubqueryHandler::FCreateOuterApplyForScalarSubquery
 
 	CColRef *pcrCount = NULL;
 	BOOL fHasCountAgg = CUtils::FHasCountAgg((*pexprSubquery)[0], &pcrCount);
-	if (!fHasCountAgg)
+
+	DrgPcr *pdrgpcrGroupingCols = NULL;
+	BOOL fHasLogicalGbAgg = CUtils::FHasLogicalGbAgg((*pexprSubquery)[0], &pdrgpcrGroupingCols);;
+	BOOL fHasGroupCols = fHasLogicalGbAgg && (0 < pdrgpcrGroupingCols->UlLength());
+
+	// if the subquery doesn't have count agg, just set outer apply expression and return.
+	// if the subquery has both count and group by aggregation, and the grouping column number > 0,
+	// the count(*) column can return NULL. In this case, we don't need proceed to create coalesce
+	// operator.
+	if (!fHasCountAgg || fHasGroupCols)
 	{
 		// residual scalar uses the scalar subquery column
 		*ppexprNewOuter = pexprLeftOuterApply;
@@ -622,17 +631,13 @@ CSubqueryHandler::FCreateOuterApplyForScalarSubquery
 		return fSuccess;
 	}
 
-	DrgPcr *pdrgpcrGroupingCols = NULL;
-	BOOL fHasLogicalGbAgg = CUtils::FHasLogicalGbAgg((*pexprSubquery)[0], &pdrgpcrGroupingCols);;
-	BOOL fHasGroupCols = fHasLogicalGbAgg && (0 < pdrgpcrGroupingCols->UlLength());
-
 	// add projection for subquery column
 	CExpression *pexprPrj = CUtils::PexprAddProjection(pmp, pexprLeftOuterApply, CUtils::PexprScalarIdent(pmp, pcr));
 	const CColRef *pcrComputed = CScalarProjectElement::PopConvert((*(*pexprPrj)[1])[0]->Pop())->Pcr();
 	*ppexprNewOuter = pexprPrj;
 
 	BOOL fGeneratedByQuantified =  popSubquery->FGeneratedByQuantified();
-	if (!fHasGroupCols && (fGeneratedByQuantified || pcrCount == pcr))
+	if (fGeneratedByQuantified || pcrCount == pcr)
 	{
 		CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 		const IMDTypeInt8 *pmdtypeint8 = pmda->PtMDType<IMDTypeInt8>();
