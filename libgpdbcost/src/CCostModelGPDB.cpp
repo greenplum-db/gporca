@@ -1312,8 +1312,8 @@ CCostModelGPDB::CostBitmapTableScan
 	}
 
 	// if the expression is const table get, the pcrsUsed is empty
-	// so we use 0.0 for dNDV in that case.
-	CDouble dNDV = 0.0;
+	// so we use minimum value DMinDistinct for dNDV in that case.
+	CDouble dNDV = CHistogram::DMinDistinct;
 	if (1 == pcrsUsed->CElements())
 	{
 		CColRef *pcrIndexCond =  pcrsUsed->PcrFirst();
