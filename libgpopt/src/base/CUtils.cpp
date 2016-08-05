@@ -2495,39 +2495,65 @@ CUtils::FHasCountAgg
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CUtils::FHasLogicalGbAgg
+//		CUtils::FHasCountAndGroupbyAgg
 //
 //	@doc:
 //		Check if the given expression has a group by agg,
-//		return the grouping columns
+//		return the top-most found count column and grouping columns
 //
 //---------------------------------------------------------------------------
 BOOL
-CUtils::FHasLogicalGbAgg
+CUtils::FHasCountAndGroupbyAgg
 	(
 	CExpression *pexpr,
+	CColRef **ppcrCount, // output: count(*)/count(Any) column
 	DrgPcr **pdrgpcr // output: grouping columns
 	)
 {
 	GPOS_CHECK_STACK_SIZE;
+	GPOS_ASSERT(NULL != ppcrCount);
 	GPOS_ASSERT(NULL != pdrgpcr);
 
-	if (COperator::EopLogicalGbAgg == pexpr->Pop()->Eopid())
+	BOOL fHasCount = NULL != *ppcrCount;
+	BOOL fHasGroupby = NULL != *pdrgpcr;
+
+	if (!fHasCount && COperator::EopScalarProjectElement == pexpr->Pop()->Eopid())
+	{
+		// base case, count(*)/count(Any) must appear below a project element
+		if (COperator::EopScalarAggFunc == (*pexpr)[0]->Pop()->Eopid())
+		{
+			CScalarAggFunc *popAggFunc = CScalarAggFunc::PopConvert((*pexpr)[0]->Pop());
+			if (popAggFunc->FCountStar() || popAggFunc->FCountAny())
+			{
+				*ppcrCount = CScalarProjectElement::PopConvert(pexpr->Pop())->Pcr();
+				fHasCount = true;
+				if (fHasGroupby)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	if (!fHasGroupby && COperator::EopLogicalGbAgg == pexpr->Pop()->Eopid())
 	{
 		DrgPcr *pdrgpcrGroupingCols = CLogicalGbAgg::PopConvert(pexpr->Pop())->Pdrgpcr();
 		*pdrgpcr = pdrgpcrGroupingCols;
-		return true;
+		if (fHasCount)
+		{
+			return true;
+		}
 	}
 
 	// recursively process children
-	BOOL fHasLogicalGbAgg = false;
+	BOOL fHasCountAndGroupby = false;
 	const ULONG ulArity = pexpr->UlArity();
-	for (ULONG ul = 0; !fHasLogicalGbAgg && ul < ulArity; ul++)
+	for (ULONG ul = 0; !fHasCountAndGroupby && ul < ulArity; ul++)
 	{
-		fHasLogicalGbAgg = FHasLogicalGbAgg((*pexpr)[ul], pdrgpcr);
+		fHasCountAndGroupby = FHasCountAndGroupbyAgg((*pexpr)[ul], ppcrCount, pdrgpcr);
 	}
 
-	return fHasLogicalGbAgg;
+	return fHasCountAndGroupby;
 }
 
 

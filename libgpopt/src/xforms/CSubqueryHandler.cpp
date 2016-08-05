@@ -613,11 +613,10 @@ CSubqueryHandler::FCreateOuterApplyForScalarSubquery
 	CExpression *pexprLeftOuterApply = CUtils::PexprLogicalApply<CLogicalLeftOuterApply>(pmp, pexprOuter, pexprInner, pcr, popSubquery->Eopid());
 
 	CColRef *pcrCount = NULL;
-	BOOL fHasCountAgg = CUtils::FHasCountAgg((*pexprSubquery)[0], &pcrCount);
-
 	DrgPcr *pdrgpcrGroupingCols = NULL;
-	BOOL fHasLogicalGbAgg = CUtils::FHasLogicalGbAgg((*pexprSubquery)[0], &pdrgpcrGroupingCols);;
-	BOOL fHasGroupCols = fHasLogicalGbAgg && (0 < pdrgpcrGroupingCols->UlLength());
+	CUtils::FHasCountAndGroupbyAgg((*pexprSubquery)[0], &pcrCount, &pdrgpcrGroupingCols);
+	BOOL fHasCountAgg = NULL != pcrCount;
+	BOOL fHasGroupCols = (NULL != pdrgpcrGroupingCols) && (0 < pdrgpcrGroupingCols->UlLength());
 
 	// if the subquery doesn't have count agg, just set outer apply expression and return.
 	// if the subquery has both count and group by aggregation, and the grouping column number > 0,
