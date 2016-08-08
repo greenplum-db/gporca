@@ -6,10 +6,7 @@
 namespace gpopt
 {
 	CDistributionSpecStrictHashed::CDistributionSpecStrictHashed(DrgPexpr *pdrgpexpr, BOOL fNullsColocated)
-		: CDistributionSpecHashed(pdrgpexpr, fNullsColocated)
-	{
-		this->m_fDuplicateSensitive = true;
-	}
+		: CDistributionSpecHashed(pdrgpexpr, fNullsColocated) {}
 
 	CDistributionSpec::EDistributionType CDistributionSpecStrictHashed::Edt() const
 	{

@@ -2,7 +2,6 @@
 //	Copyright (C) 2016 Pivotal Software, Inc.
 
 #include "gpopt/base/CDistributionSpecUniversal.h"
-#include "gpopt/base/CDistributionSpecStrictHashed.h"
 
 namespace gpopt
 {
@@ -29,14 +28,6 @@ namespace gpopt
 		// random distributions
 		if (CDistributionSpec::EdtRandom == pds->Edt() &&
 			(CDistributionSpecRandom::PdsConvert(pds))->FDuplicateSensitive())
-		{
-			return false;
-		}
-
-		// universal distribution does not satisfy duplicate-sensitive
-		// strict hash distributions, which is only used in parallel union
-		if (CDistributionSpec::EdtStrictHashed == pds->Edt() &&
-			(CDistributionSpecStrictHashed::PdsConvert(pds))->FDuplicateSensitive())
 		{
 			return false;
 		}
