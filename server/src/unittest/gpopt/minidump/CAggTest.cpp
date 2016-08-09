@@ -28,6 +28,8 @@ ULONG CAggTest::m_ulAggTestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszAggFileNames[] =
 {
+	"../data/dxl/minidump/ScalarSubquery-Count-Groupby.mdp",
+	"../data/dxl/minidump/ScalarSubquery-Count-Groupby-Limit.mdp",
 	"../data/dxl/minidump/DQA-SplitScalarWithAggAndGuc.mdp",
 	"../data/dxl/minidump/DQA-SplitScalarWithGuc.mdp",
 	"../data/dxl/minidump/DQA-SplitScalar.mdp",

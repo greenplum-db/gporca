@@ -613,8 +613,16 @@ CSubqueryHandler::FCreateOuterApplyForScalarSubquery
 	CExpression *pexprLeftOuterApply = CUtils::PexprLogicalApply<CLogicalLeftOuterApply>(pmp, pexprOuter, pexprInner, pcr, popSubquery->Eopid());
 
 	CColRef *pcrCount = NULL;
-	BOOL fHasCountAgg = CUtils::FHasCountAgg((*pexprSubquery)[0], &pcrCount);
-	if (!fHasCountAgg)
+	DrgPcr *pdrgpcrGroupingCols = NULL;
+	CUtils::FHasCountAndGroupbyAgg((*pexprSubquery)[0], &pcrCount, &pdrgpcrGroupingCols);
+	BOOL fHasCountAgg = NULL != pcrCount;
+	BOOL fHasGroupCols = (NULL != pdrgpcrGroupingCols) && (0 < pdrgpcrGroupingCols->UlLength());
+
+	// if the subquery doesn't have count agg, just set outer apply expression and return.
+	// if the subquery has both count and group by aggregation, and the grouping column number > 0,
+	// the count(*) column can return NULL. In this case, we don't need proceed to create coalesce
+	// operator.
+	if (!fHasCountAgg || fHasGroupCols)
 	{
 		// residual scalar uses the scalar subquery column
 		*ppexprNewOuter = pexprLeftOuterApply;
