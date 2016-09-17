@@ -34,7 +34,30 @@ namespace gpopt
 		pdrgpcrOutput->AddRef();
 		pdrgpdrgpcrInput->AddRef();
 
-		if (m_fParallel)
+		GPOS_ASSERT(1 < pdrgpdrgpcrInput->UlLength());
+		DrgPcr *pdrgpcr = (*pdrgpdrgpcrInput)[0];
+		ULONG ulCols = pdrgpcr->UlLength();
+		BOOL fCanParallel = false;
+
+		// If parallel union is enable and there is at least 1 hashable column,
+		// we can do parallel union. Otherwise, we do serial union regardless of
+		// whether the parallel union is enabled or not.
+		//
+		// We only need to check the columns of the first relation child of union,
+		// because the number of columns and data type for each column of each
+		// relation child should match every other children of union operator.
+		// Otherwise, we will not reach here.
+		for (ULONG ul = 0; m_fParallel && ul < ulCols; ul++)
+		{
+			CColRef *pcr = (*pdrgpcr)[ul];
+			if (pcr->Pmdtype()->FHashable())
+			{
+				fCanParallel = true;
+				break;
+			}
+		}
+
+		if (m_fParallel && fCanParallel)
 		{
 			return GPOS_NEW(pmp) CPhysicalParallelUnionAll
 				(
