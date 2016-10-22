@@ -233,6 +233,7 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/retail_28.mdp",
 		"../data/dxl/minidump/JoinNDVRemain.mdp",
 		"../data/dxl/minidump/Least-Greatest.mdp",
+		"../data/dxl/minidump/notequal-predicate-over-data-with-nulls.mdp",
 #endif
 	};
 
