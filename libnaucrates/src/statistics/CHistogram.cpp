@@ -329,6 +329,12 @@ CHistogram::PhistNEqual
 	DrgPbucket *pdrgppbucket = PdrgppbucketNEqual(pmp, ppoint);
 	CDouble dNullFreq(0.0);
 
+	if (!ppoint->Pdatum()->FNull())
+	{
+		// (col = NOT-NULL-CONSTANT) means that null values will also be returned
+		dNullFreq = m_dNullFreq;
+	}
+
 	return GPOS_NEW(pmp) CHistogram(pdrgppbucket, true /*fWellDefined*/, dNullFreq, m_dDistinctRemain, m_dFreqRemain);
 }
 
