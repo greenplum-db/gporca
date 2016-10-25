@@ -1936,19 +1936,27 @@ CHistogram::PhistUnionNormalized
 	// add any leftover buckets from this histogram
 	AddBuckets(pmp, m_pdrgppbucket, pdrgppbucket, dRows, pdrgpdoubleRows, ul1, ulBuckets1);
 
-	CHistogram *phistResult = PhistUpdatedFrequency(pmp, pdrgppbucket, pdrgpdoubleRows, pdRowsOutput);
+	// compute the total number of null values from both histograms
+	CDouble dNullRows(this->DNullFreq() * dRows);
+	dNullRows = dNullRows + (phist->DNullFreq() * dRowsOther);
 
-	CDouble dNullFreq = 0.0;
-	if (CStatistics::DEpsilon < m_dNullFreq || CStatistics::DEpsilon < phist->m_dNullFreq)
-	{
-		dNullFreq = 1.0 / (*pdRowsOutput);
-	}
-	phistResult->m_dNullFreq = dNullFreq;
+	// compute the total number of distinct values (NDV) that are not captured by the buckets in both the histograms
+	CDouble dNDVRemain = std::max(m_dDistinctRemain, phist->DDistinctRemain());
 
-	CDouble dDistinctRemain = std::max(m_dDistinctRemain, phist->m_dDistinctRemain);
-	CDouble dFreqRemain = std::max(m_dFreqRemain, phist->m_dFreqRemain);
-	phistResult->m_dDistinctRemain = dDistinctRemain;
-	phistResult->m_dFreqRemain = dFreqRemain;
+	// compute the total number of rows having distinct values not  captured by the buckets in both the histograms
+	CDouble dNDVRemainRows = this->DFreqRemain() * dRows;
+	dNDVRemainRows = dNDVRemainRows + (phist->DFreqRemain() * dRowsOther);
+
+	CHistogram *phistResult = PhistUpdatedFrequency
+								(
+								pmp,
+								pdrgppbucket,
+								pdrgpdoubleRows,
+								pdRowsOutput,
+								dNullRows,
+								dNDVRemain,
+								dNDVRemainRows
+								);
 
 	// clean up
 	pdrgppbucket->Release();
@@ -1971,7 +1979,10 @@ CHistogram::PhistUpdatedFrequency
 	IMemoryPool *pmp,
 	DrgPbucket *pdrgppbucket,
 	DrgPdouble *pdrgpdouble,
-	CDouble *pdRowOutput
+	CDouble *pdRowOutput,
+	CDouble dNullRows,
+	CDouble dNDVRemain,
+	CDouble dNDVRemainRows
 	)
 	const
 {
@@ -1981,7 +1992,7 @@ CHistogram::PhistUpdatedFrequency
 	const ULONG ulLen = pdrgpdouble->UlLength();
 	GPOS_ASSERT(ulLen == pdrgppbucket->UlLength());
 
-	CDouble dRowCummulative(0.0);
+	CDouble dRowCummulative = dNullRows + dNDVRemainRows;
 	for (ULONG ul = 0; ul < ulLen; ul++)
 	{
 		CDouble dRows = *(*pdrgpdouble)[ul];
@@ -2000,7 +2011,7 @@ CHistogram::PhistUpdatedFrequency
 		pbucket->PpLower()->AddRef();
 		pbucket->PpUpper()->AddRef();
 
-		CDouble dFrequency = dRows / dRowCummulative;
+		CDouble dFrequency = dRows / *pdRowOutput;
 
 		CBucket *pbucketNew = GPOS_NEW(pmp) CBucket
 										(
@@ -2015,7 +2026,17 @@ CHistogram::PhistUpdatedFrequency
 		pdrgppbucketNew->Append(pbucketNew);
 	}
 
-	return GPOS_NEW(pmp) CHistogram(pdrgppbucketNew);
+	CDouble dNullFreq = dNullRows / *pdRowOutput ;
+	CDouble dDistinctRemainFreq =  dNDVRemainRows / *pdRowOutput ;
+	return GPOS_NEW(pmp) CHistogram
+			(
+			pdrgppbucketNew,
+			true /* fWellDefined */,
+			dNullFreq,
+			dDistinctRemain,
+			dDistinctRemainFreq,
+			false /* fColStatsMissing */
+			);
 }
 
 //---------------------------------------------------------------------------
