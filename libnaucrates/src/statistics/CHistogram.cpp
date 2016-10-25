@@ -1943,7 +1943,7 @@ CHistogram::PhistUnionNormalized
 	// compute the total number of distinct values (NDV) that are not captured by the buckets in both the histograms
 	CDouble dNDVRemain = std::max(m_dDistinctRemain, phist->DDistinctRemain());
 
-	// compute the total number of rows having distinct values not  captured by the buckets in both the histograms
+	// compute the total number of rows having distinct values not captured by the buckets in both the histograms
 	CDouble dNDVRemainRows = this->DFreqRemain() * dRows;
 	dNDVRemainRows = dNDVRemainRows + (phist->DFreqRemain() * dRowsOther);
 
@@ -2027,14 +2027,14 @@ CHistogram::PhistUpdatedFrequency
 	}
 
 	CDouble dNullFreq = dNullRows / *pdRowOutput ;
-	CDouble dDistinctRemainFreq =  dNDVRemainRows / *pdRowOutput ;
+	CDouble dNDVRemainFreq =  dNDVRemainRows / *pdRowOutput ;
 	return GPOS_NEW(pmp) CHistogram
 			(
 			pdrgppbucketNew,
 			true /* fWellDefined */,
 			dNullFreq,
-			dDistinctRemain,
-			dDistinctRemainFreq,
+			dNDVRemain,
+			dNDVRemainFreq,
 			false /* fColStatsMissing */
 			);
 }
