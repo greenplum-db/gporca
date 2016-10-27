@@ -1944,8 +1944,7 @@ CHistogram::PhistUnionNormalized
 	CDouble dNDVRemain = std::max(m_dDistinctRemain, phist->DDistinctRemain());
 
 	// compute the total number of rows having distinct values not captured by the buckets in both the histograms
-	CDouble dNDVRemainRows = this->DFreqRemain() * dRows;
-	dNDVRemainRows = dNDVRemainRows + (phist->DFreqRemain() * dRowsOther);
+	CDouble dNDVRemainRows = std::max( (this->DFreqRemain() * dRows), (phist->DFreqRemain() * dRowsOther));
 
 	CHistogram *phistResult = PhistUpdatedFrequency
 								(
