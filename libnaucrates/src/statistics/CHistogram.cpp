@@ -1937,8 +1937,7 @@ CHistogram::PhistUnionNormalized
 	AddBuckets(pmp, m_pdrgppbucket, pdrgppbucket, dRows, pdrgpdoubleRows, ul1, ulBuckets1);
 
 	// compute the total number of null values from both histograms
-	CDouble dNullRows(this->DNullFreq() * dRows);
-	dNullRows = dNullRows + (phist->DNullFreq() * dRowsOther);
+	CDouble dNullRows= std::max( (this->DNullFreq() * dRows), (phist->DNullFreq() * dRowsOther));
 
 	// compute the total number of distinct values (NDV) that are not captured by the buckets in both the histograms
 	CDouble dNDVRemain = std::max(m_dDistinctRemain, phist->DDistinctRemain());
