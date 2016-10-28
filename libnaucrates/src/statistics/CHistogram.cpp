@@ -1843,7 +1843,7 @@ CHistogram::PhistUnionNormalized
 	(
 	IMemoryPool *pmp,
 	CDouble dRows,
-	const CHistogram *phist,
+	const CHistogram *phistOther,
 	CDouble dRowsOther,
 	CDouble *pdRowsOutput
 	)
@@ -1854,7 +1854,7 @@ CHistogram::PhistUnionNormalized
 	ULONG ul1 = 0; // index on buckets from this histogram
 	ULONG ul2 = 0; // index on buckets from other histogram
 	CBucket *pbucket1 = (*this) [ul1];
-	CBucket *pbucket2 = (*phist) [ul2];
+	CBucket *pbucket2 = (*phistOther) [ul2];
 
 	// flags to determine if the buckets where residue of the bucket-merge operation
 	BOOL fbucket1Residual = false;
@@ -1884,7 +1884,7 @@ CHistogram::PhistUnionNormalized
 			pdrgpdoubleRows->Append(GPOS_NEW(pmp) CDouble(pbucket2->DFrequency() * dRowsOther));
 			CleanupResidualBucket(pbucket2, fbucket2Residual);
 			ul2++;
-			pbucket2 = (*phist) [ul2];
+			pbucket2 = (*phistOther) [ul2];
 			fbucket2Residual = false;
 		}
 		else
@@ -1914,12 +1914,12 @@ CHistogram::PhistUnionNormalized
 			CleanupResidualBucket(pbucket2, fbucket2Residual);
 
 			pbucket1 = PbucketNext(this, pbucket1New, &fbucket1Residual, &ul1);
-			pbucket2 = PbucketNext(phist, pbucket2New, &fbucket2Residual, &ul2);
+			pbucket2 = PbucketNext(phistOther, pbucket2New, &fbucket2Residual, &ul2);
 		}
 	}
 
 	const ULONG ulBuckets1 = UlBuckets();
-	const ULONG ulBuckets2 = phist->UlBuckets();
+	const ULONG ulBuckets2 = phistOther->UlBuckets();
 
 	GPOS_ASSERT_IFF(NULL == pbucket1, ul1 == ulBuckets1);
 	GPOS_ASSERT_IFF(NULL == pbucket2, ul2 == ulBuckets2);
@@ -1931,19 +1931,19 @@ CHistogram::PhistUnionNormalized
 	CleanupResidualBucket(pbucket2, fbucket2Residual);
 
 	// add any leftover buckets from other histogram
-	AddBuckets(pmp, phist->m_pdrgppbucket, pdrgppbucket, dRowsOther, pdrgpdoubleRows, ul2, ulBuckets2);
+	AddBuckets(pmp, phistOther->m_pdrgppbucket, pdrgppbucket, dRowsOther, pdrgpdoubleRows, ul2, ulBuckets2);
 
 	// add any leftover buckets from this histogram
 	AddBuckets(pmp, m_pdrgppbucket, pdrgppbucket, dRows, pdrgpdoubleRows, ul1, ulBuckets1);
 
 	// compute the total number of null values from both histograms
-	CDouble dNullRows= std::max( (this->DNullFreq() * dRows), (phist->DNullFreq() * dRowsOther));
+	CDouble dNullRows= std::max( (this->DNullFreq() * dRows), (phistOther->DNullFreq() * dRowsOther));
 
 	// compute the total number of distinct values (NDV) that are not captured by the buckets in both the histograms
-	CDouble dNDVRemain = std::max(m_dDistinctRemain, phist->DDistinctRemain());
+	CDouble dNDVRemain = std::max(m_dDistinctRemain, phistOther->DDistinctRemain());
 
 	// compute the total number of rows having distinct values not captured by the buckets in both the histograms
-	CDouble dNDVRemainRows = std::max( (this->DFreqRemain() * dRows), (phist->DFreqRemain() * dRowsOther));
+	CDouble dNDVRemainRows = std::max( (this->DFreqRemain() * dRows), (phistOther->DFreqRemain() * dRowsOther));
 
 	CHistogram *phistResult = PhistUpdatedFrequency
 								(
