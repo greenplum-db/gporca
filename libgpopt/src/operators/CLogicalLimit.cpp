@@ -364,4 +364,22 @@ CLogicalLimit::PstatsDerive
 	return pstatsChild->PstatsLimit(pmp, dRowsMax);
 }
 
+CPropConstraint *
+CLogicalLimit::PpcDeriveConstraint
+       (
+       IMemoryPool *pmp,
+       CExpressionHandle &exprhdl
+       )
+       const
+{
+       GPOS_ASSERT(Esp(exprhdl) > EspNone);
+
+       if (Esp(exprhdl) == EspNone)
+               return NULL;
+
+       DrgPcrs *pdrgpcrs = GPOS_NEW(pmp) DrgPcrs(pmp);
+
+       return GPOS_NEW(pmp) CPropConstraint(pmp, pdrgpcrs, NULL);
+}
+
 // EOF

@@ -165,10 +165,7 @@ namespace gpopt
 				IMemoryPool *, //pmp,
 				CExpressionHandle &exprhdl
 				)
-				const
-			{
-				return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-			}
+				const;
 
 			//-------------------------------------------------------------------------------------
 			// Required Relational Properties
