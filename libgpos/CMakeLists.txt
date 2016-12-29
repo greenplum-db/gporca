@@ -2,10 +2,6 @@
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-set(GPOS_VERSION_MAJOR 1)
-set(GPOS_VERSION_MINOR 147)
-set(GPOS_VERSION_STRING ${GPOS_VERSION_MAJOR}.${GPOS_VERSION_MINOR})
-
 # Whenever an ABI-breaking change is made to GPOS, this should be incremented.
 # ABI changes include removing functions, and adding or removing function
 # parameters. Because GPOS is a C++ library, there are also several other cases
@@ -69,10 +65,6 @@ if ((NOT (COMPILER_HAS_FETCH_ADD_32 AND COMPILER_HAS_FETCH_ADD_64
 endif()
 
 include_directories(include)
-
-# Generate version-number header.
-configure_file(version.h.in
-               ${PROJECT_BINARY_DIR}/include/gpos/version.h)
 
 # Compile .cpp source files under libgpos/src into monolithic gpos library.
 add_library(gpos
@@ -324,31 +316,18 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
   endif()
 endif()
 
-set_target_properties(gpos PROPERTIES
-                      SOVERSION ${GPOS_ABI_VERSION}
-                      VERSION ${GPOS_VERSION_STRING})
-
 # Tests reside in the 'server' subdirectory.
 enable_testing()
 add_subdirectory(server)
 
+set_target_properties(gpos PROPERTIES
+                      SOVERSION ${GPORCA_ABI_VERSION}
+                      VERSION ${GPORCA_VERSION_STRING})
+
 # Installation.
-option(VERBOSE_INSTALL_PATH "Install in a subdirectory path that includes GPOS version, CPU architecture, and bit width" OFF)
-if (VERBOSE_INSTALL_PATH)
-  set(installpath "${GPOS_VERSION_STRING}/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}/${CMAKE_BUILD_TYPE}")
-  string(TOLOWER ${installpath} installpath)
-  get_filename_component(full_install_name_dir "${installpath}/lib" ABSOLUTE)
-  install(TARGETS gpos DESTINATION "${installpath}/lib")
-  install(DIRECTORY include/gpos DESTINATION "${installpath}/include")
-  install(FILES "${PROJECT_BINARY_DIR}/include/gpos/version.h"
-          DESTINATION "${installpath}/include/gpos")
-else()
-  get_filename_component(full_install_name_dir "${CMAKE_INSTALL_PREFIX}/lib" ABSOLUTE)
-  install(TARGETS gpos DESTINATION lib)
-  install(DIRECTORY include/gpos DESTINATION include)
-  install(FILES "${PROJECT_BINARY_DIR}/include/gpos/version.h"
-          DESTINATION include/gpos)
-endif()
+get_filename_component(full_install_name_dir "${CMAKE_INSTALL_PREFIX}/lib" ABSOLUTE)
+install(TARGETS gpos DESTINATION lib)
+install(DIRECTORY include/gpos DESTINATION include)
 
 # Mac OS X handles searching for dynamic libraries differently from other
 # unices. It does not merely search for the leaf filename of a .dylib in a list
