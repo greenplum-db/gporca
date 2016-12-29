@@ -3,6 +3,7 @@
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include"
                     "${CMAKE_SOURCE_DIR}/libgpdbcost/include"
                     "${CMAKE_SOURCE_DIR}/libgpopt/include"
+                    "${CMAKE_SOURCE_DIR}/libgpos/include"
                     "${CMAKE_SOURCE_DIR}/libnaucrates/include")
 
 # Some tests use C99 long long integer constants, but the C++ dialect may not
@@ -174,10 +175,10 @@ add_executable(gporca_test
                src/unittest/gpopt/minidump/CPhysicalParallelUnionAllTest.cpp
         )
 target_link_libraries(gporca_test
+                      gpos
                       gpdbcost
                       gpopt
-                      naucrates
-                      ${GPOS_LIBRARIES})
+                      naucrates)
 
 option(ENABLE_EXTENDED_TESTS
        "Enable extended tests for fault-injection and timing that may take a long time to run."

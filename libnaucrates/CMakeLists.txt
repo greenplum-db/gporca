@@ -3,6 +3,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpopt/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpdbcost/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpos/include)
 add_library(naucrates
             include/naucrates/base/IDatum.h
             include/naucrates/base/IDatumBool.h
@@ -828,8 +829,8 @@ add_library(naucrates
 )
 
 target_link_libraries(naucrates
+                      gpos
                       ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-                      ${GPOS_LIBRARIES}
                       ${XERCES_LIBRARIES}
                       ${GPORCA_SOLARIS_EXTRA_LIBS})
 
