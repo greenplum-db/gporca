@@ -3,6 +3,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpopt/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libnaucrates/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpos/include)
 add_library(gpdbcost
             include/gpdbcost/CCostModelGPDB.h
             src/CCostModelGPDB.cpp
@@ -16,8 +17,8 @@ add_library(gpdbcost
         )
 
 target_link_libraries(gpdbcost  
+                      gpos
                       ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-                      ${GPOS_LIBRARIES}
                       ${XERCES_LIBRARIES}
                       ${GPORCA_SOLARIS_EXTRA_LIBS})
 

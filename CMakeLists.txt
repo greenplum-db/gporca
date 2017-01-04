@@ -3,8 +3,8 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(gpopt LANGUAGES CXX C)
 
-set(GPORCA_VERSION_MAJOR 1)
-set(GPORCA_VERSION_MINOR 697)
+set(GPORCA_VERSION_MAJOR 2)
+set(GPORCA_VERSION_MINOR 000)
 set(GPORCA_VERSION_STRING ${GPORCA_VERSION_MAJOR}.${GPORCA_VERSION_MINOR})
 
 # Whenever an ABI-breaking change is made to GPORCA, this should be incremented.
@@ -134,10 +134,6 @@ endif()
 find_package(Xerces REQUIRED)
 include_directories(${XERCES_INCLUDE_DIRS})
 
-# GPOS.
-find_package(GPOS 1.147 REQUIRED)
-include_directories(${GPOS_INCLUDE_DIRS})
-
 # Extra system libs needed on Solaris.
 set(GPORCA_SOLARIS_EXTRA_LIBS)
 if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
@@ -159,6 +155,7 @@ endif()
 enable_testing()
 
 # Sub-libraries.
+add_subdirectory(libgpos)
 add_subdirectory(libnaucrates)
 add_subdirectory(libgpdbcost)
 add_subdirectory(libgpopt)

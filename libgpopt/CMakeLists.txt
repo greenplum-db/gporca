@@ -3,6 +3,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpcost/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libnaucrates/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpos/include)
 
 # Generate version-number header.
 configure_file(version.h.in
@@ -902,10 +903,10 @@ add_library(gpopt
             )
 
 target_link_libraries(gpopt
+                      gpos
                       gpdbcost
                       naucrates
                       ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-                      ${GPOS_LIBRARIES}
                       ${XERCES_LIBRARIES}
                       ${GPORCA_SOLARIS_EXTRA_LIBS})
 
