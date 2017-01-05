@@ -148,8 +148,10 @@ xmllint --format ~/data-master/minidumps/Minidump_20160610_220222_4_14.mdp > dat
 
 ## [Experimental] Concourse
 GPORCA contains a series of pipeline and task files to run various sets of tests
-on [concourse](concourse.ci). You can learn more about deploying concourse with
-[bosh at bosh.io](bosh.io).
+on http://concourse.ci. You can learn more about deploying concourse with
+bosh at http://bosh.io.
+
+The concourse pipeline is: http://gporca.ci.pivotalci.info/
 
 Our concourse currently runs the following sets of tests:
 * build and ctest on centos5
