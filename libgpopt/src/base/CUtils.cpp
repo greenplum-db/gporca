@@ -5853,7 +5853,7 @@ CUtils::PexprCollapseProjects
 										*CDrvdPropScalar::Pdpscalar(pexprChildScalar->PdpDerive())->PcrsDefined()
 										);
 
-	BOOL fChildProjElHasSetReturn = CDrvdPropScalar::Pdpscalar(pexprChildScalar->PdpDerive())->FHasNonScalarFunction();
+	// BOOL fChildProjElHasSetReturn = CDrvdPropScalar::Pdpscalar(pexprChildScalar->PdpDerive())->FHasNonScalarFunction();
 
 	// array of project elements for the new child project node
 	DrgPexpr *pdrgpexprPrElChild = GPOS_NEW(pmp) DrgPexpr(pmp);
@@ -5873,16 +5873,12 @@ CUtils::PexprCollapseProjects
 
 		pexprPrE->AddRef();
 
-
-		BOOL fParentProjElHasSetReturn = CDrvdPropScalar::Pdpscalar(pexprPrE->PdpDerive())->FHasNonScalarFunction();
-
-		// if both pexprPrE and pexprChildScalar have set returning functions we should not collapse
-		BOOL fBothHasSetReturningFunc = fChildProjElHasSetReturn && fParentProjElHasSetReturn;
+		BOOL fHasSetReturn = CDrvdPropScalar::Pdpscalar(pexprPrE->PdpDerive())->FHasNonScalarFunction();
 
 		pcrsUsed->Intersection(pcrsDefinedChild);
 		ULONG ulIntersect = pcrsUsed->CElements();
 
-		if (0 == ulIntersect && !fBothHasSetReturningFunc)
+		if (0 == ulIntersect && !fHasSetReturn)
 		{
 			pdrgpexprPrElChild->Append(pexprPrE);
 		}
