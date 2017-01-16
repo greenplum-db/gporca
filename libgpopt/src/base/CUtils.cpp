@@ -5853,8 +5853,6 @@ CUtils::PexprCollapseProjects
 										*CDrvdPropScalar::Pdpscalar(pexprChildScalar->PdpDerive())->PcrsDefined()
 										);
 
-	// BOOL fChildProjElHasSetReturn = CDrvdPropScalar::Pdpscalar(pexprChildScalar->PdpDerive())->FHasNonScalarFunction();
-
 	// array of project elements for the new child project node
 	DrgPexpr *pdrgpexprPrElChild = GPOS_NEW(pmp) DrgPexpr(pmp);
 
