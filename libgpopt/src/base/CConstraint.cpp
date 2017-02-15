@@ -668,8 +668,15 @@ CConstraint::PdrgpcnstrDeduplicate
 	DrgPcnstr *pdrgpcnstrNew = GPOS_NEW(pmp) DrgPcnstr(pmp);
 
 	CColRefSet *pcrsDeduped = GPOS_NEW(pmp) CColRefSet(pmp);
+	HMColConstr *phmcolconstr = NULL;
 
 	const ULONG ulLen = pdrgpcnstr->UlLength();
+
+	if (ulLen >= 5)
+	{
+		phmcolconstr = PhmcolconstrSingleColConstr(pmp,pdrgpcnstr);
+	}
+
 	for (ULONG ul = 0; ul < ulLen; ul++)
 	{
 		CConstraint *pcnstrChild = (*pdrgpcnstr)[ul];
@@ -691,8 +698,19 @@ CConstraint::PdrgpcnstrDeduplicate
 			continue;
 		}
 
-		// get all constraints from the input array that reference this column
-		DrgPcnstr *pdrgpcnstrCol = PdrgpcnstrOnColumn(pmp, pdrgpcnstr, pcr, true /*fExclusive*/);
+		DrgPcnstr *pdrgpcnstrCol = NULL;
+		if (ulLen < 5)
+		{
+			// get all constraints from the input array that reference this column
+			pdrgpcnstrCol = PdrgpcnstrOnColumn(pmp, pdrgpcnstr, pcr, true /*fExclusive*/);
+		}
+		else
+		{
+			GPOS_ASSERT(phmcolconstr);
+			pdrgpcnstrCol = phmcolconstr->PtLookup(pcr);
+			pdrgpcnstrCol->AddRef();
+		}
+
 		if (1 == pdrgpcnstrCol->UlLength())
 		{
 			// if there is only one such constraint, then no simplification
@@ -726,7 +744,55 @@ CConstraint::PdrgpcnstrDeduplicate
 
 	pcrsDeduped->Release();
 	pdrgpcnstr->Release();
+	if (ulLen >= 5)
+	{
+		phmcolconstr->Release();
+	}
+
 	return pdrgpcnstrNew;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CConstraint::PhmcolconstrSingleColConstr
+//
+//	@doc:
+//		Construct mapping between columns and arrays of constraints.
+//		Constraints that has more than one column and predicate not mapped.
+//
+//---------------------------------------------------------------------------
+HMColConstr *
+CConstraint::PhmcolconstrSingleColConstr
+	(
+	IMemoryPool *pmp,
+	DrgPcnstr *pdrgpcnstr
+	)
+const
+{
+	HMColConstr *phmcolconstr = GPOS_NEW(pmp) HMColConstr(pmp);
+
+	const ULONG ulLen = pdrgpcnstr->UlLength();
+
+	for (ULONG ul = 0; ul < ulLen; ul++)
+	{
+		CConstraint *pcnstrChild = (*pdrgpcnstr)[ul];
+		CColRefSet *pcrs = pcnstrChild->PcrsUsed();
+
+		if (1 == pcrs->CElements())
+		{
+			CColRef *pcr = pcrs->PcrFirst();
+			DrgPcnstr *pcnstrMapped = phmcolconstr->PtLookup(pcr);
+			if (NULL == pcnstrMapped)
+			{
+				pcnstrMapped = GPOS_NEW(pmp) DrgPcnstr(pmp);
+				phmcolconstr->FInsert(pcr, pcnstrMapped);
+			}
+			pcnstrChild->AddRef();
+			pcnstrMapped->Append(pcnstrChild);
+		}
+	}
+
+	return phmcolconstr;
 }
 
 //---------------------------------------------------------------------------
