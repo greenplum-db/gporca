@@ -143,9 +143,6 @@ namespace gpopt
 			// mapping between columns and arrays of constraints
 			HMColConstr *Phmcolconstr(IMemoryPool *pmp, CColRefSet *pcrs, DrgPcnstr *pdrgpcnstr) const;
 
-			// mapping between columns and single column constraints in array of constraints
-			HMColConstr *PhmcolconstrSingleColConstr(IMemoryPool *pmp, DrgPcnstr *pdrgpcnstr) const;
-
 			// return a copy of the conjunction/disjunction constraint for a different column
 			CConstraint *PcnstrConjDisjRemapForColumn
 							(
@@ -155,10 +152,6 @@ namespace gpopt
 							BOOL fConj
 							)
 							const;
-
-			// subset of the given constraints, which reference the given column
-			static
-			DrgPcnstr *PdrgpcnstrOnColumn(IMemoryPool *pmp, DrgPcnstr *pdrgpcnstr, CColRef *pcr, BOOL fExclusive);
 
 			// create constraint from scalar array comparison expression
 			static
@@ -271,6 +264,10 @@ namespace gpopt
 			// merge equivalence classes coming from children of a bool op
 			static
 			DrgPcrs *PdrgpcrsMergeFromBoolOp(IMemoryPool *pmp, CExpression *pexpr, DrgPcrs *pdrgpcrsFst, DrgPcrs *pdrgpcrsSnd);
+
+			// subset of the given constraints, which reference the given column
+			static
+			DrgPcnstr *PdrgpcnstrOnColumn(IMemoryPool *pmp, DrgPcnstr *pdrgpcnstr, CColRef *pcr, BOOL fExclusive);
 
 	}; // class CConstraint
 

@@ -10,8 +10,12 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
 
 #include "gpopt/base/CUtils.h"
+#include "gpopt/base/IColConstraintsMapper.h"
+#include "gpopt/base/CColConstraintsArrayMapper.h"
+#include "gpopt/base/CColConstraintsHashMapper.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CConstraint.h"
 #include "gpopt/base/CConstraintInterval.h"
@@ -667,14 +671,19 @@ CConstraint::PdrgpcnstrDeduplicate
 {
 	DrgPcnstr *pdrgpcnstrNew = GPOS_NEW(pmp) DrgPcnstr(pmp);
 
-	CColRefSet *pcrsDeduped = GPOS_NEW(pmp) CColRefSet(pmp);
-	HMColConstr *phmcolconstr = NULL;
+	CAutoRef<CColRefSet> pcrsDeduped(GPOS_NEW(pmp) CColRefSet(pmp));
+	CAutoRef<IColConstraintsMapper> arccm;
 
 	const ULONG ulLen = pdrgpcnstr->UlLength();
 
+	pdrgpcnstr->AddRef();
 	if (ulLen >= 5)
 	{
-		phmcolconstr = PhmcolconstrSingleColConstr(pmp,pdrgpcnstr);
+		arccm = GPOS_NEW(pmp) CColConstraintsHashMapper(pmp, pdrgpcnstr);
+	}
+	else
+	{
+		arccm = GPOS_NEW(pmp) CColConstraintsArrayMapper(pmp, pdrgpcnstr);
 	}
 
 	for (ULONG ul = 0; ul < ulLen; ul++)
@@ -698,18 +707,7 @@ CConstraint::PdrgpcnstrDeduplicate
 			continue;
 		}
 
-		DrgPcnstr *pdrgpcnstrCol = NULL;
-		if (ulLen < 5)
-		{
-			// get all constraints from the input array that reference this column
-			pdrgpcnstrCol = PdrgpcnstrOnColumn(pmp, pdrgpcnstr, pcr, true /*fExclusive*/);
-		}
-		else
-		{
-			GPOS_ASSERT(phmcolconstr);
-			pdrgpcnstrCol = phmcolconstr->PtLookup(pcr);
-			pdrgpcnstrCol->AddRef();
-		}
+		DrgPcnstr *pdrgpcnstrCol = arccm->PdrgPcnstrLookup(pcr);
 
 		if (1 == pdrgpcnstrCol->UlLength())
 		{
@@ -742,57 +740,9 @@ CConstraint::PdrgpcnstrDeduplicate
 		pcrsDeduped->Include(pcr);
 	}
 
-	pcrsDeduped->Release();
 	pdrgpcnstr->Release();
-	if (ulLen >= 5)
-	{
-		phmcolconstr->Release();
-	}
 
 	return pdrgpcnstrNew;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CConstraint::PhmcolconstrSingleColConstr
-//
-//	@doc:
-//		Construct mapping between columns and arrays of constraints.
-//		Constraints that has more than one column and predicate not mapped.
-//
-//---------------------------------------------------------------------------
-HMColConstr *
-CConstraint::PhmcolconstrSingleColConstr
-	(
-	IMemoryPool *pmp,
-	DrgPcnstr *pdrgpcnstr
-	)
-const
-{
-	HMColConstr *phmcolconstr = GPOS_NEW(pmp) HMColConstr(pmp);
-
-	const ULONG ulLen = pdrgpcnstr->UlLength();
-
-	for (ULONG ul = 0; ul < ulLen; ul++)
-	{
-		CConstraint *pcnstrChild = (*pdrgpcnstr)[ul];
-		CColRefSet *pcrs = pcnstrChild->PcrsUsed();
-
-		if (1 == pcrs->CElements())
-		{
-			CColRef *pcr = pcrs->PcrFirst();
-			DrgPcnstr *pcnstrMapped = phmcolconstr->PtLookup(pcr);
-			if (NULL == pcnstrMapped)
-			{
-				pcnstrMapped = GPOS_NEW(pmp) DrgPcnstr(pmp);
-				phmcolconstr->FInsert(pcr, pcnstrMapped);
-			}
-			pcnstrChild->AddRef();
-			pcnstrMapped->Append(pcnstrChild);
-		}
-	}
-
-	return phmcolconstr;
 }
 
 //---------------------------------------------------------------------------
