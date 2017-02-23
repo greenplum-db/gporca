@@ -1544,9 +1544,14 @@ CPredicateUtils::FCompareIdentToConstArray
 
 	if (!CUtils::FScalarArrayCmp(pexpr) ||
 		!CUtils::FScalarIdent((*pexpr)[0]) ||
-		!CUtils::FScalarArray((*pexpr)[1]))
+		(!CUtils::FScalarArray((*pexpr)[1]) && !CUtils::FScalarConstArray((*pexpr)[1])))
 	{
 		return false;
+	}
+
+	if (CUtils::FScalarConstArray((*pexpr)[1]))
+	{
+		return true;
 	}
 
 	CExpression *pexprArray = (*pexpr)[1];

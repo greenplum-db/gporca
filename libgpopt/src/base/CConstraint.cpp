@@ -23,6 +23,7 @@
 #include "gpopt/base/CConstraintDisjunction.h"
 #include "gpopt/base/CConstraintNegation.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpopt/operators/CScalarConstArray.h"
 #include "gpopt/operators/CScalarArrayCmp.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/operators/CPredicateUtils.h"
@@ -106,7 +107,13 @@ CConstraint::PcnstrFromScalarArrayCmp
 		IMDType::ECmpType ecmpt = CUtils::Ecmpt(popScArrayCmp->PmdidOp());
 		CExpression *pexprArray = (*pexpr)[1];
 
-		const ULONG ulArity = pexprArray->UlArity();
+		ULONG ulArity = pexprArray->UlArity();
+		CScalarConstArray *popScArray = NULL;
+		if (CUtils::FScalarConstArray(pexprArray))
+		{
+			popScArray = CScalarConstArray::PopConvert(pexprArray->Pop());
+			ulArity = popScArray->UlSize();
+		}
 
 		// When array size exceeds the threshold, don't expand it into a DNF
 		COptimizerConfig *poconf = COptCtxt::PoctxtFromTLS()->Poconf();
@@ -121,9 +128,12 @@ CConstraint::PcnstrFromScalarArrayCmp
 
 		for (ULONG ul = 0; ul < ulArity; ul++)
 		{
-			GPOS_ASSERT(CUtils::FScalarConst((*pexprArray)[ul]) && "expecting a constant");
+			COperator *pop = popScArray ?
+									popScArray->PopConstAt(ul) :
+									(*pexprArray)[ul]->Pop();
+			GPOS_ASSERT(COperator::EopScalarConst == pop->Eopid() && "expecting a constant");
 
-			CScalarConst *popScConst = CScalarConst::PopConvert((*pexprArray)[ul]->Pop());
+			CScalarConst *popScConst = CScalarConst::PopConvert(pop);
 			CConstraintInterval *pci =  CConstraintInterval::PciIntervalFromColConstCmp(pmp, pcr, ecmpt, popScConst);
 			pdrgpcnstr->Append(pci);
 		}

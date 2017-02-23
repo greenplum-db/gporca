@@ -4,6 +4,7 @@
 #include "gpopt/operators/COperator.h"
 #include "gpopt/base/CDatumSortedSet.h"
 #include "gpopt/operators/CScalarConst.h"
+#include "gpopt/operators/CScalarConstArray.h"
 #include "gpopt/base/CUtils.h"
 #include "gpos/common/CAutoRef.h"
 
@@ -19,15 +20,38 @@ CDatumSortedSet::CDatumSortedSet
 	DrgPdatum(pmp),
 	m_fIncludesNull(false)
 {
-	GPOS_ASSERT(0 < pexprArray->UlArity());
-	GPOS_ASSERT(COperator::EopScalarArray == pexprArray->Pop()->Eopid());
+	GPOS_ASSERT(CUtils::FScalarArray(pexprArray) ||
+			CUtils::FScalarConstArray(pexprArray) ||
+			CUtils::FScalarArrayCoerce(pexprArray));
 
-	const ULONG ulArrayExprArity = pexprArray->UlArity();
+	if (CUtils::FScalarArrayCoerce(pexprArray))
+	{
+		pexprArray = (*pexprArray)[0];
+	}
+
+	ULONG ulArrayExprArity = pexprArray->UlArity();
+	CScalarConstArray *popScArray = NULL;
+	if (CUtils::FScalarConstArray(pexprArray))
+	{
+		popScArray = CScalarConstArray::PopConvert(pexprArray->Pop());
+		ulArrayExprArity = popScArray->UlSize();
+	}
+
+	GPOS_ASSERT(0 < ulArrayExprArity);
 
 	gpos::CAutoRef<DrgPdatum> aprngdatum(GPOS_NEW(pmp) DrgPdatum(pmp));
 	for (ULONG ul = 0; ul < ulArrayExprArity; ul++)
 	{
-		CScalarConst *popScConst = CScalarConst::PopConvert((*pexprArray)[ul]->Pop());
+		CScalarConst *popScConst = NULL;
+		if (NULL == popScArray)
+		{
+			popScConst = CScalarConst::PopConvert((*pexprArray)[ul]->Pop());
+		}
+		else
+		{
+			popScConst = popScArray->PopConstAt(ul);
+		}
+
 		IDatum *pdatum = popScConst->Pdatum();
 		if (pdatum->FNull())
 		{

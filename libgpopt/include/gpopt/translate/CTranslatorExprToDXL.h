@@ -603,6 +603,9 @@ namespace gpopt
 			// translate an array
 			CDXLNode *PdxlnArray(CExpression *pexpr);
 
+			// translate an const array
+			CDXLNode *PdxlnConstArray(CExpression *pexpr);
+
 			// translate an arrayref
 			CDXLNode *PdxlnArrayRef(CExpression *pexpr);
 

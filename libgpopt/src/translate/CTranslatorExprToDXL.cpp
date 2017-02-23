@@ -157,6 +157,7 @@ CTranslatorExprToDXL::InitScalarTranslators()
 			{COperator::EopScalarCoerceViaIO, &gpopt::CTranslatorExprToDXL::PdxlnScCoerceViaIO},
 			{COperator::EopScalarArrayCoerceExpr, &gpopt::CTranslatorExprToDXL::PdxlnScArrayCoerceExpr},
 			{COperator::EopScalarArray, &gpopt::CTranslatorExprToDXL::PdxlnArray},
+			{COperator::EopScalarConstArray, &gpopt::CTranslatorExprToDXL::PdxlnConstArray},
 			{COperator::EopScalarArrayCmp, &gpopt::CTranslatorExprToDXL::PdxlnArrayCmp},
 			{COperator::EopScalarArrayRef, &gpopt::CTranslatorExprToDXL::PdxlnArrayRef},
 			{COperator::EopScalarArrayRefIndexList, &gpopt::CTranslatorExprToDXL::PdxlnArrayRefIndexList},
@@ -6699,6 +6700,58 @@ CTranslatorExprToDXL::PdxlnArray
 						);
 
 	TranslateScalarChildren(pexpr, pdxlnArray);
+
+	return pdxlnArray;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CTranslatorExprToDXL::PdxlnConstArray
+//
+//	@doc:
+//		Create a DXL const array node from an optimizer const array expression
+//
+//---------------------------------------------------------------------------
+CDXLNode *
+CTranslatorExprToDXL::PdxlnConstArray
+	(
+	CExpression *pexpr
+	)
+{
+	GPOS_ASSERT(NULL != pexpr);
+	CScalarConstArray *pConstArray = CScalarConstArray::PopConvert(pexpr->Pop());
+
+	IMDId *pmdidElem = pConstArray->PmdidElem();
+	pmdidElem->AddRef();
+
+	IMDId *pmdidArray = pConstArray->PmdidArray();
+	pmdidArray->AddRef();
+
+	CDXLNode *pdxlnArray =
+			GPOS_NEW(m_pmp) CDXLNode
+						(
+						m_pmp,
+						GPOS_NEW(m_pmp) CDXLScalarArray
+										(
+										m_pmp,
+										pmdidElem,
+										pmdidArray,
+										pConstArray->FMultiDimensional()
+										)
+						);
+
+	DrgPconst *pConsts = pConstArray->PConsts();
+	const ULONG ulArity = pConsts->UlLength();
+	for (ULONG ul = 0; ul < ulArity; ul++)
+	{
+		CScalarConst *popScConst = (*pConsts)[ul];
+		IDatum *pdatum = popScConst->Pdatum();
+		CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
+		const IMDType *pmdtype = pmda->Pmdtype(pdatum->Pmdid());
+
+		CDXLNode *pdxlnConst = GPOS_NEW(m_pmp) CDXLNode(m_pmp, pmdtype->PdxlopScConst(m_pmp, pdatum));
+		pdxlnArray->AddChild(pdxlnConst);
+	}
 
 	return pdxlnArray;
 }

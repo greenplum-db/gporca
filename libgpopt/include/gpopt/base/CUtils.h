@@ -730,6 +730,10 @@ namespace gpopt
 			static
 			BOOL FScalarArray(CExpression *pexpr);
 
+			// check if expression is scalar const array
+			static
+			BOOL FScalarConstArray(CExpression *pexpr);
+
 			// check if expression is scalar array coerce
 			static
 			BOOL FScalarArrayCoerce(CExpression *pexpr);

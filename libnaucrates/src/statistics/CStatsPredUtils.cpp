@@ -910,8 +910,7 @@ CStatsPredUtils::ProcessArrayCmp
 	CExpression *pexprLeft = (*pexprPred)[0];
 	CExpression *pexprRight = (*pexprPred)[1];
 
-	BOOL fCompareToConst = ((COperator::EopScalarIdent == pexprLeft->Pop()->Eopid())
-							&& (COperator::EopScalarArray == pexprRight->Pop()->Eopid()));
+	BOOL fCompareToConst = CPredicateUtils::FCompareIdentToConstArray(pexprPred);
 
 	if (!fCompareToConst)
 	{
@@ -929,7 +928,14 @@ CStatsPredUtils::ProcessArrayCmp
 		pdrgpstatspredChild = GPOS_NEW(pmp) DrgPstatspred(pmp);
 	}
 
-	const ULONG ulConstants = pexprRight->UlArity();
+	ULONG ulConstants = pexprRight->UlArity();
+
+	CScalarConstArray *popScArray = NULL;
+	if (CUtils::FScalarConstArray(pexprRight))
+	{
+		popScArray = CScalarConstArray::PopConvert(pexprRight->Pop());
+		ulConstants = popScArray->UlSize();
+	}
 	// comparison semantics for statistics purposes is looser than regular comparison.
 	CStatsPred::EStatsCmpType escmpt = Estatscmptype(popScArrayCmp->PmdidOp());
 
@@ -946,10 +952,13 @@ CStatsPredUtils::ProcessArrayCmp
 
 	for (ULONG ul = 0; ul < ulConstants; ul++)
 	{
-		CExpression *pexprConst = (*pexprRight)[ul];
-		if (COperator::EopScalarConst == pexprConst->Pop()->Eopid())
+		COperator *popConst = popScArray ?
+							popScArray->PopConstAt(ul) :
+							(*pexprRight)[ul]->Pop();
+
+		if (COperator::EopScalarConst == popConst->Eopid())
 		{
-			CScalarConst *popScalarConst = CScalarConst::PopConvert(pexprConst->Pop());
+			CScalarConst *popScalarConst = CScalarConst::PopConvert(popConst);
 			IDatum *pdatumLiteral = popScalarConst->Pdatum();
 			CStatsPred *pstatspredChild = NULL;
 			if (!pdatumLiteral->FStatsComparable(pdatumLiteral))

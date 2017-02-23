@@ -18,6 +18,7 @@
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarArray.h"
+#include "gpopt/operators/CScalarConstArray.h"
 #include "gpopt/operators/CScalarIdent.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "gpopt/base/CDatumSortedSet.h"
@@ -217,7 +218,18 @@ CConstraintInterval::PcnstrIntervalFromScalarArrayCmp
 	const ULONG ulArrayExprArity = pexprArray->UlArity();
 	if (0 == ulArrayExprArity)
 	{
-		return NULL;
+		if (CUtils::FScalarConstArray(pexprArray))
+		{
+			CScalarConstArray *popScAray = CScalarConstArray::PopConvert(pexprArray->Pop());
+			if (0 == popScAray->UlSize())
+			{
+				return NULL;
+			}
+		}
+		else
+		{
+			return NULL;
+		}
 	}
 
 	const IComparator *pcomp = COptCtxt::PoctxtFromTLS()->Pcomp();

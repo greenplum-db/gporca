@@ -77,6 +77,10 @@ namespace gpopt
 			static
 			CExpression *PexprEliminateSelfComparison(IMemoryPool *pmp, CExpression *pexpr);
 
+			// collapse CScalarArray with constant values to CScalarConstArray
+			static
+			CExpression *PexprCollapseConstArray(IMemoryPool *pmp, CExpression *pexpr);
+
 			// remove CTE Anchor nodes
 			static
 			CExpression *PexprRemoveCTEAnchors(IMemoryPool *pmp, CExpression *pexpr);

@@ -1728,6 +1728,72 @@ CExpressionPreprocessor::PexprPruneEmptySubtrees
 	return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexpr);
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CExpressionPreprocessor::PexprCollapseConstArray
+//
+//	@doc:
+// 		If it's a scalar array of all CScalarConst, collapse it into an
+//		CScalarConstArray to reduce MEMO groups.
+//
+//---------------------------------------------------------------------------
+CExpression *
+CExpressionPreprocessor::PexprCollapseConstArray
+(
+	IMemoryPool *pmp,
+	CExpression *pexpr
+)
+{
+	GPOS_ASSERT(NULL != pexpr);
+
+	const ULONG ulArity = pexpr->UlArity();
+
+	if (CUtils::FScalarArray(pexpr))
+	{
+		BOOL fAllConsts = true;
+
+		for (ULONG ul = 0; fAllConsts && ul < ulArity; ul++)
+		{
+			fAllConsts = CUtils::FScalarConst((*pexpr)[ul]);
+		}
+
+		// It is possible that the array element can be a scalar subquery,
+		// and in that subquery there may be const array or large IN list.
+		// But for now, we don't bother to consider such a rare special case.
+		if (fAllConsts)
+		{
+			DrgPconst *pdrgpconst = GPOS_NEW(pmp) DrgPconst(pmp);
+			for (ULONG ul = 0; ul < ulArity; ul++)
+			{
+				CScalarConst *popConst = CScalarConst::PopConvert((*pexpr)[ul]->Pop());
+				popConst->AddRef();
+				pdrgpconst->Append(popConst);
+			}
+
+			CScalarArray *psArray = CScalarArray::PopConvert(pexpr->Pop());
+			IMDId *pmdidElem = psArray->PmdidElem();
+			IMDId *pmdidArray = psArray->PmdidArray();
+			pmdidElem->AddRef();
+			pmdidArray->AddRef();
+
+			CScalarConstArray *pConstArray = GPOS_NEW(pmp) CScalarConstArray(pmp, pmdidElem, pmdidArray, psArray->FMultiDimensional(), pdrgpconst);
+			return GPOS_NEW(pmp) CExpression(pmp, pConstArray);
+		}
+	}
+
+	// process children
+	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
+
+	for (ULONG ul = 0; ul < ulArity; ul++)
+	{
+		CExpression *pexprChild = PexprCollapseConstArray(pmp, (*pexpr)[ul]);
+		pdrgpexpr->Append(pexprChild);
+	}
+
+	COperator *pop = pexpr->Pop();
+	pop->AddRef();
+	return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexpr);
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -2228,9 +2294,14 @@ CExpressionPreprocessor::PexprPreprocess
 
 	CAutoTimer at("\n[OPT]: Expression Preprocessing Time", GPOS_FTRACE(EopttracePrintOptStats));
 
-	// (1) remove unused CTE anchors
-	CExpression *pexprNoUnusedCTEs = PexprRemoveUnusedCTEs(pmp, pexpr);
+	// (0) collapse CScalarArray with constant values to CScalarConstArray
+	CExpression *pexprConstArray = PexprCollapseConstArray(pmp, pexpr);
 	GPOS_CHECK_ABORT;
+	
+	// (1) remove unused CTE anchors
+	CExpression *pexprNoUnusedCTEs = PexprRemoveUnusedCTEs(pmp, pexprConstArray);
+	GPOS_CHECK_ABORT;
+	pexprConstArray->Release();
 
 	// (2) remove intermediate superfluous limit
 	CExpression *pexprSimplified = PexprRemoveSuperfluousLimit(pmp, pexprNoUnusedCTEs);

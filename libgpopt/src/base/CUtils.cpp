@@ -3960,6 +3960,24 @@ CUtils::FScalarArray
 
 //---------------------------------------------------------------------------
 //	@function:
+//		CUtils::FScalarConstArray
+//
+//	@doc:
+//		 Check if given expression is a scalar const array
+//
+//---------------------------------------------------------------------------
+BOOL
+CUtils::FScalarConstArray
+	(
+	CExpression *pexpr
+	)
+{
+	return (COperator::EopScalarConstArray == pexpr->Pop()->Eopid());
+}
+
+
+//---------------------------------------------------------------------------
+//	@function:
 //		CUtils::FScalarArrayCoerce
 //
 //	@doc:

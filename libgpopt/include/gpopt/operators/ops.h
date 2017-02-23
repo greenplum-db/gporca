@@ -46,6 +46,7 @@
 #include "gpopt/operators/CScalarSubqueryExists.h"
 #include "gpopt/operators/CScalarSubqueryNotExists.h"
 #include "gpopt/operators/CScalarArray.h"
+#include "gpopt/operators/CScalarConstArray.h"
 #include "gpopt/operators/CScalarArrayCmp.h"
 #include "gpopt/operators/CScalarArrayRef.h"
 #include "gpopt/operators/CScalarArrayRefIndexList.h"

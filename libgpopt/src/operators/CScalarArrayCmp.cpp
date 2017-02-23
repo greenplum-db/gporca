@@ -16,6 +16,7 @@
 
 #include "gpopt/mdcache/CMDAccessorUtils.h"
 
+#include "gpopt/operators/CScalarConstArray.h"
 #include "gpopt/operators/CScalarArrayCmp.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
@@ -225,8 +226,19 @@ CScalarArrayCmp::PexprExpand
 	{
 		pexprRight = (*pexprRight)[0];
 	}
-	const ULONG ulArrayElems = pexprRight->UlArity();
-	if (!CUtils::FScalarArray(pexprRight) || 0 == ulArrayElems)
+
+	ULONG ulArrayElems = pexprRight->UlArity();
+	BOOL fConstArray = CUtils::FScalarConstArray(pexprRight);
+
+	CScalarConstArray *popConstArray = NULL;
+	if (fConstArray)
+	{
+		popConstArray = CScalarConstArray::PopConvert(pexprRight->Pop());
+		ulArrayElems = popConstArray->UlSize();
+	}
+
+	if ((!CUtils::FScalarArray(pexprRight) && !fConstArray)
+			|| 0 == ulArrayElems)
 	{
 		// if right child is not an actual array (e.g., Const of type array), return input
 		// expression without expansion
@@ -237,9 +249,19 @@ CScalarArrayCmp::PexprExpand
 	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
 	for (ULONG ul = 0; ul < ulArrayElems; ul++)
 	{
-		CExpression *pexprArrayElem = (*pexprRight)[ul];
+		CExpression *pexprArrayElem = NULL;
+		if (fConstArray)
+		{
+			CScalarConst *popScConst = popConstArray->PopConstAt(ul);
+			popScConst->AddRef();
+			pexprArrayElem = GPOS_NEW(pmp) CExpression(pmp, popScConst);
+		}
+		else
+		{
+			pexprArrayElem = (*pexprRight)[ul];
+			pexprArrayElem->AddRef();
+		}
 		pexprLeft->AddRef();
-		pexprArrayElem->AddRef();
 		const CWStringConst *pstrOpName = popArrayCmp->Pstr();
 		IMDId *pmdidOp = popArrayCmp->PmdidOp();
 		GPOS_ASSERT(IMDId::FValid(pmdidOp));
