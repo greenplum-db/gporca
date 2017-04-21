@@ -603,9 +603,12 @@ CMDAccessor::Pimdobj
 			pmdobjNew = gpdxl::CDXLUtils::PimdobjParseDXL(pmp, a_pstr.Pt(), NULL /* XSD path */);
 			GPOS_ASSERT(NULL != pmdobjNew);
 
-			// add fetch time in msec
-			CDouble dFetch(timerFetch.UlElapsedUS() / CDouble(GPOS_USEC_IN_MSEC));
-			m_dFetchTime = CDouble(m_dFetchTime.DVal() + dFetch.DVal());
+			if (GPOS_FTRACE(EopttracePrintOptStats))
+			{
+				// add fetch time in msec
+				CDouble dFetch(timerFetch.UlElapsedUS() / CDouble(GPOS_USEC_IN_MSEC));
+				m_dFetchTime = CDouble(m_dFetchTime.DVal() + dFetch.DVal());
+			}
 
 			// For CTAS mdid, we avoid adding the corresponding object to the MD cache
 			// since those objects have a fixed id, and if caching is enabled and those
