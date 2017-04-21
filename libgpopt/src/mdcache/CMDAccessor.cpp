@@ -668,9 +668,12 @@ CMDAccessor::Pimdobj
 	pimdobj = pmdaccelem->Pimdobj();
 	GPOS_ASSERT(NULL != pimdobj);
 	
-	// add lookup time in msec
-	CDouble dLookup(timerLookup.UlElapsedUS() / CDouble(GPOS_USEC_IN_MSEC));
-	m_dLookupTime = CDouble(m_dLookupTime.DVal() + dLookup.DVal());
+	if (GPOS_FTRACE(EopttracePrintOptStats))
+	{
+		// add lookup time in msec
+		CDouble dLookup(timerLookup.UlElapsedUS() / CDouble(GPOS_USEC_IN_MSEC));
+		m_dLookupTime = CDouble(m_dLookupTime.DVal() + dLookup.DVal());
+	}
 
 	return pimdobj;
 }
