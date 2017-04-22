@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table foo (a int) distributed by (a);
+create table bar (b int) distributed by (b);
+
+insert into foo select i from generate_series(1, 1000) i;
+insert into bar select i from generate_series(1, 1000) i;
+
+explain SELECT * FROM foo, bar WHERE foo.a = (select bar.b limit 1) ;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
