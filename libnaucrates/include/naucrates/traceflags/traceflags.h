@@ -32,8 +32,8 @@ namespace gpos
 		// print xform info
 		EopttracePrintXform = 101002,
 
-		// disable printing input and output of xforms
-		EopttraceDisablePrintXformRes = 101003,
+		// print input and output of xforms
+		EopttracePrintXformRes = 101003,
 
 		// print MEMO after exploration
 		EopttracePrintMemoExplrd = 101004,
@@ -130,8 +130,8 @@ namespace gpos
 		// Enable plan space pruning
 		EopttraceEnableSpacePruning = 103014,
 
-		// Prefer multi-stage aggregation whenever a multi-stage agg plan is possible
-		EopttracePreferMultiStageAgg = 103015,
+		// Always pick multi-stage aggregation whenever a multi-stage agg plan is possible
+		EopttraceForceMultiStageAgg = 103015,
 
 		// Enable generating (Redistribute, Broadcast) alternative for hash join children
 		EopttraceEnableRedistributeBroadcastHashJoin = 103016,
@@ -151,8 +151,8 @@ namespace gpos
 		// enforce evaluating subqueries using correlated joins (subplans in GPDB)
 		EopttraceEnforceCorrelatedExecution = 103021,
 
-		// prefer plans that expand multiple distinct qualified aggregates into join of single distinct aggregates
-		EopttracePreferExpandedMDQAs = 103022,
+		// Always pick plans that expand multiple distinct qualified aggregates into join of single distinct aggregates
+		EopttraceForceExpandedMDQAs = 103022,
 
 		// prevent optimizing CTE producer side based on requirements enforced on top of CTE consumer
 		EopttraceDisablePushingCTEConsumerReqsToCTEProducer = 103023,
@@ -184,9 +184,9 @@ namespace gpos
 
 		// do not trigger stats derivation for all groups after exploration
 		EopttraceDonotDeriveStatsForAllGroups = 104004,
-                
-		// Prefer plans that split scalar DQA into multiple stage aggregates other than 2-stage aggregates.
-		EopttracePreferScalarDQAMultiStageAgg = 104005,
+
+		// Always pick plans that split scalar DQA into multiple stage aggregates other than 2-stage aggregates.
+		EopttraceForceScalarDQAMultiStageAgg = 104005,
 
 		///////////////////////////////////////////////////////
 		/////////// constant expression evaluator flags ///////

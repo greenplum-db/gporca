@@ -215,7 +215,7 @@ CGroupExpression::SetOptimizationLevel()
 	}
 	else if (CUtils::FPhysicalAgg(m_pop))
 	{
-		BOOL fPreferMultiStageAgg = GPOS_FTRACE(EopttracePreferMultiStageAgg);
+		BOOL fPreferMultiStageAgg = GPOS_FTRACE(EopttraceForceMultiStageAgg);
 		if (!fPreferMultiStageAgg && COperator::EopPhysicalHashAgg == m_pop->Eopid())
 		{
 			// if we choose agg plans based on cost only (no preference for multi-stage agg), 
@@ -224,7 +224,7 @@ CGroupExpression::SetOptimizationLevel()
 			return;
 		}
 
-		// if we prefer plans with multi-stage agg, we optimize any multi-stage agg
+		// if we want plans with multi-stage agg, we optimize any multi-stage agg
 		// first to avoid later optimization of one stage agg if possible                                   
 		BOOL fMultiStage = CPhysicalAgg::PopConvert(m_pop)->FMultiStage();
 		if (fPreferMultiStageAgg && fMultiStage)
@@ -1089,7 +1089,7 @@ CGroupExpression::PrintXform
 	CXformResult *pxfres
 	)
 {
-	if (NULL != pexpr && GPOS_FTRACE(EopttracePrintXform) && !GPOS_FTRACE(EopttraceDisablePrintXformRes))
+	if (NULL != pexpr && GPOS_FTRACE(EopttracePrintXform) && GPOS_FTRACE(EopttracePrintXformRes))
 	{
 		CAutoTrace at(pmp);
 		IOstream &os(at.Os());

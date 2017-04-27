@@ -316,7 +316,7 @@ COptimizationContext::FOptimizeAgg
 	GPOS_ASSERT(CUtils::FPhysicalAgg(pgexprAgg->Pop()));
 	GPOS_ASSERT(0 < ulSearchStages);
 
-	if (GPOS_FTRACE(EopttracePreferExpandedMDQAs))
+	if (GPOS_FTRACE(EopttraceForceExpandedMDQAs))
 	{
 		BOOL fHasMultipleDistinctAggs = CDrvdPropScalar::Pdpscalar((*pgexprAgg)[1]->Pdp())->FHasMultipleDistinctAggs();
 		if (fHasMultipleDistinctAggs)
@@ -326,7 +326,7 @@ COptimizationContext::FOptimizeAgg
 		}
 	}
 
-	if (!GPOS_FTRACE(EopttracePreferMultiStageAgg))
+	if (!GPOS_FTRACE(EopttraceForceMultiStageAgg))
 	{
 		// no preference for multi-stage agg, we always proceed with optimization
 		return true;
