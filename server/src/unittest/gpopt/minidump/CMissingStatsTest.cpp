@@ -91,8 +91,6 @@ CMissingStatsTest::EresUnittest_RunTests()
 	const ULONG ulTests = GPOS_ARRAY_SIZE(rgtc);
 	for (ULONG ul = m_ulMissingStatsTestCounter; ((ul < ulTests) && (GPOS_OK == eres)); ul++)
 	{
-		CAutoTraceFlag atf1(EopttraceDonotCollectMissingStatsCols, false /*fVal*/);
-
 		ICostModel *pcm = CTestUtils::Pcm(pmp);
 
 		COptimizerConfig *poconf = GPOS_NEW(pmp) COptimizerConfig

@@ -1123,7 +1123,7 @@ CMDAccessor::RecordColumnStats
 	GPOS_ASSERT(NULL != phist);
 	phmulhist->FInsert(GPOS_NEW(pmp) ULONG(ulColId), phist);
 
-	BOOL fGuc = !GPOS_FTRACE(EopttraceDonotCollectMissingStatsCols);
+	BOOL fGuc = GPOS_FTRACE(EopttracePrintColsWithMissingStats);
 	BOOL fRecordMissingStats = !fEmptyTable && fGuc && !fSystemCol
 								&& (NULL != pstatsconf) && phist->FColStatsMissing();
 	if (fRecordMissingStats)

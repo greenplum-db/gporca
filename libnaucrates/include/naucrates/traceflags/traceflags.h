@@ -179,8 +179,8 @@ namespace gpos
 		// derive new statistics for dynamic scans when partition elimination applies
 		EopttraceDeriveStatsForDPE = 104002,
 
-		// avoid collecting information about columns with missing statistics
-		EopttraceDonotCollectMissingStatsCols = 104003,
+		// print information about columns with missing statistics
+		EopttracePrintColsWithMissingStats = 104003,
 
 		// do not trigger stats derivation for all groups after exploration
 		EopttraceDonotDeriveStatsForAllGroups = 104004,
