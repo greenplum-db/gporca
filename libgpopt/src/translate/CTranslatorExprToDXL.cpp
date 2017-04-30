@@ -3231,18 +3231,8 @@ CTranslatorExprToDXL::PdxlnCorrelatedNLJoin
 
 		case COperator::EopPhysicalFilter:
 		{
-			// get the original condition from the filter node
-			CExpression *pexprOrigCond = (*pexprOuterChild)[1];
-			CDXLNode *pdxlnOrigCond = PdxlnScalar(pexprOrigCond);
-			// create a new AND expression
-			CDXLNode *pdxlnBoolExpr = PdxlnScBoolExpr
-											(
-											Edxland,
-											pdxlnOrigCond,
-											pdxlnCond
-											);
+			pdxln = PdxlnResultFromNLJoinOuter(pexprOuterChild, pdxlnCond, pdrgpcr, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, pdxlprop);
 
-			pdxln = PdxlnResultFromNLJoinOuter(pexprOuterChild, pdxlnBoolExpr, pdrgpcr, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, pdxlprop);
 			break;
 		}
 
@@ -3489,16 +3479,30 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 		case EdxlopPhysicalDynamicBitmapTableScan:
 		case EdxlopPhysicalResult:
 		{
+			// get the original condition from the filter node
+			CExpression *pexprOrigCond = (*pexprRelational)[1];
+			CDXLNode *pdxlnOrigCond = PdxlnScalar(pexprOrigCond);
+			// create a new AND expression
+			CDXLNode *pdxlnBoolExpr = PdxlnScBoolExpr
+			(
+			 Edxland,
+			 pdxlnOrigCond,
+			 pdxlnCond
+			 );
+
 			ULONG ulIndexFilter = UlIndexFilter(edxlopid);
 			GPOS_ASSERT(ulIndexFilter != ULONG_MAX);
 			// add the new filter to the result replacing its original
 			// empty filter
-			CDXLNode *pdxlnFilter = PdxlnFilter(pdxlnCond);
+			CDXLNode *pdxlnFilter = PdxlnFilter(pdxlnBoolExpr);
 			pdxlnResult->ReplaceChild(ulIndexFilter /*ulPos*/, pdxlnFilter);
 		}
 			break;
 		case EdxlopPhysicalSequence:
-			pdxlnCond->Release();
+		{
+			pdxlprop->AddRef();
+			pdxlnResult = PdxlnResult(pexprRelational, pdrgpcr, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, pdxlnCond, pdxlprop);
+		}
 			break;
 		default:
 			pdxlnCond->Release();
