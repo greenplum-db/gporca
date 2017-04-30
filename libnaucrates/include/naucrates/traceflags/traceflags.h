@@ -130,7 +130,7 @@ namespace gpos
 		// Enable plan space pruning
 		EopttraceEnableSpacePruning = 103014,
 
-		// Always pick multi-stage aggregation whenever a multi-stage agg plan is possible
+		// Always pick multi-stage aggregation whenever such a plan us generated
 		EopttraceForceMultiStageAgg = 103015,
 
 		// Enable generating (Redistribute, Broadcast) alternative for hash join children
@@ -185,8 +185,8 @@ namespace gpos
 		// do not trigger stats derivation for all groups after exploration
 		EopttraceDonotDeriveStatsForAllGroups = 104004,
 
-		// Always pick plans that split scalar DQA into multiple stage aggregates other than 2-stage aggregates.
-		EopttraceForceScalarDQAMultiStageAgg = 104005,
+		// Always pick plans that split scalar DQA into a plan with 3-stage aggregation
+		EopttraceForceThreeStageScalarDQA = 104005,
 
 		///////////////////////////////////////////////////////
 		/////////// constant expression evaluator flags ///////

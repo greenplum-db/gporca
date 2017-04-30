@@ -224,7 +224,7 @@ CGroupExpression::SetOptimizationLevel()
 			return;
 		}
 
-		// if we want plans with multi-stage agg, we optimize any multi-stage agg
+		// if we only want plans with multi-stage agg, we generate multi-stage agg
 		// first to avoid later optimization of one stage agg if possible                                   
 		BOOL fMultiStage = CPhysicalAgg::PopConvert(m_pop)->FMultiStage();
 		if (fPreferMultiStageAgg && fMultiStage)
