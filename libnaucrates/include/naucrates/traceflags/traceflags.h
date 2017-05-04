@@ -130,7 +130,7 @@ namespace gpos
 		// Enable plan space pruning
 		EopttraceEnableSpacePruning = 103014,
 
-		// Always pick multi-stage aggregation whenever such a plan us generated
+		// Always pick multi-stage aggregation whenever such a plan is generated
 		EopttraceForceMultiStageAgg = 103015,
 
 		// Enable generating (Redistribute, Broadcast) alternative for hash join children
