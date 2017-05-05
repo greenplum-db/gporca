@@ -832,7 +832,7 @@ CGroupExpression::Transform
 	// check traceflag and compatibility with origin xform
 	if (GPOPT_FDISABLED_XFORM(pxform->Exfid())|| !pxform->FCompatible(m_exfidOrigin))
 	{
-		if (GPOS_FTRACE(EopttracePrintOptStats))
+		if (GPOS_FTRACE(EopttracePrintOptimizationStatistics))
 		{
 			*pulElapsedTime = timer.UlElapsedMS();
 		}
@@ -845,7 +845,7 @@ CGroupExpression::Transform
 	exprhdl.DeriveProps(NULL /*pdpctxt*/);
 	if (CXform::ExfpNone == pxform->Exfp(exprhdl))
 	{
-		if (GPOS_FTRACE(EopttracePrintOptStats))
+		if (GPOS_FTRACE(EopttracePrintOptimizationStatistics))
 		{
 			*pulElapsedTime = timer.UlElapsedMS();
 		}
@@ -888,7 +888,7 @@ CGroupExpression::Transform
 	// post-prcoessing before applying xform to group expression
 	PostprocessTransform(pmpLocal, pmp, pxform);
 
-	if (GPOS_FTRACE(EopttracePrintOptStats))
+	if (GPOS_FTRACE(EopttracePrintOptimizationStatistics))
 	{
 		*pulElapsedTime = timer.UlElapsedMS();
 	}
@@ -1089,7 +1089,7 @@ CGroupExpression::PrintXform
 	CXformResult *pxfres
 	)
 {
-	if (NULL != pexpr && GPOS_FTRACE(EopttracePrintXform) && GPOS_FTRACE(EopttracePrintXformRes))
+	if (NULL != pexpr && GPOS_FTRACE(EopttracePrintXform) && GPOS_FTRACE(EopttracePrintXformResults))
 	{
 		CAutoTrace at(pmp);
 		IOstream &os(at.Os());
@@ -1117,7 +1117,7 @@ CGroupExpression::OsPrintCostContexts
 	const CHAR *szPrefix
 	)
 {
-	if (Pop()->FPhysical() && GPOS_FTRACE(EopttracePrintOptCtxt))
+	if (Pop()->FPhysical() && GPOS_FTRACE(EopttracePrintOptimizationContext))
 	{
 		// print cost contexts
 		os << szPrefix << szPrefix << "Cost Ctxts:" << std::endl;

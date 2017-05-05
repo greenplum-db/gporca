@@ -33,34 +33,34 @@ namespace gpos
 		EopttracePrintXform = 101002,
 
 		// print input and output of xforms
-		EopttracePrintXformRes = 101003,
+		EopttracePrintXformResults = 101003,
 
 		// print MEMO after exploration
-		EopttracePrintMemoExplrd = 101004,
+		EopttracePrintMemoAfterExploration = 101004,
 
 		// print MEMO after implementation
-		EopttracePrintMemoImpld = 101005,
+		EopttracePrintMemoAfterImplementation = 101005,
 
 		// print MEMO after optimization
-		EopttracePrintMemoOptd = 101006,
+		EopttracePrintMemoAfterOptimization = 101006,
 
 		// print jobs in scheduler on each job completion
-		EopttracePrintScheduler = 101007,
+		EopttracePrintJobScheduler = 101007,
 
 		// print expression properties
-		EopttracePrintExprProps = 101008,
+		EopttracePrintExpressionProperties = 101008,
 
 		// print group properties
-		EopttracePrintGrpProps = 101009,
+		EopttracePrintGroupProperties = 101009,
 
 		// print optimization context
-		EopttracePrintOptCtxt = 101010,
+		EopttracePrintOptimizationContext = 101010,
 
 		// print xform pattern
 		EopttracePrintXformPattern = 101011,
 
 		// print optimizer's stats
-		EopttracePrintOptStats = 101012,
+		EopttracePrintOptimizationStatistics = 101012,
 
 		// enable plan enumeration
 		EopttraceEnumeratePlans = 101013,

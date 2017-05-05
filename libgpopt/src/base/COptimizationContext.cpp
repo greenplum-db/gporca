@@ -491,7 +491,7 @@ COptimizationContext::OsPrint
 void
 COptimizationContext::DbgPrint()
 {
-	CAutoTraceFlag atf(EopttracePrintOptCtxt, true);
+	CAutoTraceFlag atf(EopttracePrintOptimizationContext, true);
 	CAutoTrace at(m_pmp);
 	(void) this->OsPrint(at.Os(), " ");
 }
