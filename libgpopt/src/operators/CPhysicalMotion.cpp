@@ -20,7 +20,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalMotion::FValidContext
@@ -135,6 +134,63 @@ CPhysicalMotion::PrsRequired
 	return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtNone /*ert*/);
 }
 
+// Hash function
+ULONG
+CPhysicalMotion::CPartPropReq::UlHash
+	(
+	const CPartPropReq *pppr
+	)
+{
+    GPOS_ASSERT(NULL != pppr);
+    
+    ULONG ulHash = pppr->Ppps()->UlHash();
+    ulHash = UlCombineHashes(ulHash , pppr->UlChildIndex());
+    return UlCombineHashes(ulHash , pppr->UlOuterChild());
+ 
+}
+
+// Equality function
+BOOL
+CPhysicalMotion::CPartPropReq::FEqual
+	(
+	const CPartPropReq *ppprFst,
+	const CPartPropReq *ppprSnd
+	)
+{
+    GPOS_ASSERT(NULL != ppprFst);
+    GPOS_ASSERT(NULL != ppprSnd);
+    
+    return
+    ppprFst->UlChildIndex() == ppprSnd->UlChildIndex() &&
+    ppprFst->UlOuterChild() == ppprSnd->UlOuterChild() &&
+    ppprFst->Ppps()->FMatch(ppprSnd->Ppps());
+}
+
+
+// Create partition propagation request
+CPhysicalMotion::CPartPropReq *
+CPhysicalMotion::PpprCreate
+(
+	IMemoryPool *pmp,
+	CExpressionHandle &exprhdl,
+	CPartitionPropagationSpec *pppsRequired,
+	ULONG ulChildIndex
+	)
+{
+    GPOS_ASSERT(exprhdl.Pop() == this);
+    GPOS_ASSERT(NULL != pppsRequired);
+    if (NULL == exprhdl.Pgexpr())
+    {
+        return NULL;
+    }
+    
+    ULONG ulOuterChild = (*exprhdl.Pgexpr())[0]->UlId();
+
+    
+    pppsRequired->AddRef();
+    return  GPOS_NEW(pmp) CPartPropReq(pppsRequired, ulChildIndex, ulOuterChild);
+}
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalMotion::PppsRequired
@@ -150,48 +206,58 @@ CPhysicalMotion::PppsRequired
 	CExpressionHandle &exprhdl,
 	CPartitionPropagationSpec *pppsRequired,
 	ULONG 
-#ifdef GPOS_DEBUG
-	ulChildIndex
-#endif // GPOS_DEBUG
-	,
+	ulChildIndex,
 	DrgPdp *, //pdrgpdpCtxt,
 	ULONG //ulOptReq
 	)
 {
 	GPOS_ASSERT(0 == ulChildIndex);
 	GPOS_ASSERT(NULL != pppsRequired);
-	
-	CPartIndexMap *ppimReqd = pppsRequired->Ppim();
-	CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
-	
-	DrgPul *pdrgpul = ppimReqd->PdrgpulScanIds(pmp);
-	
-	CPartIndexMap *ppimResult = GPOS_NEW(pmp) CPartIndexMap(pmp);
-	CPartFilterMap *ppfmResult = GPOS_NEW(pmp) CPartFilterMap(pmp);
-	
-	/// get derived part consumers
-	CPartInfo *ppartinfo = exprhdl.Pdprel(0)->Ppartinfo();
-	
-	const ULONG ulPartIndexSize = pdrgpul->UlLength();
-	
-	for (ULONG ul = 0; ul < ulPartIndexSize; ul++)
+
+	CPartPropReq *pppr = PpprCreate(pmp, exprhdl, pppsRequired, ulChildIndex);
+	CPartitionPropagationSpec *ppps = m_phmpp->PtLookup(pppr);
+	if (NULL == ppps)
 	{
-		ULONG ulPartIndexId = *((*pdrgpul)[ul]);
-
-		if (!ppartinfo->FContainsScanId(ulPartIndexId))
-		{
-			// part index id does not exist in child nodes: do not push it below 
-			// the motion
-			continue;
-		}
-
-		ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
-		(void) ppfmResult->FCopyPartFilter(m_pmp, ulPartIndexId, ppfmReqd);
-	}
+		CPartIndexMap *ppimResult = GPOS_NEW(pmp) CPartIndexMap(pmp);
+		CPartFilterMap *ppfmResult = GPOS_NEW(pmp) CPartFilterMap(pmp);
+		CPartIndexMap *ppimReqd = pppsRequired->Ppim();
+		CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
 		
-	pdrgpul->Release();
+		DrgPul *pdrgpul = ppimReqd->PdrgpulScanIds(pmp);
+		
+		/// get derived part consumers
+		CPartInfo *ppartinfo = exprhdl.Pdprel(0)->Ppartinfo();
+		
+		const ULONG ulPartIndexSize = pdrgpul->UlLength();
+		
+		for (ULONG ul = 0; ul < ulPartIndexSize; ul++)
+		{
+			ULONG ulPartIndexId = *((*pdrgpul)[ul]);
+			
+			if (!ppartinfo->FContainsScanId(ulPartIndexId))
+			{
+				// part index id does not exist in child nodes: do not push it below
+				// the motion
+				continue;
+			}
+			
+			ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
+			(void) ppfmResult->FCopyPartFilter(m_pmp, ulPartIndexId, ppfmReqd);
+		}
+		
+		pdrgpul->Release();
+		
+		ppps = GPOS_NEW(pmp) CPartitionPropagationSpec(ppimResult, ppfmResult);
+		m_phmpp->FInsert(pppr, ppps);
+	}
+	else
+	{
+		pppr->Release();
+	}
+	
+    ppps->AddRef();
+    return ppps;
 
-	return GPOS_NEW(pmp) CPartitionPropagationSpec(ppimResult, ppfmResult);
 }
 
 //---------------------------------------------------------------------------
