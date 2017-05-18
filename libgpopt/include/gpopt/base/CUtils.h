@@ -942,6 +942,10 @@ namespace gpopt
 			static
 			CExpression *PexprCast(IMemoryPool *pmp, CMDAccessor *pmda, CExpression *pexpr, IMDId *pmdidDest);
 
+			// check whether the given expression is a cast of something
+			static
+			BOOL FScalarCast(CExpression *pexpr);
+
 			// check whether the given expression is a binary coercible cast of something
 			static
 			BOOL FBinaryCoercibleCast(CExpression *pexpr);

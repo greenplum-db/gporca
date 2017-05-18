@@ -808,7 +808,7 @@ CUtils::PexprScalarArrayChild
 	)
 {
 	CExpression *pexprArray = (*pexprScalarArrayCmp)[1];
-	if(FScalarArrayCoerce(pexprArray))
+	if(FScalarArrayCoerce(pexprArray) || FScalarCast(pexprArray))
 	{
 		pexprArray = (*pexprArray)[0];
 	}
@@ -5491,6 +5491,17 @@ CUtils::PexprCast
 
 	CScalarCast *popCast = GPOS_NEW(pmp) CScalarCast(pmp, pmdidDest, pmdcast->PmdidCastFunc(), pmdcast->FBinaryCoercible());
 	return GPOS_NEW(pmp) CExpression(pmp, popCast, pexpr);
+}
+
+// Check whether the given expression is a cast of something
+BOOL
+CUtils::FScalarCast
+	(
+	CExpression *pexpr
+	)
+{
+	GPOS_ASSERT(NULL != pexpr);
+	return (COperator::EopScalarCast == pexpr->Pop()->Eopid());
 }
 
 //---------------------------------------------------------------------------
