@@ -22,6 +22,8 @@
 
 #include "naucrates/exception.h"
 #include "naucrates/md/IMDIndex.h"
+#include "naucrates/md/CMDIdIndexType.h"
+#include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;
 
@@ -366,12 +368,16 @@ CTableDescriptor::FDescriptorWithPartialIndexes()
 
 	CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 	const IMDRelation *pmdrel = pmda->Pmdrel(m_pmdid);
+
 	for (ULONG ul = 0; ul < ulIndices; ul++)
 	{
 		const IMDIndex *pmdindex = NULL;
 		GPOS_TRY
 		{
-			pmdindex = pmda->Pmdindex(pmdrel->PmdidIndex(ul));
+			IMDId *pmdid = pmdrel->PmdidIndex(ul);
+			CMDIdIndexType *pmdidIndexType = CMDIdIndexType::PmdidConvert(pmdid);
+			pmdrel->FPartitioned() ? pmdidIndexType->FSetIndexType(CMDIdIndexType::EAggregate) : pmdidIndexType->FSetIndexType(CMDIdIndexType::ENonAggregate);
+			pmdindex = pmda->Pmdindex(CMDIdIndexType::PmdidConvert(pmdidIndexType));
 		}
 		GPOS_CATCH_EX(ex)
 		{

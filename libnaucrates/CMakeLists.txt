@@ -49,6 +49,8 @@ add_library(naucrates
             include/naucrates/statistics/IBucket.h
             include/naucrates/statistics/IStatistics.h
 
+	    include/naucrates/md/CMDIdIndexType.h
+	    src/md/CMDIdIndexType.cpp
             include/naucrates/dxl/CDXLUtils.h
             src/CDXLUtils.cpp
             include/naucrates/dxl/CIdGenerator.h
