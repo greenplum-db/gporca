@@ -33,6 +33,9 @@
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDType.h"
 #include "naucrates/statistics/CStatistics.h"
+#include "naucrates/base/IDatumInt2.h"
+#include "naucrates/base/IDatumInt4.h"
+#include "naucrates/base/IDatumInt8.h"
 
 #include "naucrates/traceflags/traceflags.h"
 
@@ -414,16 +417,62 @@ CExpressionPreprocessor::PexprRemoveSuperfluousLimit
 	// if current operator is a logical limit with zero offset, and no specified
 	// row count, skip to limit's logical child
 	if (COperator::EopLogicalLimit == pop->Eopid() &&
-			CUtils::FHasZeroOffset(pexpr) &&
-			!CLogicalLimit::PopConvert(pop)->FHasCount())
+			CUtils::FHasZeroOffset(pexpr)
+			)
 	{
-		CLogicalLimit *popLgLimit = CLogicalLimit::PopConvert(pop);
-		if (!popLgLimit->FTopLimitUnderDML() ||
-				(popLgLimit->FTopLimitUnderDML() && GPOS_FTRACE(EopttraceRemoveOrderBelowDML)))
+		if (!CLogicalLimit::PopConvert(pop)->FHasCount())
 		{
-			return PexprRemoveSuperfluousLimit(pmp, (*pexpr)[0]);
+			CLogicalLimit *popLgLimit = CLogicalLimit::PopConvert(pop);
+			if (!popLgLimit->FTopLimitUnderDML() ||
+					(popLgLimit->FTopLimitUnderDML() && GPOS_FTRACE(EopttraceRemoveOrderBelowDML)))
+			{
+				return PexprRemoveSuperfluousLimit(pmp, (*pexpr)[0]);
+			}
+		}
+		else if (COperator::EopLogicalConstTableGet == (*pexpr)[0]->Pop()->Eopid())
+		{
+			CExpression *pexprCTG = (*pexpr)[0];
+			CExpression *pexprLimitCount = (*pexpr)[2];
+			COperator *popCount = pexprLimitCount->Pop();
+
+			if (COperator::EopScalarConst == popCount->Eopid())
+			{
+				IDatum *pdatumCount = CScalarConst::PopConvert(popCount)->Pdatum();
+				if (!pdatumCount->FNull())
+				{
+					CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
+					IMDType::ETypeInfo eti = pmda->Pmdtype(pdatumCount->Pmdid())->Eti();
+
+					if ((IMDType::EtiInt2 == eti) || (IMDType::EtiInt4 == eti) || (IMDType::EtiInt8 == eti))
+					{
+						LINT lValue = 0;
+						if (IMDType::EtiInt2 == eti)
+						{
+							lValue = dynamic_cast<IDatumInt2 *>(pdatumCount)->SValue();
+						}
+						else if (IMDType::EtiInt4 == eti)
+						{
+							lValue = dynamic_cast<IDatumInt4 *>(pdatumCount)->IValue();
+						}
+						else
+						{
+							lValue = dynamic_cast<IDatumInt8 *>(pdatumCount)->LValue();
+						}
+
+						CLogicalConstTableGet *popCTG = CLogicalConstTableGet::PopConvert(pexprCTG->Pop());
+
+						if (lValue >= popCTG->Pdrgpdrgpdatum()->UlLength())
+						{
+							pexprCTG->AddRef();
+
+							return pexprCTG;
+						}
+					}
+				}
+			}
 		}
 	}
+
 
 	// recursively process children
 	const ULONG ulArity = pexpr->UlArity();
