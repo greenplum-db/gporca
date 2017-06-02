@@ -356,7 +356,10 @@ CCTEInfo::DeriveProducerStats
 	// for multi-threaded optimization two consumers can potentially try deriving
 	// stats on the producer at the same time, hence lock the mutex
 	CAutoMutex am(pcteinfoentry->m_mutex);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	// Given the subset of CTE consumer columns needed for statistics derivation,
 	// compute its corresponding set of columns in the CTE Producer
@@ -523,7 +526,11 @@ CCTEInfo::IncrementConsumers
 		// counter already exists - just increment it
 		// to be sure that no one else does this at the same time, lock the mutex
 		CAutoMutex am(pconsumercounter->m_mutex);
-		am.Lock();
+		if (GPOS_FTRACE(EopttraceParallel))
+		{
+			am.Lock();
+		}
+
 		pconsumercounter->Increment();
 	}
 }
@@ -632,7 +639,10 @@ CCTEInfo::AddConsumerCols
 	GPOS_ASSERT(NULL != pcteinfoentry);
 
 	CAutoMutex am(pcteinfoentry->m_mutex);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	pcteinfoentry->AddConsumerCols(pdrgpcr);
 }
@@ -659,7 +669,10 @@ CCTEInfo::UlConsumerColPos
 	GPOS_ASSERT(NULL != pcteinfoentry);
 
 	CAutoMutex am(pcteinfoentry->m_mutex);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	return pcteinfoentry->UlConsumerColPos(pcr);
 }

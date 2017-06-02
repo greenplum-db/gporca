@@ -1239,7 +1239,10 @@ CPhysicalJoin::PppsRequiredJoinChild
 	}
 
 	CAutoMutex am(m_mutexJoin);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	CPartitionPropagationSpec *ppps = m_phmpp->PtLookup(pppr);
 	if (NULL == ppps)

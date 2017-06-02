@@ -2882,7 +2882,11 @@ CStatistics::UlIndexUpperBoundNDVs
 {
 	GPOS_ASSERT(NULL != pcr);
  	CAutoMutex am(m_mutexCardUpperBoundAccess);
- 	am.Lock();
+
+ 	if (GPOS_FTRACE(EopttraceParallel))
+ 	{
+ 		am.Lock();
+ 	}
 
  	const ULONG ulLen = m_pdrgpubndvs->UlLength();
  	for (ULONG ul = 0; ul < ulLen; ul++)
@@ -2914,7 +2918,10 @@ CStatistics::AddCardUpperBound
 	GPOS_ASSERT(NULL != pubndv);
 
 	CAutoMutex am(m_mutexCardUpperBoundAccess);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	m_pdrgpubndvs->Append(pubndv);
 }
@@ -2972,7 +2979,10 @@ CStatistics::DUpperBoundNDVs
 	GPOS_ASSERT(NULL != pcr);
 
 	CAutoMutex am(m_mutexCardUpperBoundAccess);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	const ULONG ulLen = m_pdrgpubndvs->UlLength();
 	for (ULONG ul = 0; ul < ulLen; ul++)

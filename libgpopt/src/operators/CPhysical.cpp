@@ -82,7 +82,10 @@ CPhysical::UpdateOptRequests
 	GPOS_ASSERT(ulPropIndex < GPOPT_PLAN_PROPS);
 
 	CAutoMutex am(m_mutex);
-	am.Lock();
+	if (GPOS_FTRACE(EopttraceParallel))
+	{
+		am.Lock();
+	}
 
 	// update property requests
 	m_rgulOptReqs[ulPropIndex] = ulRequests;
@@ -560,7 +563,10 @@ CPhysical::PcrsChildReqd
 	{
 		// scope of AutoMutex
 		CAutoMutex am(m_mutex);
-		am.Lock();
+		if (GPOS_FTRACE(EopttraceParallel))
+		{
+			am.Lock();
+		}
 
 		// lookup required columns map first
 		pcrs = m_phmrcr->PtLookup(prcr);
@@ -588,7 +594,10 @@ CPhysical::PcrsChildReqd
 	{
 		// scope of AutoMutex
 		CAutoMutex am(m_mutex);
-		am.Lock();
+		if (GPOS_FTRACE(EopttraceParallel))
+		{
+			am.Lock();
+		}
 
 		CColRefSet *pcrsFound = m_phmrcr->PtLookup(prcr);
 		if (NULL != pcrsFound)
