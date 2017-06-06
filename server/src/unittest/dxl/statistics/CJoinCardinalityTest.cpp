@@ -297,7 +297,7 @@ CJoinCardinalityTest::PdrgpstatsjoinSingleJoinPredicate
 	)
 {
 	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 8));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 8, CStatisticsJoin::EjcaDefault));
 
 	return pdrgpstatsjoin;
 }
@@ -310,10 +310,10 @@ CJoinCardinalityTest::PdrgpstatsjoinMultiplePredicates
 	)
 {
 	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(16, CStatsPred::EstatscmptEq, 32));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 31));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(54, CStatsPred::EstatscmptEq, 32));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(53, CStatsPred::EstatscmptEq, 31));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(16, CStatsPred::EstatscmptEq, 32, CStatisticsJoin::EjcaDefault));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 31, CStatisticsJoin::EjcaDefault));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(54, CStatsPred::EstatscmptEq, 32, CStatisticsJoin::EjcaDefault));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(53, CStatsPred::EstatscmptEq, 31, CStatisticsJoin::EjcaDefault));
 
 	return pdrgpstatsjoin;
 }
@@ -326,7 +326,7 @@ CJoinCardinalityTest::PdrgpstatsjoinNullableCols
 	)
 {
 	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(1, CStatsPred::EstatscmptEq, 2));
+	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(1, CStatsPred::EstatscmptEq, 2, CStatisticsJoin::EjcaDefault));
 
 	return pdrgpstatsjoin;
 }

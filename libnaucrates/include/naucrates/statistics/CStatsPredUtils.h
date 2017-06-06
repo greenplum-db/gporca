@@ -16,6 +16,7 @@
 #include "gpopt/operators/CExpression.h"
 
 #include "naucrates/statistics/CStatsPred.h"
+#include "naucrates/statistics/CStatisticsJoin.h"
 
 namespace gpopt
 {
@@ -174,6 +175,9 @@ namespace gpopt
 				CStatsPred::EStatsCmpType *pescmpt,
 				const CColRef **pcr2
 				);
+
+			static
+			CStatisticsJoin::EJoinCardAlgorithm Ejca(const CColRef *pcr);
 
 		public:
 

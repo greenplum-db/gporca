@@ -1076,12 +1076,22 @@ CStatsPredUtils::PstatsjoinExtract
 
 		if (ULONG_MAX != ulIndexLeft && ULONG_MAX != ulIndexRight && ulIndexLeft != ulIndexRight)
 		{
-			if (ulIndexLeft < ulIndexRight)
+			CStatisticsJoin::EJoinCardAlgorithm ejca = CStatisticsJoin::EjcaDefault;
+
+			CStatisticsJoin::EJoinCardAlgorithm ejcaLeft = CStatsPredUtils::Ejca(pcrLeft);
+			CStatisticsJoin::EJoinCardAlgorithm ejcaRight = CStatsPredUtils::Ejca(pcrRight);
+
+			if (CStatisticsJoin::EjcaNDV == ejcaLeft || CStatisticsJoin::EjcaNDV == ejcaRight)
 			{
-				return GPOS_NEW(pmp) CStatisticsJoin(pcrLeft->UlId(), escmpt, pcrRight->UlId());
+				ejca = CStatisticsJoin::EjcaNDV;
 			}
 
-			return GPOS_NEW(pmp) CStatisticsJoin(pcrRight->UlId(), escmpt, pcrLeft->UlId());
+			if (ulIndexLeft < ulIndexRight)
+			{
+				return GPOS_NEW(pmp) CStatisticsJoin(pcrLeft->UlId(), escmpt, pcrRight->UlId(), ejca);
+			}
+
+			return GPOS_NEW(pmp) CStatisticsJoin(pcrRight->UlId(), escmpt, pcrLeft->UlId(), ejca);
 		}
 	}
 
@@ -1284,5 +1294,38 @@ CStatsPredUtils::FUnsupportedPredOnDefinedCol
 	return ((CStatsPred::EsptUnsupported == pstatspred->Espt()) && (ULONG_MAX == pstatspred->UlColId()));
 }
 
+CStatisticsJoin::EJoinCardAlgorithm
+CStatsPredUtils::Ejca
+	(
+	const CColRef *pcr
+	)
+{
+	IMDType::ETypeInfo eti = pcr->Pmdtype()->Eti();
+	if (IMDType::EtiInt2 == eti ||
+		IMDType::EtiInt4 == eti ||
+		IMDType::EtiInt8 == eti ||
+		IMDType::EtiBool == eti ||
+		IMDType::EtiOid == eti )
+	{
+		return CStatisticsJoin::EjcaDefault;
+	}
+
+	CStatisticsJoin::EJoinCardAlgorithm ejcaRes = CStatisticsJoin::EjcaNDV;
+	IDatum *pdatum = pcr->Pmdtype()->PdatumNull();
+
+	if (pdatum->FStatsMappable())
+	{
+		IDatumStatisticsMappable *pdatumMappable = (IDatumStatisticsMappable *) pdatum;
+
+		if (pdatumMappable->FHasStatsDoubleMapping())
+		{
+			ejcaRes = CStatisticsJoin::EjcaDefault;
+		}
+	}
+
+	pdatum->Release();
+
+	return ejcaRes;
+}
 
 // EOF

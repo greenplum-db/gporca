@@ -1613,7 +1613,7 @@ CStatisticsTest::EresUnittest_CStatisticsBasic()
 	CCardinalityTestUtils::PrintStats(pmp, pstats2);
 
 	// join pstats with pstats2
-	CStatisticsJoin *pstatsjoin = GPOS_NEW(pmp) CStatisticsJoin(2, CStatsPred::EstatscmptEq, 10);
+	CStatisticsJoin *pstatsjoin = GPOS_NEW(pmp) CStatisticsJoin(2, CStatsPred::EstatscmptEq, 10, CStatisticsJoin::EjcaDefault);
 	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
 	pdrgpstatsjoin->Append(pstatsjoin);
 	CStatistics *pstats3 = pstats->PstatsInnerJoin(pmp, pstats2, pdrgpstatsjoin);
