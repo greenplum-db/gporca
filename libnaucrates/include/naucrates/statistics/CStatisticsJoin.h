@@ -29,14 +29,6 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CStatisticsJoin : public CRefCount
 	{
-		public:
-			enum EJoinCardAlgorithm
-			{
-				EjcaDefault, // use histogram as well as total number of distinct values and its frequencies to determine join cardinality
-				EjcaNDV, // do not trust histogram boundaries, instead use total number of distinct values and its frequencies
-				EjcaGeneric // should be the last in this enum
-			};
-
 		private:
 
 			// private copy ctor
@@ -54,8 +46,6 @@ namespace gpnaucrates
 			// column id
 			ULONG m_ulColId2;
 
-			CStatisticsJoin::EJoinCardAlgorithm m_ejca;
-
 		public:
 
 			// c'tor
@@ -63,17 +53,13 @@ namespace gpnaucrates
 				(
 				ULONG ulColId1,
 				CStatsPred::EStatsCmpType escmpt,
-				ULONG ulColId2,
-				CStatisticsJoin::EJoinCardAlgorithm ejca
+				ULONG ulColId2
 				)
 				:
 				m_ulColId1(ulColId1),
 				m_escmpt(escmpt),
-				m_ulColId2(ulColId2),
-				m_ejca(ejca)
-			{
-				GPOS_ASSERT(EjcaGeneric != m_ejca);
-			}
+				m_ulColId2(ulColId2)
+			{}
 
 			// accessors
 			ULONG UlColId1() const
@@ -90,11 +76,6 @@ namespace gpnaucrates
 			ULONG UlColId2() const
 			{
 				return m_ulColId2;
-			}
-
-			CStatisticsJoin::EJoinCardAlgorithm Ejca() const
-			{
-				return m_ejca;
 			}
 
 			// d'tor
