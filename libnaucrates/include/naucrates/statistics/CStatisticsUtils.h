@@ -23,6 +23,7 @@
 #include "naucrates/statistics/CStatsPredUtils.h"
 #include "naucrates/statistics/CStatsPredDisj.h"
 #include "naucrates/statistics/CStatsPredUnsupported.h"
+
 #include "naucrates/base/IDatum.h"
 
 namespace gpopt
@@ -454,6 +455,10 @@ namespace gpnaucrates
 			// return the default column width
 			static
 			CDouble DDefaultColumnWidth(const IMDType *pmdtype);
+
+			// check if the join cardinality estimation can be done based on NDV alone
+			static
+			BOOL FNDVBasedJoinCardEstimation(const CHistogram *phist);
 
 	}; // class CStatisticsUtils
 

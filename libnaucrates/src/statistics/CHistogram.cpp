@@ -1318,6 +1318,51 @@ CHistogram::PhistJoinEquality
 	CDouble dFreqJoinBuckets1(0.0);
 	CDouble dFreqJoinBuckets2(0.0);
 
+	CDouble dDistinctRemain(0.0);
+	CDouble dFreqRemain(0.0);
+
+	BOOL fNDVBasedJoinCardEstimation1 = CStatisticsUtils::FNDVBasedJoinCardEstimation(this);
+	BOOL fNDVBasedJoinCardEstimation2 = CStatisticsUtils::FNDVBasedJoinCardEstimation(phist);
+
+	if (fNDVBasedJoinCardEstimation1 || fNDVBasedJoinCardEstimation2)
+	{
+		// compute the number of non-null distinct values in the input histograms
+		CDouble dNDV1 = this->DDistinct();
+		CDouble dFreqRemain1 = this->DFrequency();
+		if (CStatistics::DEpsilon < this->DNullFreq())
+		{
+			dNDV1 = dNDV1 - 1.0;
+			dFreqRemain1 = dFreqRemain1 - this->DNullFreq();
+		}
+
+		CDouble dNDV2 = phist->DDistinct();
+		CDouble dFreqRemain2 = phist->DFrequency();
+		if (CStatistics::DEpsilon < phist->DNullFreq())
+		{
+			dNDV2 = dNDV2 - 1.0;
+			dFreqRemain2 = dFreqRemain2 - this->DNullFreq();
+		}
+
+		// the estimated final number of distinct value for the join is the minimum of the non-null
+		// distinct values of the two inputs.
+		// Frequency follows the principle of used to estimate join scaling factor -- based on
+		// the maximum NDV of the two inputs
+		dDistinctRemain = std::min(dNDV1, dNDV2);
+		if (dDistinctRemain > CStatistics::DEpsilon)
+		{
+			dFreqRemain = dFreqRemain1 * dFreqRemain2 / std::max(dNDV1, dNDV2);
+		}
+
+		return GPOS_NEW(pmp) CHistogram
+								(
+								pdrgppbucketJoin,
+								true /*fWellDefined*/,
+								0.0 /*dNullFreq*/,
+								dDistinctRemain,
+								dFreqRemain
+								);
+	}
+
 	while (ul1 < ulBuckets1 && ul2 < ulBuckets2)
 	{
 		CBucket *pbucket1 = (*m_pdrgppbucket)[ul1];
@@ -1362,9 +1407,6 @@ CHistogram::PhistJoinEquality
 			ul2++;
 		}
 	}
-
-	CDouble dDistinctRemain = 0.0;
-	CDouble dFreqRemain = 0.0;
 
 	ComputeJoinNDVRemainInfo
 		(
