@@ -194,8 +194,7 @@ CJoinCardinalityTest::EresUnittest_Join()
 		{"../data/dxl/statistics/LOJ-Input.xml", "../data/dxl/statistics/LOJ-Output.xml", true, PdrgpstatsjoinNullableCols},
 		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-Only-Nulls.xml", false, PdrgpstatsjoinNullableCols},
 		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-LOJ-Only-Nulls.xml", true, PdrgpstatsjoinNullableCols},
-		// TODO:  - Sep 13, 2013 re-enable after dDistinct value is fixed in a cleaner way
-		// {"../data/dxl/statistics/Join-Statistics-DDistinct-Input.xml", "../data/dxl/statistics/Join-Statistics-DDistinct-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
+	    {"../data/dxl/statistics/Join-Statistics-DDistinct-Input.xml", "../data/dxl/statistics/Join-Statistics-DDistinct-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
 	};
 
 	const ULONG ulTestCases = GPOS_ARRAY_SIZE(rgstatsjointc);
