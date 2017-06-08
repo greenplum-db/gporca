@@ -195,6 +195,7 @@ CJoinCardinalityTest::EresUnittest_Join()
 		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-Only-Nulls.xml", false, PdrgpstatsjoinNullableCols},
 		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-LOJ-Only-Nulls.xml", true, PdrgpstatsjoinNullableCols},
 	    {"../data/dxl/statistics/Join-Statistics-DDistinct-Input.xml", "../data/dxl/statistics/Join-Statistics-DDistinct-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
+		{"../data/dxl/statistics/Join-Statistics-Text-Input.xml", "../data/dxl/statistics/Join-Statistics-Text-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
 	};
 
 	const ULONG ulTestCases = GPOS_ARRAY_SIZE(rgstatsjointc);
