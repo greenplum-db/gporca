@@ -145,6 +145,7 @@ namespace gpopt
 				EopLogicalLeftAntiSemiApplyNotIn,
 				EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
 				EopLogicalConstTableGet,
+				EopLogicalConstTableGetSingletonDistSpec,
 				EopLogicalDynamicGet,
 				EopLogicalDynamicIndexGet,
 				EopLogicalSequence,
@@ -260,6 +261,7 @@ namespace gpopt
 				EopPhysicalPartitionSelectorDML,
 				
 				EopPhysicalConstTableGet,
+				EopPhysicalConstTableGetSingletonDistSpec,
 				
 				EopPhysicalDML,
 				EopPhysicalSplit,

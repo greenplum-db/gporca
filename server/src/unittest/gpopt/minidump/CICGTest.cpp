@@ -92,6 +92,7 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/SelectCheckConstraint.mdp",
 		"../data/dxl/minidump/FullOuterJoin.mdp",
 		"../data/dxl/minidump/FullOuterJoin2.mdp",
+		"../data/dxl/minidump/FullOuterJoinConstTable.mdp",
 		"../data/dxl/minidump/AddEqualityPredicates.mdp",
 		"../data/dxl/minidump/AddPredsInSubqueries.mdp",
 		"../data/dxl/minidump/DeduplicatePredicates.mdp",

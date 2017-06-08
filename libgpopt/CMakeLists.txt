@@ -291,6 +291,8 @@ add_library(gpopt
             src/operators/CLogicalBitmapTableGet.cpp
             include/gpopt/operators/CLogicalConstTableGet.h
             src/operators/CLogicalConstTableGet.cpp
+            include/gpopt/operators/CLogicalConstTableGetSingletonDistSpec.h
+            src/operators/CLogicalConstTableGetSingletonDistSpec.cpp
             include/gpopt/operators/CLogicalCTEAnchor.h
             src/operators/CLogicalCTEAnchor.cpp
             include/gpopt/operators/CLogicalCTEConsumer.h
@@ -419,6 +421,8 @@ add_library(gpopt
             src/operators/CPhysicalComputeScalar.cpp
             include/gpopt/operators/CPhysicalConstTableGet.h
             src/operators/CPhysicalConstTableGet.cpp
+            include/gpopt/operators/CPhysicalConstTableGetSingletonDistSpec.h
+            src/operators/CPhysicalConstTableGetSingletonDistSpec.cpp
             include/gpopt/operators/CPhysicalCTEConsumer.h
             src/operators/CPhysicalCTEConsumer.cpp
             include/gpopt/operators/CPhysicalCTEProducer.h
@@ -719,6 +723,8 @@ add_library(gpopt
             src/xforms/CXformImplementBitmapTableGet.cpp
             include/gpopt/xforms/CXformImplementConstTableGet.h
             src/xforms/CXformImplementConstTableGet.cpp
+            include/gpopt/xforms/CXformImplementConstTableGetSingletonDistSpec.h
+            src/xforms/CXformImplementConstTableGetSingletonDistSpec.cpp
             include/gpopt/xforms/CXformImplementCTEConsumer.h
             src/xforms/CXformImplementCTEConsumer.cpp
             include/gpopt/xforms/CXformImplementCTEProducer.h
