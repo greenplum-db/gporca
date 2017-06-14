@@ -52,14 +52,7 @@ const CDouble CStatistics::DDefaultDistinctValues(1000.0);
 // the default value for operators that have no cardinality estimation risk
 const ULONG CStatistics::ulStatsEstimationNoRisk = 1;
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::CStatistics
-//
-//	@doc:
-//		Ctor
-//
-//---------------------------------------------------------------------------
+// ctor
 CStatistics::CStatistics
 	(
 	IMemoryPool *pmp,
@@ -89,14 +82,7 @@ CStatistics::CStatistics
 	m_pstatsconf = COptCtxt::PoctxtFromTLS()->Poconf()->Pstatsconf();
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::~CStatistics
-//
-//	@doc:
-//		Dtor
-//
-//---------------------------------------------------------------------------
+// Dtor
 CStatistics::~CStatistics()
 {
 	m_phmulhist->Release();
@@ -104,15 +90,7 @@ CStatistics::~CStatistics()
 	m_pdrgpubndvs->Release();
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PdWidth
-//
-//	@doc:
-//		Look up the width of a particular column
-//
-//---------------------------------------------------------------------------
+// look up the width of a particular column
 const CDouble *
 CStatistics::PdWidth
 	(
@@ -124,14 +102,7 @@ CStatistics::PdWidth
 }
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::CapNDVs
-//
-//	@doc:
-//		Cap the total number of distinct values (NDVs) in buckets to the number of rows
-//
-//---------------------------------------------------------------------------
+//	cap the total number of distinct values (NDVs) in buckets to the number of rows
 void
 CStatistics::CapNDVs
 	(
@@ -148,15 +119,7 @@ CStatistics::CapNDVs
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsFilter
-//
-//	@doc:
-//		Create new structure from a list of statistics filters
-//
-//---------------------------------------------------------------------------
+// create new structure from a list of statistics filters
 CStatistics *
 CStatistics::PstatsFilter
 	(
@@ -241,15 +204,7 @@ CStatistics::PstatsFilter
 	return pstatsFilter;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhistPointFilter
-//
-//	@doc:
-//		Create a new histograms after applying the point filter
-//
-//---------------------------------------------------------------------------
+// create a new histograms after applying the point filter
 CHistogram *
 CStatistics::PhistPointFilter
 	(
@@ -284,15 +239,7 @@ CStatistics::PhistPointFilter
 	return phistAfter;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhistLikeFilter
-//
-//	@doc:
-//		Create a new histograms after applying the LIKE filter
-//
-//---------------------------------------------------------------------------
+//	create a new histograms after applying the LIKE filter
 CHistogram *
 CStatistics::PhistLikeFilter
 	(
@@ -320,14 +267,7 @@ CStatistics::PhistLikeFilter
 	return phistAfter;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhmulhistApplyConjFilter
-//
-//	@doc:
-//		Create new hash map of histograms after applying conjunctive predicates
-//
-//---------------------------------------------------------------------------
+// create new hash map of histograms after applying conjunctive predicates
 HMUlHist *
 CStatistics::PhmulhistApplyConjFilter
 	(
@@ -476,15 +416,7 @@ CStatistics::PhmulhistApplyConjFilter
 	return phmulhistResult;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhmulhistApplyDisjFilter
-//
-//	@doc:
-//		Create new hash map of histograms after applying disjunctive predicates
-//
-//---------------------------------------------------------------------------
+// create new hash map of histograms after applying disjunctive predicates
 HMUlHist *
 CStatistics::PhmulhistApplyDisjFilter
 	(
@@ -674,16 +606,8 @@ CStatistics::PhmulhistApplyDisjFilter
 	return phmulhistResultDisj;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhmulhistApplyConjOrDisjFilter
-//
-//	@doc:
-//		Create a new hash map of histograms after applying a conjunctive
-//		or a disjunctive filter
-//
-//---------------------------------------------------------------------------
+// create a new hash map of histograms after applying a conjunctive
+// or a disjunctive filter
 HMUlHist *
 CStatistics::PhmulhistApplyConjOrDisjFilter
 	(
@@ -731,16 +655,8 @@ CStatistics::PhmulhistApplyConjOrDisjFilter
 	return phmulhistAfter;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhistSimpleFilter
-//
-//	@doc:
-//		Create a new histograms after applying the filter that is not
-//		an AND/OR predicate
-//
-//---------------------------------------------------------------------------
+//	create a new histograms after applying the filter that is not
+//	an AND/OR predicate
 CHistogram *
 CStatistics::PhistSimpleFilter
 	(
@@ -770,15 +686,7 @@ CStatistics::PhistSimpleFilter
 	return PhistUnsupportedPred(pmp, pstatspredUnsupported, pbsFilterColIds, phistBefore, pdScaleFactorLast, pulColIdLast);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhistUnsupportedPred
-//
-//	@doc:
-//		Create a new histograms for an unsupported predicate
-//
-//---------------------------------------------------------------------------
+//	create a new histograms for an unsupported predicate
 CHistogram *
 CStatistics::PhistUnsupportedPred
 	(
@@ -809,15 +717,7 @@ CStatistics::PhistUnsupportedPred
 	return phistAfter;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::OsPrint
-//
-//	@doc:
-//		Print function
-//
-//---------------------------------------------------------------------------
+// helper print function
 IOstream &
 CStatistics::OsPrint
 	(
@@ -860,30 +760,14 @@ CStatistics::OsPrint
 	return os;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DRows
-//
-//	@doc:
-//		Actual number of rows per statistics
-//
-//---------------------------------------------------------------------------
+//	return the total number of rows for this statistics object
 CDouble
 CStatistics::DRows() const
 {
 	return m_dRows;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DSkew
-//
-//	@doc:
-//		Skew estimate for given column
-//
-//---------------------------------------------------------------------------
+// return the estimated skew of the given column
 CDouble
 CStatistics::DSkew
 	(
@@ -900,14 +784,7 @@ CStatistics::DSkew
 	return phist->DSkew();
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DWidth
-//
-//	@doc:
-//		Width in bytes
-//
-//---------------------------------------------------------------------------
+// return total width in bytes
 CDouble
 CStatistics::DWidth() const
 {
@@ -921,14 +798,7 @@ CStatistics::DWidth() const
 	return dWidth.FpCeil();
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DWidth
-//
-//	@doc:
-//		Width in bytes of a set of columns
-//
-//---------------------------------------------------------------------------
+// return the width in bytes of a set of columns
 CDouble
 CStatistics::DWidth
 	(
@@ -960,15 +830,7 @@ CStatistics::DWidth
 	return dWidth.FpCeil();
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DWidth
-//
-//	@doc:
-//		Width in bytes of a set of columns
-//
-//---------------------------------------------------------------------------
+// return width in bytes of a set of columns
 CDouble
 CStatistics::DWidth
 	(
@@ -988,15 +850,7 @@ CStatistics::DWidth
 	return dWidth;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsDummy
-//
-//	@doc:
-//		Dummy statistics object
-//
-//---------------------------------------------------------------------------
+// return dummy statistics object
 CStatistics *
 CStatistics::PstatsDummy
 	(
@@ -1024,14 +878,7 @@ CStatistics::PstatsDummy
 	return pstats;
 }
 
-//---------------------------------------------------------------------------
-//      @function:
-//              CStatistics::CreateAndInsertUpperBoundNDVs
-//
-//      @doc:
-//              Add upper bound ndvs information for a given set of columns
-//
-//---------------------------------------------------------------------------
+// add upper bound ndvs information for a given set of columns
 void
 CStatistics::CreateAndInsertUpperBoundNDVs
 	(
@@ -1067,14 +914,7 @@ CStatistics::CreateAndInsertUpperBoundNDVs
 	}
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsDummy
-//
-//	@doc:
-//		Dummy stats object
-//
-//---------------------------------------------------------------------------
+//	return dummy statistics object
 CStatistics *
 CStatistics::PstatsDummy
 	(
@@ -1127,15 +967,7 @@ CStatistics::PstatsDummy
 	return pstats;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsJoinDriver
-//
-//	@doc:
-//		Main driver to generate join stats
-//
-//---------------------------------------------------------------------------
+// main driver to generate join stats
 CStatistics *
 CStatistics::PstatsJoinDriver
 	(
@@ -1274,14 +1106,7 @@ CStatistics::PstatsJoinDriver
 	return pstatsJoin;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::FEmptyJoinInput
-//
-//	@doc:
-//		Check if the input statistics from join statistics computation empty
-//
-//---------------------------------------------------------------------------
+//	check if the input statistics from join statistics computation empty
 BOOL
 CStatistics::FEmptyJoinInput
 	(
@@ -1302,15 +1127,8 @@ CStatistics::FEmptyJoinInput
 }
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::FEmptyJoinStats
-//
-//	@doc:
-//		Check if the join statistics object is empty output based on the input
-//		histograms and the join histograms
-//
-//---------------------------------------------------------------------------
+// check if the join statistics object is empty output based on the input
+// histograms and the join histograms
 BOOL
 CStatistics::FEmptyJoinStats
 	(
@@ -1331,14 +1149,7 @@ CStatistics::FEmptyJoinStats
 		   (!phistOuter->FEmpty() && !phistInner->FEmpty() && phistJoin->FEmpty());
 	}
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::DJoinCardinality
-//
-//	@doc:
-//		Return join cardinality based on scaling factor and join type
-//
-//---------------------------------------------------------------------------
+// return join cardinality based on scaling factor and join type
 CDouble
 CStatistics::DJoinCardinality
 	(
@@ -1379,15 +1190,7 @@ CStatistics::DJoinCardinality
 	return std::max(DMinRows.DVal(), (dCartesianProduct / dScaleFactor).DVal());
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsLOJ
-//
-//	@doc:
-//		Join with another stats structure
-//
-//---------------------------------------------------------------------------
+//	return statistics object after performing LOJ operation with another statistics structure
 CStatistics *
 CStatistics::PstatsLOJ
 	(
@@ -1451,16 +1254,8 @@ CStatistics::PstatsLOJ
 	return pstatsLOJ;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PhmulhistLOJ
-//
-//	@doc:
-//		Create a new hash map of histograms for LOJ from the histograms
-//		of the outer child and the histograms of the inner join
-//
-//---------------------------------------------------------------------------
+//	create a new hash map of histograms for LOJ from the histograms
+//	of the outer child and the histograms of the inner join
 HMUlHist *
 CStatistics::PhmulhistLOJ
 	(
@@ -1554,15 +1349,7 @@ CStatistics::PhmulhistLOJ
 	return phmulhistLOJ;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddHistogramLOJInner
-//
-//	@doc:
-//		Helper function to add histograms of the inner side of a LOJ
-//
-//---------------------------------------------------------------------------
+// helper function to add histograms of the inner side of a LOJ
 void
 CStatistics::AddHistogramsLOJInner
 	(
@@ -1604,15 +1391,7 @@ CStatistics::AddHistogramsLOJInner
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsLSJoin
-//
-//	@doc:
-//		Semi join with another stats structure
-//
-//---------------------------------------------------------------------------
+//	return statistics object after performing semi-join with another statistics structure
 CStatistics *
 CStatistics::PstatsLSJoin
 	(
@@ -1662,14 +1441,7 @@ CStatistics::PstatsLSJoin
 	return pstatsSemiJoin;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::LASJoinHistograms
-//
-//	@doc:
-//		Helper for LAS-joining histograms
-//
-//---------------------------------------------------------------------------
+// helper for LAS-joining histograms
 void
 CStatistics::LASJoinHistograms
 	(
@@ -1739,15 +1511,7 @@ CStatistics::LASJoinHistograms
 	*pphist2 = NULL;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::InnerJoinHistograms
-//
-//	@doc:
-//		Helper for inner-joining histograms
-//
-//---------------------------------------------------------------------------
+// helper for inner-joining histograms
 void
 CStatistics::InnerJoinHistograms
 	(
@@ -1839,15 +1603,7 @@ CStatistics::InnerJoinHistograms
 	*pphist2 = phist2->PhistCopy(pmp);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::JoinHistograms
-//
-//	@doc:
-//		Helper for joining histograms
-//
-//---------------------------------------------------------------------------
+// helper for joining histograms
 void
 CStatistics::JoinHistograms
 	(
@@ -1896,14 +1652,7 @@ CStatistics::JoinHistograms
 }
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsInnerJoin
-//
-//	@doc:
-//		Left anti semi join with another stats structure
-//
-//---------------------------------------------------------------------------
+// return statistics object after performing inner join
 CStatistics *
 CStatistics::PstatsInnerJoin
 	(
@@ -1926,15 +1675,7 @@ CStatistics::PstatsInnerJoin
 			);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsLASJoin
-//
-//	@doc:
-//		Left anti semi join with another stats structure
-//
-//---------------------------------------------------------------------------
+//		return statistics object after performing LASJ
 CStatistics *
 CStatistics::PstatsLASJoin
 	(
@@ -1958,15 +1699,7 @@ CStatistics::PstatsLASJoin
 			);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddDummyHistogramAndWidthInfo
-//
-//	@doc:
-//		Add dummy histogram buckets and column information for the array of columns
-//
-//---------------------------------------------------------------------------
+// add dummy histogram buckets and column information for the array of columns
 void
 CStatistics::AddDummyHistogramAndWidthInfo
 	(
@@ -2000,15 +1733,7 @@ CStatistics::AddDummyHistogramAndWidthInfo
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddEmptyHistogram
-//
-//	@doc:
-//		Add empty histogram for the columns in the input histogram
-//
-//---------------------------------------------------------------------------
+//	add empty histogram for the columns in the input histogram
 void
 CStatistics::AddEmptyHistogram
 	(
@@ -2031,15 +1756,7 @@ CStatistics::AddEmptyHistogram
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsGroupBy
-//
-//	@doc:
-//		Group by computation
-//
-//---------------------------------------------------------------------------
+// return statistics object after Group by computation
 CStatistics *
 CStatistics::PstatsGroupBy
 	(
@@ -2108,14 +1825,7 @@ CStatistics::PstatsGroupBy
 }
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsProject
-//
-//	@doc:
-//      Create a statistics object for a project operation
-//
-//---------------------------------------------------------------------------
+//  return a statistics object for a project operation
 CStatistics *
 CStatistics::PstatsProject
 	(
@@ -2232,15 +1942,7 @@ CStatistics::PstatsProject
 	return pstatsProject;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddNotExcludedHistograms
-//
-//	@doc:
-//		Helper method to copy stats on columns that are not excluded by bitset
-//
-//---------------------------------------------------------------------------
+//	helper method to copy statistics on columns that are not excluded by bitset
 void
 CStatistics::AddNotExcludedHistograms
 	(
@@ -2267,15 +1969,7 @@ CStatistics::AddNotExcludedHistograms
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddWidthInfo
-//
-//	@doc:
-//		Add width information
-//
-//---------------------------------------------------------------------------
+//	add width information
 void
 CStatistics::AddWidthInfo
 	(
@@ -2300,14 +1994,7 @@ CStatistics::AddWidthInfo
 	}
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddHistograms
-//
-//	@doc:
-//		Append given histograms to current object
-//
-//---------------------------------------------------------------------------
+// append given histograms to current object
 void
 CStatistics::AddHistograms
 	(
@@ -2325,14 +2012,7 @@ CStatistics::AddHistograms
 	}
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsUnionAll
-//
-//	@doc:
-//		Union all operation
-//
-//---------------------------------------------------------------------------
+// return statistics object after union all operation with input statistics object
 CStatistics *
 CStatistics::PstatsUnionAll
 	(
@@ -2429,14 +2109,7 @@ CStatistics::PstatsUnionAll
 	return pstatsUnionAll;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsLimit
-//
-//	@doc:
-//		Limit operation
-//
-//---------------------------------------------------------------------------
+//	compute the statistics of a limit operation
 CStatistics *
 CStatistics::PstatsLimit
 	(
@@ -2492,15 +2165,7 @@ CStatistics::PstatsLimit
 	return pstatsLimit;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::Prprel
-//
-//	@doc:
-//		Return required props associated with stats object
-//
-//---------------------------------------------------------------------------
+//	return required props associated with statistics object
 CReqdPropRelational *
 CStatistics::Prprel
 	(
@@ -2527,15 +2192,7 @@ CStatistics::Prprel
 	return GPOS_NEW(pmp) CReqdPropRelational(pcrs);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AppendStats
-//
-//	@doc:
-//		Append given stats to current object
-//
-//---------------------------------------------------------------------------
+// append given statistics to current object
 void
 CStatistics::AppendStats
 	(
@@ -2552,15 +2209,7 @@ CStatistics::AppendStats
 	GPOS_CHECK_ABORT;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsCopy
-//
-//	@doc:
-//		Copy stats object
-//
-//---------------------------------------------------------------------------
+// copy statistics object
 IStatistics *
 CStatistics::PstatsCopy
 	(
@@ -2571,14 +2220,7 @@ CStatistics::PstatsCopy
 	return PstatsScale(pmp, CDouble(1.0) /*dFactor*/);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsScale
-//
-//	@doc:
-//		Return a copy of this stats object scaled by a given factor
-//
-//---------------------------------------------------------------------------
+// return a copy of this statistics object scaled by a given factor
 IStatistics *
 CStatistics::PstatsScale
 	(
@@ -2621,14 +2263,7 @@ CStatistics::PstatsScale
 	return pstatsScaled;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PstatsCopyWithRemap
-//
-//	@doc:
-//		Copy stats object with remapped column ids
-//
-//---------------------------------------------------------------------------
+//	copy statistics object with re-mapped column ids
 IStatistics *
 CStatistics::PstatsCopyWithRemap
 	(
@@ -2676,15 +2311,8 @@ CStatistics::PstatsCopyWithRemap
 	return pstatsCopy;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::PdrgulColIds
-//
-//	@doc:
-//		Return the column identifiers of all columns whose statistics are
-//		maintained by the stats object
-//---------------------------------------------------------------------------
+//	return the column identifiers of all columns whose statistics are
+//	maintained by the statistics object
 DrgPul *
 CStatistics::PdrgulColIds
 	(
@@ -2704,16 +2332,7 @@ CStatistics::PdrgulColIds
 	return pdrgpul;
 }
 
-
-//
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::Pcrs
-//
-//	@doc:
-//		Return the set of column references we have stats for
-//
-//---------------------------------------------------------------------------
+// return the set of column references we have statistics for
 CColRefSet *
 CStatistics::Pcrs
 	(
@@ -2737,15 +2356,7 @@ CStatistics::Pcrs
 	return pcrs;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddHistogramsWithRemap
-//
-//	@doc:
-//		Append given histograms to current object where the column ids have been remapped
-//
-//---------------------------------------------------------------------------
+//	append given histograms to current object where the column ids have been re-mapped
 void
 CStatistics::AddHistogramsWithRemap
 	(
@@ -2776,15 +2387,7 @@ CStatistics::AddHistogramsWithRemap
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddWidthInfoWithRemap
-//
-//	@doc:
-//		Add width information where the column ids have been remapped
-//
-//---------------------------------------------------------------------------
+// add width information where the column ids have been re-mapped
 void
 CStatistics::AddWidthInfoWithRemap
 	(
@@ -2823,16 +2426,9 @@ CStatistics::AddWidthInfoWithRemap
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::ComputeCardUpperBounds
-//
-//	@doc:
-//		For the output stats object, compute its upper bound cardinality
-// 		mapping based on the bounding method estimated output cardinality
-//      and information maintained in the current stats object
-//---------------------------------------------------------------------------
+//	for the output statistics object, compute its upper bound cardinality
+// 	mapping based on the bounding method estimated output cardinality
+//  and information maintained in the current statistics object
 void
 CStatistics::ComputeCardUpperBounds
 	(
@@ -2866,14 +2462,7 @@ CStatistics::ComputeCardUpperBounds
 	}
 }
 
-
-//---------------------------------------------------------------------------
-//      @function:
-//              CStatistics::UlIndexUpperBoundNDVs
-//
-//      @doc:
-//              Return the index of the array of upper bound ndvs to which column reference belongs
-//---------------------------------------------------------------------------
+// return the index of the array of upper bound ndvs to which column reference belongs
 ULONG
 CStatistics::UlIndexUpperBoundNDVs
 (
@@ -2897,14 +2486,7 @@ CStatistics::UlIndexUpperBoundNDVs
 	return ULONG_MAX;
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::AddCardUpperBound
-//
-//	@doc:
-//		Add upper bound of source cardinality
-//---------------------------------------------------------------------------
+// add upper bound of source cardinality
 void
 CStatistics::AddCardUpperBound
 	(
@@ -2919,15 +2501,7 @@ CStatistics::AddCardUpperBound
 	m_pdrgpubndvs->Append(pubndv);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CStatistics::Pdxlstatsderrel
-//
-//	@doc:
-//		Return the dxl representation of the statistics object
-//
-//---------------------------------------------------------------------------
+// return the dxl representation of the statistics object
 CDXLStatsDerivedRelation *
 CStatistics::Pdxlstatsderrel
 	(
@@ -2954,15 +2528,7 @@ CStatistics::Pdxlstatsderrel
 	return GPOS_NEW(pmp) CDXLStatsDerivedRelation(m_dRows, FEmpty(), pdrgpdxlstatsdercol);
 }
 
-
-//---------------------------------------------------------------------------
-//      @function:
-//              CStatistics::DUpperBoundNDVs
-//
-//      @doc:
-//      Return the upper bound of ndvs for a column reference
-//
-//---------------------------------------------------------------------------
+// return the upper bound of ndvs for a column reference
 CDouble
 CStatistics::DUpperBoundNDVs
 	(
@@ -2988,14 +2554,7 @@ CStatistics::DUpperBoundNDVs
 }
 
 
-//---------------------------------------------------------------------------
-//      @function:
-//              CStatistics::DColumnDistinctValues
-//
-//      @doc:
-//      Look up the number of distinct values of a particular column
-//
-//---------------------------------------------------------------------------
+// look up the number of distinct values of a particular column
 CDouble
 CStatistics::DNDV
 	(
