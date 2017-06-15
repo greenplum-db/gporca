@@ -452,9 +452,6 @@
               <dxl:ProjElem ColId="1" Alias="year">
                 <dxl:Ident ColId="1" ColName="year" TypeMdid="0.23.1.0"/>
               </dxl:ProjElem>
-              <dxl:ProjElem ColId="9" Alias="ColRef_0009">
-                <dxl:PartOid Level="0"/>
-              </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:PartEqFilters>
               <dxl:Ident ColId="1" ColName="year" TypeMdid="0.23.1.0"/>

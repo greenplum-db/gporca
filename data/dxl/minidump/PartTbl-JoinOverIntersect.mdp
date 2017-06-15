@@ -1480,9 +1480,6 @@ select * from (select * from p1 intersect select * from p2) as p, tt where p.b=t
           <dxl:ProjElem ColId="19" Alias="b">
             <dxl:Ident ColId="19" ColName="b" TypeMdid="0.23.1.0"/>
           </dxl:ProjElem>
-          <dxl:ProjElem ColId="28" Alias="ColRef_0028">
-            <dxl:PartOid Level="0"/>
-          </dxl:ProjElem>
         </dxl:ProjList>
         <dxl:PartEqFilters>
           <dxl:Ident ColId="19" ColName="b" TypeMdid="0.23.1.0"/>
@@ -1526,9 +1523,6 @@ select * from (select * from p1 intersect select * from p2) as p, tt where p.b=t
               </dxl:ProjElem>
               <dxl:ProjElem ColId="19" Alias="b">
                 <dxl:Ident ColId="19" ColName="b" TypeMdid="0.23.1.0"/>
-              </dxl:ProjElem>
-              <dxl:ProjElem ColId="27" Alias="ColRef_0027">
-                <dxl:PartOid Level="0"/>
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:PartEqFilters>
