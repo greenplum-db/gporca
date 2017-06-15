@@ -456,10 +456,6 @@ namespace gpnaucrates
 			static
 			CDouble DDefaultColumnWidth(const IMDType *pmdtype);
 
-			// check if the join cardinality estimation can be done based on NDV alone
-			static
-			BOOL FNDVBasedJoinCardEstimation(const CHistogram *phist);
-
 	}; // class CStatisticsUtils
 
 	// comparison function for sorting MCVs

@@ -160,6 +160,10 @@ namespace gpnaucrates
 				return (ULONG_MAX == ulColId || ulColId != ulColIdLast);
 			}
 
+			// check if the cardinality estimation should be done only via NDVs
+			static
+			BOOL FNDVBasedCardEstimation(const CHistogram *phist);
+
 	}; // class CHistogramUtils
 }
 

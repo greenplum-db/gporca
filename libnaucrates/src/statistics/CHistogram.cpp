@@ -21,6 +21,7 @@
 #include "naucrates/statistics/CStatistics.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 #include "naucrates/statistics/CScaleFactorUtils.h"
+#include "naucrates/statistics/CHistogramUtils.h"
 
 #include "gpopt/base/CColRef.h"
 
@@ -1321,8 +1322,8 @@ CHistogram::PhistJoinEquality
 	CDouble dDistinctRemain(0.0);
 	CDouble dFreqRemain(0.0);
 
-	BOOL fNDVBasedJoinCardEstimation1 = CStatisticsUtils::FNDVBasedJoinCardEstimation(this);
-	BOOL fNDVBasedJoinCardEstimation2 = CStatisticsUtils::FNDVBasedJoinCardEstimation(phist);
+	BOOL fNDVBasedJoinCardEstimation1 = CHistogramUtils::FNDVBasedCardEstimation(this);
+	BOOL fNDVBasedJoinCardEstimation2 = CHistogramUtils::FNDVBasedCardEstimation(phist);
 
 	if (fNDVBasedJoinCardEstimation1 || fNDVBasedJoinCardEstimation2)
 	{
