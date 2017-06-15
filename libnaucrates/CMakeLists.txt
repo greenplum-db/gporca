@@ -804,6 +804,8 @@ add_library(naucrates
             src/statistics/CBucket.cpp
             include/naucrates/statistics/CHistogram.h
             src/statistics/CHistogram.cpp
+            include/naucrates/statistics/CHistogramUtils.h
+            src/statistics/CHistogramUtils.cpp
             include/naucrates/statistics/CPoint.h
             src/statistics/CPoint.cpp
             include/naucrates/statistics/CScaleFactorUtils.h
