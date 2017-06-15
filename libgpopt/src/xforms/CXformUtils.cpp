@@ -1296,13 +1296,22 @@ CXformUtils::PexprLogicalDMLOverProject
 	CColRef *pcrAction = NULL;
 	CColRef *pcrOid = NULL;
 
+	BOOL fInsertSortOnParquet = (!GPOS_FTRACE(EopttraceDisableSortForDMLOnParquet) && ptabdesc->Erelstorage() == IMDRelation::ErelstorageAppendOnlyParquet);
+
+	COptimizerConfig *poconf = COptCtxt::PoctxtFromTLS()->Poconf();
+	BOOL fInsertSortOnRows = (ptabdesc->Erelstorage() == IMDRelation::ErelstorageAppendOnlyRows) && (poconf->Phint()->UlMinNumOfPartsToRequireSortOnInsert() <= ptabdesc->UlPartitions());
+
+	BOOL fGeneratePartOid = fInsertSortOnParquet || fInsertSortOnRows;
+
 	if (ptabdesc->FPartitioned())
 	{
 		// generate a PartitionSelector node which generates OIDs, then add a project
 		// on top of that to add the action column
 		CExpression *pexprSelector = PexprLogicalPartitionSelector(pmp, ptabdesc, pdrgpcr, pexprChild);
-		pcrOid = CLogicalPartitionSelector::PopConvert(pexprSelector->Pop())->PcrOid();
-
+		if (fGeneratePartOid)
+		{
+			pcrOid = CLogicalPartitionSelector::PopConvert(pexprSelector->Pop())->PcrOid();
+		}
 		pexprProject = CUtils::PexprAddProjection(pmp, pexprSelector, CUtils::PexprScalarConstInt4(pmp, iVal));
 		CExpression *pexprPrL = (*pexprProject)[1];
 		pcrAction = CUtils::PcrFromProjElem((*pexprPrL)[0]);
@@ -1310,22 +1319,27 @@ CXformUtils::PexprLogicalDMLOverProject
 	else
 	{
 		DrgPexpr *pdrgpexprProjected = GPOS_NEW(pmp) DrgPexpr(pmp);
-		// generate one project node with two new columns: action, oid
+		// generate one project node with two new columns: action, oid (based on the traceflag)
 		pdrgpexprProjected->Append(CUtils::PexprScalarConstInt4(pmp, iVal));
 
-		OID oidTable = CMDIdGPDB::PmdidConvert(pmdidRel)->OidObjectId();
-		pdrgpexprProjected->Append(CUtils::PexprScalarConstOid(pmp, oidTable));
+		if (fGeneratePartOid)
+		{
+			OID oidTable = CMDIdGPDB::PmdidConvert(pmdidRel)->OidObjectId();
+			pdrgpexprProjected->Append(CUtils::PexprScalarConstOid(pmp, oidTable));
+		}
 
 		pexprProject = CUtils::PexprAddProjection(pmp, pexprChild, pdrgpexprProjected);
 		pdrgpexprProjected->Release();
 
 		CExpression *pexprPrL = (*pexprProject)[1];
 		pcrAction = CUtils::PcrFromProjElem((*pexprPrL)[0]);
-		pcrOid = CUtils::PcrFromProjElem((*pexprPrL)[1]);
+		if (GPOS_FTRACE(EopttraceDisableSortForDMLOnParquet))
+		{
+			pcrOid = CUtils::PcrFromProjElem((*pexprPrL)[1]);
+		}
 	}
 
 	GPOS_ASSERT(NULL != pcrAction);
-	GPOS_ASSERT(NULL != pcrOid);
 
 	if (FTriggersExist(edmlop, ptabdesc, true /*fBefore*/))
 	{
@@ -4866,6 +4880,5 @@ CXformUtils::PexprGbAggOnCTEConsumer2Join
 
 	return pexprJoin;
 }
-
 
 // EOF

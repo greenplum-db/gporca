@@ -29,6 +29,7 @@
 #include "gpopt/operators/ops.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
+#include "gpopt/optimizer/COptimizerConfig.h"
 
 // fwd declaration
 namespace gpnaucrates
@@ -824,6 +825,12 @@ namespace gpopt
 				CExpression *pexprRecheckCond,
 				CExpression *pexprScalar,
 				CColRefSet *pcrsReqdOutput // append the required column reference
+				);
+
+			// generate part oid
+			BOOL FGeneratePartOid
+				(
+				const IMDRelation *pmdrel
 				);
 	public:
 			// ctor

@@ -44,6 +44,8 @@
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 #include "gpopt/translate/CTranslatorExprToDXLUtils.h"
 
+#include "gpopt/optimizer/COptimizerConfig.h"
+
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/base/CDatumBoolGPDB.h"
 
@@ -4226,6 +4228,7 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorDML
 	CDXLNode *pdxlnChild = Pdxln(pexprChild, pdrgpcr, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, false /*fRemap*/, false /*fRoot*/);
 
 	// construct project list
+	const IMDRelation *pmdrel = m_pmda->Pmdrel(popSelector->Pmdid());
 	GPOS_ASSERT(1 <= pdxlnChild->UlArity());
 	CDXLNode *pdxlnPrL = CTranslatorExprToDXLUtils::PdxlnPrLPartitionSelector
 							(
@@ -4236,7 +4239,8 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorDML
 							true, //fUseChildProjList
 							(*pdxlnChild)[0],
 							popSelector->PcrOid(),
-							popSelector->UlPartLevels()
+							popSelector->UlPartLevels(),
+							FGeneratePartOid(pmdrel)
 							);
 
 	// translate filters
@@ -4380,6 +4384,7 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorExpand
 	CDXLNode *pdxlnChild = PdxlnPartitionSelectorChild(pexprChild, pexprScalarCond, pdxlprop, pdrgpcr, pdrgpdsBaseTables, pulNonGatherMotions, pfDML);
 
 	// project list
+	const IMDRelation *pmdrel = (IMDRelation *) m_pmda->Pmdrel(popSelector->Pmdid());
 	CDXLNode *pdxlnPrL = CTranslatorExprToDXLUtils::PdxlnPrLPartitionSelector
 							(
 							m_pmp,
@@ -4389,7 +4394,8 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorExpand
 							false, //fUseChildProjList
 							NULL, //pdxlnPrLchild
 							NULL, //pcrOid
-							ulLevels
+							ulLevels,
+							FGeneratePartOid(pmdrel)
 							);
 
 	// translate filters
@@ -4401,7 +4407,6 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorExpand
 	// construct propagation expression
 	CPartIndexMap *ppimDrvd = m_pdpplan->Ppim();
 	ULONG ulScanId = popSelector->UlScanId();
-	const IMDRelation *pmdrel = (IMDRelation *) m_pmda->Pmdrel(popSelector->Pmdid());
 	CDXLNode *pdxlnPropagation = CTranslatorExprToDXLUtils::PdxlnPropExprPartitionSelector
 									(
 									m_pmp,
@@ -4517,6 +4522,7 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorFilter
 	BOOL fNeedSequence = pdprel->Ppartinfo()->FContainsScanId(popSelector->UlScanId());
 
 	// project list
+	const IMDRelation *pmdrel = (IMDRelation *) m_pmda->Pmdrel(popSelector->Pmdid());
 	CDXLNode *pdxlnPrL = CTranslatorExprToDXLUtils::PdxlnPrLPartitionSelector
 							(
 							m_pmp,
@@ -4526,7 +4532,8 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorFilter
 							!fNeedSequence,
 							pdxlnPrLChild,
 							NULL /*pcrOid*/,
-							ulLevels
+							ulLevels,
+							FGeneratePartOid(pmdrel)
 							);
 
 	// translate filters
@@ -4536,7 +4543,6 @@ CTranslatorExprToDXL::PdxlnPartitionSelectorFilter
 	TranslatePartitionFilters(pexpr, fPassThrough, &pdxlnEqFilters, &pdxlnFilters, &pdxlnResidual);
 
 	// construct propagation expression
-	const IMDRelation *pmdrel = (IMDRelation *) m_pmda->Pmdrel(popSelector->Pmdid());
 	CDXLNode *pdxlnPropagation = CTranslatorExprToDXLUtils::PdxlnPropExprPartitionSelector
 									(
 									m_pmp,
@@ -5256,8 +5262,10 @@ CTranslatorExprToDXL::PdxlnDML
 	ulAction = pcrAction->UlId();
 
 	CColRef *pcrOid = popDML->PcrTableOid();
-	GPOS_ASSERT(NULL != pcrOid);
-	ulOid = pcrOid->UlId();
+	if (pcrOid != NULL)
+	{
+		ulOid = pcrOid->UlId();
+	}
 
 	CColRef *pcrCtid = popDML->PcrCtid();
 	CColRef *pcrSegmentId = popDML->PcrSegmentId();
@@ -7855,6 +7863,21 @@ CTranslatorExprToDXL::UlPosInArray
 	
 	// not found
 	return ulSize;
+}
+
+// generate part oid
+BOOL
+CTranslatorExprToDXL::FGeneratePartOid
+	(
+	const IMDRelation *pmdrel
+	)
+{
+	BOOL fInsertSortOnParquet = (!GPOS_FTRACE(EopttraceDisableSortForDMLOnParquet) && pmdrel->Erelstorage() == IMDRelation::ErelstorageAppendOnlyParquet);
+
+	COptimizerConfig *poconf = COptCtxt::PoctxtFromTLS()->Poconf();
+	BOOL fInsertSortOnRows = (pmdrel->Erelstorage() == IMDRelation::ErelstorageAppendOnlyRows) && (poconf->Phint()->UlMinNumOfPartsToRequireSortOnInsert() <= pmdrel->UlPartitions());
+
+	return fInsertSortOnParquet || fInsertSortOnRows;
 }
 
 // EOF
