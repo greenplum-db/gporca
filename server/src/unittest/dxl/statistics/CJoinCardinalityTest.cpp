@@ -189,13 +189,13 @@ CJoinCardinalityTest::EresUnittest_Join()
 
 	SStatsJoinSTestCase rgstatsjointc[] =
 	{
-		{"../data/dxl/statistics/Join-Statistics-Input.xml", "../data/dxl/statistics/Join-Statistics-Output.xml", false, PdrgpstatsjoinMultiplePredicates},
-		{"../data/dxl/statistics/Join-Statistics-Input-Null-Bucket.xml", "../data/dxl/statistics/Join-Statistics-Output-Null-Bucket.xml", false, PdrgpstatsjoinNullableCols},
-		{"../data/dxl/statistics/LOJ-Input.xml", "../data/dxl/statistics/LOJ-Output.xml", true, PdrgpstatsjoinNullableCols},
-		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-Only-Nulls.xml", false, PdrgpstatsjoinNullableCols},
-		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-LOJ-Only-Nulls.xml", true, PdrgpstatsjoinNullableCols},
-	    {"../data/dxl/statistics/Join-Statistics-DDistinct-Input.xml", "../data/dxl/statistics/Join-Statistics-DDistinct-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
-		{"../data/dxl/statistics/Join-Statistics-Text-Input.xml", "../data/dxl/statistics/Join-Statistics-Text-Output.xml", false, PdrgpstatsjoinSingleJoinPredicate},
+		{"../data/dxl/statistics/Join-Statistics-Input.xml", "../data/dxl/statistics/Join-Statistics-Output.xml", false, PdrgpstatspredjoinMultiplePredicates},
+		{"../data/dxl/statistics/Join-Statistics-Input-Null-Bucket.xml", "../data/dxl/statistics/Join-Statistics-Output-Null-Bucket.xml", false, PdrgpstatspredjoinNullableCols},
+		{"../data/dxl/statistics/LOJ-Input.xml", "../data/dxl/statistics/LOJ-Output.xml", true, PdrgpstatspredjoinNullableCols},
+		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-Only-Nulls.xml", false, PdrgpstatspredjoinNullableCols},
+		{"../data/dxl/statistics/Join-Statistics-Input-Only-Nulls.xml", "../data/dxl/statistics/Join-Statistics-Output-LOJ-Only-Nulls.xml", true, PdrgpstatspredjoinNullableCols},
+	    {"../data/dxl/statistics/Join-Statistics-DDistinct-Input.xml", "../data/dxl/statistics/Join-Statistics-DDistinct-Output.xml", false, PdrgpstatspredjoinSingleJoinPredicate},
+		{"../data/dxl/statistics/Join-Statistics-Text-Input.xml", "../data/dxl/statistics/Join-Statistics-Text-Output.xml", false, PdrgpstatspredjoinSingleJoinPredicate},
 	};
 
 	const ULONG ulTestCases = GPOS_ARRAY_SIZE(rgstatsjointc);
@@ -225,17 +225,17 @@ CJoinCardinalityTest::EresUnittest_Join()
 		// generate the join conditions
 		FnPdrgpstatjoin *pf = elem.m_pf;
 		GPOS_ASSERT(NULL != pf);
-		DrgPstatsjoin *pdrgpstatsjoin = pf(pmp);
+		DrgPstatspredjoin *pdrgpstatspredjoin = pf(pmp);
 
 		// calculate the output stats
 		CStatistics *pstatsOutput = NULL;
 		if (fLeftOuterJoin)
 		{
-			pstatsOutput = pstats1->PstatsLOJ(pmp, pstats2, pdrgpstatsjoin);
+			pstatsOutput = pstats1->PstatsLOJ(pmp, pstats2, pdrgpstatspredjoin);
 		}
 		else
 		{
-			pstatsOutput = pstats1->PstatsInnerJoin(pmp, pstats2, pdrgpstatsjoin);
+			pstatsOutput = pstats1->PstatsInnerJoin(pmp, pstats2, pdrgpstatspredjoin);
 		}
 		GPOS_ASSERT(NULL != pstatsOutput);
 
@@ -274,7 +274,7 @@ CJoinCardinalityTest::EresUnittest_Join()
 		// clean up
 		pdrgpstatBefore->Release();
 		pdrgpstatOutput->Release();
-		pdrgpstatsjoin->Release();
+		pdrgpstatspredjoin->Release();
 
 		GPOS_DELETE_ARRAY(szDXLInput);
 		GPOS_DELETE_ARRAY(szDXLOutput);
@@ -290,45 +290,45 @@ CJoinCardinalityTest::EresUnittest_Join()
 }
 
 //	helper method to generate a single join predicate
-DrgPstatsjoin *
-CJoinCardinalityTest::PdrgpstatsjoinSingleJoinPredicate
+DrgPstatspredjoin *
+CJoinCardinalityTest::PdrgpstatspredjoinSingleJoinPredicate
 	(
 	IMemoryPool *pmp
 	)
 {
-	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 8));
+	DrgPstatspredjoin *pdrgpstatspredjoin = GPOS_NEW(pmp) DrgPstatspredjoin(pmp);
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(0, CStatsPred::EstatscmptEq, 8));
 
-	return pdrgpstatsjoin;
+	return pdrgpstatspredjoin;
 }
 
 //	helper method to generate generate multiple join predicates
-DrgPstatsjoin *
-CJoinCardinalityTest::PdrgpstatsjoinMultiplePredicates
+DrgPstatspredjoin *
+CJoinCardinalityTest::PdrgpstatspredjoinMultiplePredicates
 	(
 	IMemoryPool *pmp
 	)
 {
-	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(16, CStatsPred::EstatscmptEq, 32));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(0, CStatsPred::EstatscmptEq, 31));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(54, CStatsPred::EstatscmptEq, 32));
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(53, CStatsPred::EstatscmptEq, 31));
+	DrgPstatspredjoin *pdrgpstatspredjoin = GPOS_NEW(pmp) DrgPstatspredjoin(pmp);
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(16, CStatsPred::EstatscmptEq, 32));
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(0, CStatsPred::EstatscmptEq, 31));
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(54, CStatsPred::EstatscmptEq, 32));
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(53, CStatsPred::EstatscmptEq, 31));
 
-	return pdrgpstatsjoin;
+	return pdrgpstatspredjoin;
 }
 
 // helper method to generate join predicate over columns that contain null values
-DrgPstatsjoin *
-CJoinCardinalityTest::PdrgpstatsjoinNullableCols
+DrgPstatspredjoin *
+CJoinCardinalityTest::PdrgpstatspredjoinNullableCols
 	(
 	IMemoryPool *pmp
 	)
 {
-	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(GPOS_NEW(pmp) CStatisticsJoin(1, CStatsPred::EstatscmptEq, 2));
+	DrgPstatspredjoin *pdrgpstatspredjoin = GPOS_NEW(pmp) DrgPstatspredjoin(pmp);
+	pdrgpstatspredjoin->Append(GPOS_NEW(pmp) CStatsPredJoin(1, CStatsPred::EstatscmptEq, 2));
 
-	return pdrgpstatsjoin;
+	return pdrgpstatspredjoin;
 }
 
 // EOF

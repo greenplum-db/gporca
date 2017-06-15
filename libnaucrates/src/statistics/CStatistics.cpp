@@ -462,7 +462,7 @@ CStatistics::PstatsJoinDriver
 	(
 	IMemoryPool *pmp,
 	const IStatistics *pistatsOther,
-	DrgPstatsjoin *pdrgpstatsjoin,
+	DrgPstatspredjoin *pdrgpstatspredjoin,
 	IStatistics::EStatsJoinType esjt,
 	BOOL fIgnoreLasjHistComputation
 	)
@@ -470,7 +470,7 @@ CStatistics::PstatsJoinDriver
 {
 	GPOS_ASSERT(NULL != pmp);
 	GPOS_ASSERT(NULL != pistatsOther);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 
 	BOOL fLASJ = (IStatistics::EsjtLeftAntiSemiJoin == esjt);
 	BOOL fSemiJoin = IStatistics::FSemiJoin(esjt);
@@ -482,9 +482,9 @@ CStatistics::PstatsJoinDriver
 
 	// build a bitset with all join columns
 	CBitSet *pbsJoinColIds = GPOS_NEW(pmp) CBitSet(pmp);
-	for (ULONG ul = 0; ul < pdrgpstatsjoin->UlLength(); ul++)
+	for (ULONG ul = 0; ul < pdrgpstatspredjoin->UlLength(); ul++)
 	{
-		CStatisticsJoin *pstatsjoin = (*pdrgpstatsjoin)[ul];
+		CStatsPredJoin *pstatsjoin = (*pdrgpstatspredjoin)[ul];
 		(void) pbsJoinColIds->FExchangeSet(pstatsjoin->UlColId1());
 		if (!fSemiJoin)
 		{
@@ -501,13 +501,13 @@ CStatistics::PstatsJoinDriver
 	}
 
 	DrgPdouble *pdrgpd = GPOS_NEW(pmp) DrgPdouble(pmp);
-	const ULONG ulJoinConds = pdrgpstatsjoin->UlLength();
+	const ULONG ulJoinConds = pdrgpstatspredjoin->UlLength();
 
 	BOOL fEmptyOutput = false;
 	// iterate over joins
 	for (ULONG ul = 0; ul < ulJoinConds; ul++)
 	{
-		CStatisticsJoin *pstatsjoin = (*pdrgpstatsjoin)[ul];
+		CStatsPredJoin *pstatsjoin = (*pdrgpstatspredjoin)[ul];
 		ULONG ulColId1 = pstatsjoin->UlColId1();
 		ULONG ulColId2 = pstatsjoin->UlColId2();
 
@@ -685,14 +685,14 @@ CStatistics::PstatsLOJ
 	(
 	IMemoryPool *pmp,
 	const IStatistics *pstatsOther,
-	DrgPstatsjoin *pdrgpstatsjoin
+	DrgPstatspredjoin *pdrgpstatspredjoin
 	)
 	const
 {
 	GPOS_ASSERT(NULL != pstatsOther);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 
-	CStatistics *pstatsInnerJoin = PstatsInnerJoin(pmp, pstatsOther, pdrgpstatsjoin);
+	CStatistics *pstatsInnerJoin = PstatsInnerJoin(pmp, pstatsOther, pdrgpstatspredjoin);
 	CDouble dRowsInnerJoin = pstatsInnerJoin->DRows();
 	CDouble dRowsLASJ(1.0);
 
@@ -706,7 +706,7 @@ CStatistics::PstatsLOJ
 								this,
 								pstatsInnerSide,
 								pstatsInnerJoin,
-								pdrgpstatsjoin,
+								pdrgpstatspredjoin,
 								dRowsInnerJoin,
 								&dRowsLASJ
 								);
@@ -752,21 +752,21 @@ CStatistics::PhmulhistLOJ
 	const CStatistics *pstatsOuter,
 	const CStatistics *pstatsInner,
 	CStatistics *pstatsInnerJoin,
-	DrgPstatsjoin *pdrgpstatsjoin,
+	DrgPstatspredjoin *pdrgpstatspredjoin,
 	CDouble dRowsInnerJoin,
 	CDouble *pdRowsLASJ
 	)
 {
 	GPOS_ASSERT(NULL != pstatsOuter);
 	GPOS_ASSERT(NULL != pstatsInner);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 	GPOS_ASSERT(NULL != pstatsInnerJoin);
 
 	// build a bitset with all outer child columns contributing to the join
 	CBitSet *pbsOuterJoinCol = GPOS_NEW(pmp) CBitSet(pmp);
-	for (ULONG ul1 = 0; ul1 < pdrgpstatsjoin->UlLength(); ul1++)
+	for (ULONG ul1 = 0; ul1 < pdrgpstatspredjoin->UlLength(); ul1++)
 	{
-		CStatisticsJoin *pstatsjoin = (*pdrgpstatsjoin)[ul1];
+		CStatsPredJoin *pstatsjoin = (*pdrgpstatspredjoin)[ul1];
 		(void) pbsOuterJoinCol->FExchangeSet(pstatsjoin->UlColId1());
 	}
 
@@ -775,7 +775,7 @@ CStatistics::PhmulhistLOJ
 											(
 											pmp,
 											pstatsInner,
-											pdrgpstatsjoin,
+											pdrgpstatspredjoin,
 											false /* fIgnoreLasjHistComputation */
 											);
 	CDouble dRowsLASJ(0.0);
@@ -886,20 +886,20 @@ CStatistics::PstatsLSJoin
 	(
 	IMemoryPool *pmp,
 	const IStatistics *pstatsInner,
-	DrgPstatsjoin *pdrgpstatsjoin
+	DrgPstatspredjoin *pdrgpstatspredjoin
 	)
 	const
 {
 	GPOS_ASSERT(NULL != pstatsInner);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 
-	const ULONG ulLen = pdrgpstatsjoin->UlLength();
+	const ULONG ulLen = pdrgpstatspredjoin->UlLength();
 
 	// iterate over all inner columns and perform a group by to remove duplicates
 	DrgPul *pdrgpulInnerColumnIds = GPOS_NEW(pmp) DrgPul(pmp);
 	for (ULONG ul = 0; ul < ulLen; ul++)
 	{
-		ULONG ulInnerColId = ((*pdrgpstatsjoin)[ul])->UlColId2();
+		ULONG ulInnerColId = ((*pdrgpstatspredjoin)[ul])->UlColId2();
 		pdrgpulInnerColumnIds->Append(GPOS_NEW(pmp) ULONG(ulInnerColId));
 	}
 
@@ -917,7 +917,7 @@ CStatistics::PstatsLSJoin
 									(
 									pmp,
 									pstatsInnerNoDups,
-									pdrgpstatsjoin,
+									pdrgpstatspredjoin,
 									IStatistics::EsjtLeftSemiJoin /* esjt */,
 									true /* fIgnoreLasjHistComputation */
 									);
@@ -937,7 +937,7 @@ CStatistics::LASJoinHistograms
 	IMemoryPool *pmp,
 	CHistogram *phist1,
 	CHistogram *phist2,
-	CStatisticsJoin *pstatsjoin,
+	CStatsPredJoin *pstatsjoin,
 	CDouble dRows1,
 	CDouble ,//dRows2,
 	CHistogram **pphist1, // output: histogram 1 after join
@@ -1007,7 +1007,7 @@ CStatistics::InnerJoinHistograms
 	IMemoryPool *pmp,
 	CHistogram *phist1,
 	CHistogram *phist2,
-	CStatisticsJoin *pstatsjoin,
+	CStatsPredJoin *pstatsjoin,
 	CDouble dRows1,
 	CDouble dRows2,
 	CHistogram **pphist1, // output: histogram 1 after join
@@ -1099,7 +1099,7 @@ CStatistics::JoinHistograms
 	IMemoryPool *pmp,
 	CHistogram *phist1,
 	CHistogram *phist2,
-	CStatisticsJoin *pstatsjoin,
+	CStatsPredJoin *pstatsjoin,
 	CDouble dRows1,
 	CDouble dRows2,
 	BOOL fLASJ, // if true, use anti-semi join semantics, otherwise use inner join semantics
@@ -1147,18 +1147,18 @@ CStatistics::PstatsInnerJoin
 	(
 	IMemoryPool *pmp,
 	const IStatistics *pistatsOther,
-	DrgPstatsjoin *pdrgpstatsjoin
+	DrgPstatspredjoin *pdrgpstatspredjoin
 	)
 	const
 {
 	GPOS_ASSERT(NULL != pistatsOther);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 
 	return PstatsJoinDriver
 			(
 			pmp,
 			pistatsOther,
-			pdrgpstatsjoin,
+			pdrgpstatspredjoin,
 			IStatistics::EsjtInnerJoin /* esjt */,
 			true /* fIgnoreLasjHistComputation */
 			);
@@ -1170,19 +1170,19 @@ CStatistics::PstatsLASJoin
 	(
 	IMemoryPool *pmp,
 	const IStatistics *pistatsOther,
-	DrgPstatsjoin *pdrgpstatsjoin,
+	DrgPstatspredjoin *pdrgpstatspredjoin,
 	BOOL fIgnoreLasjHistComputation
 	)
 	const
 {
 	GPOS_ASSERT(NULL != pistatsOther);
-	GPOS_ASSERT(NULL != pdrgpstatsjoin);
+	GPOS_ASSERT(NULL != pdrgpstatspredjoin);
 
 	return PstatsJoinDriver
 			(
 			pmp,
 			pistatsOther,
-			pdrgpstatsjoin,
+			pdrgpstatspredjoin,
 			IStatistics::EsjtLeftAntiSemiJoin /* esjt */,
 			fIgnoreLasjHistComputation
 			);

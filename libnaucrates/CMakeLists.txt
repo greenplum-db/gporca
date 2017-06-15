@@ -44,7 +44,7 @@ add_library(naucrates
             include/naucrates/md/IMDTypeInt4.h
             include/naucrates/md/IMDTypeInt8.h
             include/naucrates/md/IMDTypeOid.h
-            include/naucrates/statistics/CStatisticsJoin.h
+            include/naucrates/statistics/CStatsPredJoin.h
             include/naucrates/statistics/CStatsPred.h
             include/naucrates/statistics/IBucket.h
             include/naucrates/statistics/IStatistics.h

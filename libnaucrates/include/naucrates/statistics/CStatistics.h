@@ -123,7 +123,7 @@ namespace gpnaucrates
 							(
 							IMemoryPool *pmp,
 							const IStatistics *pistatsOther,
-							DrgPstatsjoin *pdrgpstatsjoin,
+							DrgPstatspredjoin *pdrgpstatspredjoin,
 							IStatistics::EStatsJoinType ejst,
 							BOOL fIgnoreLasjHistComputation
 							)
@@ -141,7 +141,7 @@ namespace gpnaucrates
 						const CStatistics *pstatsOuter,
 						const CStatistics *pstatsInner,
 						CStatistics *pstatsInnerJoin,
-						DrgPstatsjoin *pdrgpstatsjoin,
+						DrgPstatspredjoin *pdrgpstatspredjoin,
 						CDouble dRowsInnerJoin,
 						CDouble *pdRowsLASJ
 						);
@@ -177,7 +177,7 @@ namespace gpnaucrates
 				IMemoryPool *pmp,
 				CHistogram *phist1,
 				CHistogram *phist2,
-				CStatisticsJoin *pstatsjoin,
+				CStatsPredJoin *pstatsjoin,
 				CDouble dRows1,
 				CDouble dRows2,
 				CHistogram **pphist1, // output: histogram 1 after join
@@ -193,7 +193,7 @@ namespace gpnaucrates
 				IMemoryPool *pmp,
 				CHistogram *phist1,
 				CHistogram *phist2,
-				CStatisticsJoin *pstatsjoin,
+				CStatsPredJoin *pstatsjoin,
 				CDouble dRows1,
 				CDouble dRows2,
 				CHistogram **pphist1, // output: histogram 1 after join
@@ -210,7 +210,7 @@ namespace gpnaucrates
 				IMemoryPool *pmp,
 				CHistogram *phist1,
 				CHistogram *phist2,
-				CStatisticsJoin *pstatsjoin,
+				CStatsPredJoin *pstatsjoin,
 				CDouble dRows1,
 				CDouble dRows2,
 				BOOL fLASJ, // if true, use anti-semi join semantics, otherwise use inner join semantics
@@ -338,11 +338,11 @@ namespace gpnaucrates
 
 			// inner join with another stats structure
 			virtual
-			CStatistics *PstatsInnerJoin(IMemoryPool *pmp, const IStatistics *pistatsOther, DrgPstatsjoin *pdrgpstatsjoin) const;
+			CStatistics *PstatsInnerJoin(IMemoryPool *pmp, const IStatistics *pistatsOther, DrgPstatspredjoin *pdrgpstatspredjoin) const;
 
 			// LOJ with another stats structure
 			virtual
-			CStatistics *PstatsLOJ(IMemoryPool *pmp, const IStatistics *pistatsOther, DrgPstatsjoin *pdrgpstatsjoin) const;
+			CStatistics *PstatsLOJ(IMemoryPool *pmp, const IStatistics *pistatsOther, DrgPstatspredjoin *pdrgpstatspredjoin) const;
 
 			// left anti semi join with another stats structure
 			virtual
@@ -350,14 +350,14 @@ namespace gpnaucrates
 							(
 							IMemoryPool *pmp,
 							const IStatistics *pstatsOther,
-							DrgPstatsjoin *pdrgpstatsjoin,
+							DrgPstatspredjoin *pdrgpstatspredjoin,
 							BOOL fIgnoreLasjHistComputation // except for the case of LOJ cardinality estimation this flag is always
                                                             // "true" since LASJ stats computation is very aggressive
 							) const;
 
 			// semi join stats computation
 			virtual
-			CStatistics *PstatsLSJoin(IMemoryPool *pmp, const IStatistics *pstatsInner, DrgPstatsjoin *pdrgpstatsjoin) const;
+			CStatistics *PstatsLSJoin(IMemoryPool *pmp, const IStatistics *pstatsInner, DrgPstatspredjoin *pdrgpstatspredjoin) const;
 
 			// group by
 			virtual

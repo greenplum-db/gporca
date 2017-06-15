@@ -1613,10 +1613,10 @@ CStatisticsTest::EresUnittest_CStatisticsBasic()
 	CCardinalityTestUtils::PrintStats(pmp, pstats2);
 
 	// join pstats with pstats2
-	CStatisticsJoin *pstatsjoin = GPOS_NEW(pmp) CStatisticsJoin(2, CStatsPred::EstatscmptEq, 10);
-	DrgPstatsjoin *pdrgpstatsjoin = GPOS_NEW(pmp) DrgPstatsjoin(pmp);
-	pdrgpstatsjoin->Append(pstatsjoin);
-	CStatistics *pstats3 = pstats->PstatsInnerJoin(pmp, pstats2, pdrgpstatsjoin);
+	CStatsPredJoin *pstatspredjoin = GPOS_NEW(pmp) CStatsPredJoin(2, CStatsPred::EstatscmptEq, 10);
+	DrgPstatspredjoin *pdrgpstatspredjoin = GPOS_NEW(pmp) DrgPstatspredjoin(pmp);
+	pdrgpstatspredjoin->Append(pstatspredjoin);
+	CStatistics *pstats3 = pstats->PstatsInnerJoin(pmp, pstats2, pdrgpstatspredjoin);
 
 	GPOS_TRACE(GPOS_WSZ_LIT("pstats3 = pstats JOIN pstats2 on (col2 = col10)"));
 	// after stats
@@ -1634,7 +1634,7 @@ CStatisticsTest::EresUnittest_CStatisticsBasic()
 	CCardinalityTestUtils::PrintStats(pmp, pstats4);
 
 	// LASJ stats
-	CStatistics *pstats5 = pstats->PstatsLASJoin(pmp, pstats2, pdrgpstatsjoin, true /* fIgnoreLasjHistComputation */);
+	CStatistics *pstats5 = pstats->PstatsLASJoin(pmp, pstats2, pdrgpstatspredjoin, true /* fIgnoreLasjHistComputation */);
 
 	GPOS_TRACE(GPOS_WSZ_LIT("pstats5 = pstats LASJ pstats2 on (col2 = col10)"));
 	CCardinalityTestUtils::PrintStats(pmp, pstats5);
@@ -1666,7 +1666,7 @@ CStatisticsTest::EresUnittest_CStatisticsBasic()
 	pstats6->Release();
 	pstats7->Release();
 	pstatspred->Release();
-	pdrgpstatsjoin->Release();
+	pdrgpstatspredjoin->Release();
 	pdrgpulGC->Release();
 	pdrgpulAgg->Release();
 	pdrgpulColIds->Release();

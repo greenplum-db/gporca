@@ -42,9 +42,6 @@ namespace gpnaucrates
 	class CStatisticsTest
 	{
 
-		// shorthand for functions for generating the join predicates
-		typedef DrgPstatsjoin *(FnPdrgpstatjoin)(IMemoryPool *pmp);
-
 		// shorthand for functions for generating the disjunctive filter predicates
 		typedef CStatsPred *(FnPstatspredDisj)(IMemoryPool *pmp);
 
