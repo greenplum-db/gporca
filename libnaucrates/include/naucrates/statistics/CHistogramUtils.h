@@ -52,14 +52,14 @@ namespace gpnaucrates
 			// add dummy histogram buckets and column width for the array of columns
 			static
 			void AddDummyHistogramAndWidthInfo
-					(
-					IMemoryPool *pmp,
-					CColumnFactory *pcf,
-					HMUlHist *phmulhistOutput,
-					HMUlDouble *phmuldoubleWidthOutput,
-					const DrgPul *pdrgpul,
-					BOOL fEmpty
-					);
+				(
+				IMemoryPool *pmp,
+				CColumnFactory *pcf,
+				HMUlHist *phmulhistOutput,
+				HMUlDouble *phmuldoubleWidthOutput,
+				const DrgPul *pdrgpul,
+				BOOL fEmpty
+				);
 
 			// add dummy histogram buckets for the columns in the input histogram
 			static
@@ -68,26 +68,26 @@ namespace gpnaucrates
 			// create a new histogram after applying the filter that is not an AND/OR predicate
 			static
 			CHistogram *PhistSimpleFilter
-					(
-					IMemoryPool *pmp,
-					CStatsPred *pstatspred,
-					CBitSet *pbsFilterColIds,
-					CHistogram *phistBefore,
-					CDouble *pdScaleFactorLast,
-					ULONG *pulColIdLast
-					);
+				(
+				IMemoryPool *pmp,
+				CStatsPred *pstatspred,
+				CBitSet *pbsFilterColIds,
+				CHistogram *phistBefore,
+				CDouble *pdScaleFactorLast,
+				ULONG *pulColIdLast
+				);
 
 			// create a new histogram after applying a point filter
 			static
 			CHistogram *PhistPointFilter
-					(
-					IMemoryPool *pmp,
-					CStatsPredPoint *pstatspred,
-					CBitSet *pbsFilterColIds,
-					CHistogram *phistBefore,
-					CDouble *pdScaleFactorLast,
-					ULONG *pulColIdLast
-					);
+				(
+				IMemoryPool *pmp,
+				CStatsPredPoint *pstatspred,
+				CBitSet *pbsFilterColIds,
+				CHistogram *phistBefore,
+				CDouble *pdScaleFactorLast,
+				ULONG *pulColIdLast
+				);
 
 			// create a new histogram after applying a LIKE filter
 			static
@@ -128,26 +128,26 @@ namespace gpnaucrates
 			// create new hash map of histograms after applying the conjunction predicate
 			static
 			HMUlHist *PhmulhistApplyConjFilter
-						(
-						IMemoryPool *pmp,
-						CStatisticsConfig *pstatsconf,
-						HMUlHist *phmulhistIntermediate,
-						CDouble dRowsInput,
-						CStatsPredConj *pstatspredConj,
-						CDouble *pdScaleFactor
-						);
+				(
+				IMemoryPool *pmp,
+				CStatisticsConfig *pstatsconf,
+				HMUlHist *phmulhistIntermediate,
+				CDouble dRowsInput,
+				CStatsPredConj *pstatspredConj,
+				CDouble *pdScaleFactor
+				);
 
 			// create new hash map of histograms after applying the disjunctive predicate
 			static
 			HMUlHist *PhmulhistApplyDisjFilter
-						(
-						IMemoryPool *pmp,
-						CStatisticsConfig *pstatsconf,
-						HMUlHist *phmulhistInput,
-						CDouble dRowsInput,
-						CStatsPredDisj *pstatspred,
-						CDouble *pdScaleFactor
-						);
+				(
+				IMemoryPool *pmp,
+				CStatisticsConfig *pstatsconf,
+				HMUlHist *phmulhistInput,
+				CDouble dRowsInput,
+				CStatsPredDisj *pstatspred,
+				CDouble *pdScaleFactor
+				);
 
 			// check if the column is a new column for statistic calculation
 			static

@@ -44,26 +44,26 @@ namespace gpnaucrates
 			// create an integer bucket with the provider upper/lower bound, frequency and NDV information
 			static
 			CBucket *PbucketInteger
-						(
-						IMemoryPool *pmp,
-						INT iLower,
-						INT iUpper,
-						BOOL fLowerClosed,
-						BOOL fUpperClosed,
-						CDouble dFrequency,
-						CDouble dDistinct
-						);
+				(
+				IMemoryPool *pmp,
+				INT iLower,
+				INT iUpper,
+				BOOL fLowerClosed,
+				BOOL fUpperClosed,
+				CDouble dFrequency,
+				CDouble dDistinct
+				);
 
 			// helper function to generate integer histogram based on the NDV and bucket information provided
 			static
 			CHistogram* PhistInt4Remain
-						(
-						IMemoryPool *pmp,
-						ULONG ulBuckets,
-						CDouble dNDVPerBucket,
-						BOOL fNullFreq,
-						CDouble dNDVRemain
-						);
+				(
+				IMemoryPool *pmp,
+				ULONG ulBuckets,
+				CDouble dNDVPerBucket,
+				BOOL fNullFreq,
+				CDouble dNDVRemain
+				);
 
 			// helper function to generate an example integer histogram
 			static
