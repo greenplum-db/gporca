@@ -1330,26 +1330,36 @@ CHistogram::PhistJoinEquality
 		// compute the number of non-null distinct values in the input histograms
 		CDouble dNDV1 = this->DDistinct();
 		CDouble dFreqRemain1 = this->DFrequency();
-		if (CStatistics::DEpsilon < this->DNullFreq())
+		CDouble dNullFreq1 = this->DNullFreq();
+		if (CStatistics::DEpsilon < dNullFreq1)
 		{
-			dNDV1 = dNDV1 - 1.0;
-			dFreqRemain1 = dFreqRemain1 - this->DNullFreq();
+			dNDV1 = std::max(CDouble(0.0), (dNDV1 - 1.0));
+			dFreqRemain1 = dFreqRemain1 - dNullFreq1;
 		}
 
 		CDouble dNDV2 = phist->DDistinct();
 		CDouble dFreqRemain2 = phist->DFrequency();
+		CDouble dNullFreq2 = phist->DNullFreq();
 		if (CStatistics::DEpsilon < phist->DNullFreq())
 		{
-			dNDV2 = dNDV2 - 1.0;
-			dFreqRemain2 = dFreqRemain2 - this->DNullFreq();
+			dNDV2 = std::max(CDouble(0.0), (dNDV2 - 1.0));
+			dFreqRemain2 = dFreqRemain2 - dNullFreq2;
 		}
 
-		// the estimated final number of distinct value for the join is the minimum of the non-null
+		// the estimated number of distinct value is the minimum of the non-null
 		// distinct values of the two inputs.
-		// Frequency follows the principle of used to estimate join scaling factor -- based on
-		// the maximum NDV of the two inputs
 		dDistinctRemain = std::min(dNDV1, dNDV2);
-		if (dDistinctRemain > CStatistics::DEpsilon)
+
+		// the frequency of a tuple in this histogram (with frequency dFreqRemain1) joining with
+		// a tuple in another relation (with frequency dFreqRemain2) is a product of the two frequencies divided by
+		// the maximum NDV of the two inputs
+
+		// Example: consider two relations A and B with 10 tuples each. Let both relations have no nulls.
+		// Let A have 2 distinct values, while B have 5 distinct values. Under uniform distribution of NDVs
+		// for statistics purposes we can view A = (1,2,1,2,1,2,1,2,1,2) and B = (1,2,3,4,5,1,2,3,4,5)
+		// Join Cardinality is 20, with frequency of the join tuple being 0.2 (since cartesian product is 100).
+		// dFreqRemain1 = dFreqRemain2 = 1, and std::max(dNDV1, dNDV2) = 5. Therefore dFreqRemain = 1/5 = 0.2
+		if (CStatistics::DEpsilon < dDistinctRemain)
 		{
 			dFreqRemain = dFreqRemain1 * dFreqRemain2 / std::max(dNDV1, dNDV2);
 		}

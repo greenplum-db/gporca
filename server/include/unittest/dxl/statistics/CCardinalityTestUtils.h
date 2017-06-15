@@ -33,9 +33,9 @@ namespace gpnaucrates
 	{
 		public:
 
-			// create a bucket with closed integer bounds
+			// create a bucket with integer bounds, and lower bound is closed
 			static
-			CBucket *PbucketClosedIntegerBound(IMemoryPool *pmp, INT iLower, INT iUpper, CDouble, CDouble);
+			CBucket *PbucketIntegerClosedLowerBound(IMemoryPool *pmp, INT iLower, INT iUpper, CDouble, CDouble);
 
 			// create a singleton bucket containing a boolean value
 			static

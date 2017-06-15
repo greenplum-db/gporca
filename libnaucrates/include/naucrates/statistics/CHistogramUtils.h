@@ -151,14 +151,7 @@ namespace gpnaucrates
 
 			// check if the column is a new column for statistic calculation
 			static
-			BOOL FNewStatsColumn
-					(
-					ULONG ulColId,
-					ULONG ulColIdLast
-					)
-			{
-				return (ULONG_MAX == ulColId || ulColId != ulColIdLast);
-			}
+			BOOL FNewStatsColumn(ULONG ulColId, ULONG ulColIdLast);
 
 			// check if the cardinality estimation should be done only via NDVs
 			static

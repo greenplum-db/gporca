@@ -656,6 +656,16 @@ CHistogramUtils::FNDVBasedCardEstimation
 	return fRes;
 }
 
+// check if the column is a new column for statistic calculation
+BOOL
+CHistogramUtils::FNewStatsColumn
+	(
+	ULONG ulColId,
+	ULONG ulColIdLast
+	)
+{
+	return (ULONG_MAX == ulColId || ulColId != ulColIdLast);
+}
 
 // EOF
 

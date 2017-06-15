@@ -350,7 +350,7 @@ CStatisticsTest::EresUnittest_CBucketInt4()
 	CPoint *ppoint3 = CTestUtils::PpointInt4(pmp, 3);
 
 	// bucket [1,1]
-	CBucket *pbucket1 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 1, 1, CDouble(1.0), CDouble(1.0));
+	CBucket *pbucket1 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 1, 1, CDouble(1.0), CDouble(1.0));
 	CCardinalityTestUtils::PrintBucket(pmp, "b1", pbucket1);
 
 	GPOS_RTL_ASSERT_MSG(pbucket1->FContains(ppoint1), "[1,1] must contain 1");
@@ -360,7 +360,7 @@ CStatisticsTest::EresUnittest_CBucketInt4()
 	GPOS_RTL_ASSERT_MSG(!pbucket1->FContains(ppoint2), "[1,1] must not contain 2");
 
 	// bucket [1,3)
-	CBucket *pbucket2 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 1, 3, CDouble(1.0), CDouble(10.0));
+	CBucket *pbucket2 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 1, 3, CDouble(1.0), CDouble(10.0));
 	CCardinalityTestUtils::PrintBucket(pmp, "b2", pbucket2);
 
 	// overlap of [1,2) w.r.t [1,3) should be about 50%
@@ -692,7 +692,7 @@ CStatisticsTest::EresUnittest_CBucketScale()
 	CPoint *ppoint1 = CTestUtils::PpointInt4(pmp, 10);
 
 	// bucket [1,100)
-	CBucket *pbucket1 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 1, 100, CDouble(0.5), CDouble(20.0));
+	CBucket *pbucket1 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 1, 100, CDouble(0.5), CDouble(20.0));
 
 	CBucket *pbucket2 = pbucket1->PbucketScaleUpper(pmp, ppoint1, false /* fIncludeUpper */);
 
@@ -742,13 +742,13 @@ CStatisticsTest::EresUnittest_CBucketDifference()
 	IMemoryPool *pmp = amp.Pmp();
 
 	// bucket [1,100)
-	CBucket *pbucket1 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 1, 100, CDouble(1.0), CDouble(1.0));
+	CBucket *pbucket1 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 1, 100, CDouble(1.0), CDouble(1.0));
 
 	// bucket [50,75)
-	CBucket *pbucket2 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 50, 60, CDouble(1.0), CDouble(1.0));
+	CBucket *pbucket2 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 50, 60, CDouble(1.0), CDouble(1.0));
 
 	// bucket [200, 300)
-	CBucket *pbucket3 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 200, 300, CDouble(1.0), CDouble(1.0));
+	CBucket *pbucket3 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 200, 300, CDouble(1.0), CDouble(1.0));
 
 	CBucket *pbucket4 = NULL;
 	CBucket *pbucket5 = NULL;
@@ -940,7 +940,7 @@ CStatisticsTest::PhistExampleInt4Remain
 		INT iUpper = iLower;
 		CDouble dFrequency(0.1);
 		CDouble dDistinct(1.0);
-		CBucket *pbucket = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
+		CBucket *pbucket = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
 		pdrgppbucket->Append(pbucket);
 	}
 
@@ -969,7 +969,7 @@ CStatisticsTest::PhistExampleInt4Dim
 		INT iUpper = iLower + INT(10);
 		CDouble dFrequency(0.1);
 		CDouble dDistinct(10.0);
-		CBucket *pbucket = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
+		CBucket *pbucket = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
 		pdrgppbucket->Append(pbucket);
 	}
 
@@ -2461,9 +2461,9 @@ CStatisticsTest::EresUnittest_CHistogramValid()
 	DrgPbucket *pdrgppbucket = GPOS_NEW(pmp) DrgPbucket(pmp);
 
 	// generate histogram of the form [0, 10), [9, 20)
-	CBucket *pbucket1 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 0, 10, 0.1, 2.0);
+	CBucket *pbucket1 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 0, 10, 0.1, 2.0);
 	pdrgppbucket->Append(pbucket1);
-	CBucket *pbucket2 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 9, 20, 0.1, 2.0);
+	CBucket *pbucket2 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 9, 20, 0.1, 2.0);
 	pdrgppbucket->Append(pbucket2);
 
 	// original histogram
@@ -2659,14 +2659,14 @@ CStatisticsTest::EresUnittest_Skew()
 	CAutoMemoryPool amp;
 	IMemoryPool *pmp = amp.Pmp();
 
-	CBucket *pbucket1 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 1, 100, CDouble(0.6), CDouble(100.0));
-	CBucket *pbucket2 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 101, 200, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket3 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 201, 300, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket4 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 301, 400, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket5 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 401, 500, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket6 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 501, 600, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket7 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 601, 700, CDouble(0.2), CDouble(100.0));
-	CBucket *pbucket8 = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 701, 800, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket1 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 1, 100, CDouble(0.6), CDouble(100.0));
+	CBucket *pbucket2 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 101, 200, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket3 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 201, 300, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket4 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 301, 400, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket5 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 401, 500, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket6 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 501, 600, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket7 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 601, 700, CDouble(0.2), CDouble(100.0));
+	CBucket *pbucket8 = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 701, 800, CDouble(0.2), CDouble(100.0));
 
 	DrgPbucket *pdrgppbucket1 = GPOS_NEW(pmp) DrgPbucket(pmp);
 	pdrgppbucket1->Append(pbucket1);

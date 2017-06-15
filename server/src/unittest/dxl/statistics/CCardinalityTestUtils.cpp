@@ -30,7 +30,7 @@
 
 // create a bucket with closed integer bounds
 CBucket *
-CCardinalityTestUtils::PbucketClosedIntegerBound
+CCardinalityTestUtils::PbucketIntegerClosedLowerBound
 	(
 	IMemoryPool *pmp,
 	INT iLower,
@@ -47,17 +47,8 @@ CCardinalityTestUtils::PbucketClosedIntegerBound
 	{
 		fUpperClosed = true;
 	}
-	CBucket *pbucket = GPOS_NEW(pmp) CBucket
-									(
-									ppLower,
-									ppUpper,
-									true /* fLowerClosed */,
-									fUpperClosed,
-									dFrequency,
-									dDistinct
-									);
 
-	return pbucket;
+	return GPOS_NEW(pmp) CBucket(ppLower, ppUpper, true /* fLowerClosed */, fUpperClosed, dFrequency, dDistinct);
 }
 
 // create an integer bucket with the provider upper/lower bound, frequency and NDV information
@@ -76,17 +67,7 @@ CCardinalityTestUtils::PbucketInteger
 	CPoint *ppLower = CTestUtils::PpointInt4(pmp, iLower);
 	CPoint *ppUpper = CTestUtils::PpointInt4(pmp, iUpper);
 
-	CBucket *pbucket = GPOS_NEW(pmp) CBucket
-									(
-									ppLower,
-									ppUpper,
-									fLowerClosed,
-									fUpperClosed,
-									dFrequency,
-									dDistinct
-									);
-
-	return pbucket;
+	return GPOS_NEW(pmp) CBucket(ppLower, ppUpper, fLowerClosed, fUpperClosed, dFrequency, dDistinct);
 }
 
 // create a singleton bucket containing a boolean value
@@ -102,17 +83,7 @@ CCardinalityTestUtils::PbucketSingletonBoolVal
 
 	// lower bound is also upper bound
 	ppLower->AddRef();
-	CBucket *pbucket = GPOS_NEW(pmp) CBucket
-									(
-									ppLower,
-									ppLower,
-									true /* fClosedUpper */,
-									true /* fClosedUpper */,
-									dFrequency,
-									1.0
-									);
-
-	return pbucket;
+	return GPOS_NEW(pmp) CBucket(ppLower, ppLower, true /* fClosedUpper */, true /* fClosedUpper */, dFrequency, 1.0);
 }
 
 // helper function to generate integer histogram based on the NDV and bucket information provided
@@ -134,7 +105,7 @@ CCardinalityTestUtils::PhistInt4Remain
 		INT iUpper = INT((ulIdx + 1) * 100);
 		CDouble dFrequency(0.1);
 		CDouble dDistinct = dNDVPerBucket;
-		CBucket *pbucket = PbucketClosedIntegerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
+		CBucket *pbucket = PbucketIntegerClosedLowerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
 		pdrgppbucket->Append(pbucket);
 	}
 
@@ -170,12 +141,12 @@ CCardinalityTestUtils::PhistExampleInt4
 		INT iUpper = iLower + INT(10);
 		CDouble dFrequency(0.1);
 		CDouble dDistinct(4.0);
-		CBucket *pbucket = CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
+		CBucket *pbucket = CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, iLower, iUpper, dFrequency, dDistinct);
 		pdrgppbucket->Append(pbucket);
 	}
 
 	// add an additional singleton bucket [100, 100]
-	pdrgppbucket->Append(CCardinalityTestUtils::PbucketClosedIntegerBound(pmp, 100, 100, 0.1, 1.0));
+	pdrgppbucket->Append(CCardinalityTestUtils::PbucketIntegerClosedLowerBound(pmp, 100, 100, 0.1, 1.0));
 
 	return  GPOS_NEW(pmp) CHistogram(pdrgppbucket);
 }
