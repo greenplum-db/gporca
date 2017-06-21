@@ -50,6 +50,7 @@ const CCostModelGPDB::SCostMapping CCostModelGPDB::m_rgcm[] =
 	{COperator::EopPhysicalCTEProducer, CostCTEProducer},
 	{COperator::EopPhysicalCTEConsumer, CostCTEConsumer},
 	{COperator::EopPhysicalConstTableGet, CostConstTableGet},
+	{COperator::EopPhysicalConstTableGetSingletonDistSpec, CostConstTableGet},
 	{COperator::EopPhysicalDML, CostDML},
 
 	{COperator::EopPhysicalHashAgg, CostHashAgg},
@@ -490,7 +491,8 @@ CCostModelGPDB::CostConstTableGet
 {
 	GPOS_ASSERT(NULL != pcmgpdb);
 	GPOS_ASSERT(NULL != pci);
-	GPOS_ASSERT(COperator::EopPhysicalConstTableGet == exprhdl.Pop()->Eopid());
+	GPOS_ASSERT(COperator::EopPhysicalConstTableGet == exprhdl.Pop()->Eopid() ||
+				COperator::EopPhysicalConstTableGetSingletonDistSpec == exprhdl.Pop()->Eopid());
 
 	return CCost(pci->DRebinds() * CostTupleProcessing(pci->DRows(), pci->DWidth(), pcmgpdb->Pcp()).DVal());
 }

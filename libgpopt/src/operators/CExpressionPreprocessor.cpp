@@ -993,6 +993,77 @@ CExpressionPreprocessor::PexprProjBelowSubquery
 
 //---------------------------------------------------------------------------
 //	@function:
+//		CExpressionPreprocessor::PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec
+//
+//	@doc:
+//		Replace ConstTableGet with ConstTableGetSingletonDistSpec if its
+//      below Full Outer Join. During Full Outer Join Xform processing, the
+//      Child Expression are pushed under CTE Producer and in case of constant
+//      table since the distribution spec is universal we may try to pull up the
+//      inner child to the master but the Producer may not be in master so we may
+//      result in a wrong plan
+//---------------------------------------------------------------------------
+CExpression *
+CExpressionPreprocessor::PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec
+(
+	IMemoryPool *pmp,
+	CExpression *pexpr,
+	BOOL fFoundFullOuterJoin
+)
+{
+	// protect against stack overflow during recursion
+	GPOS_CHECK_STACK_SIZE;
+	GPOS_ASSERT(NULL != pmp);
+	GPOS_ASSERT(NULL != pexpr);
+	
+	
+	
+	COperator *pop = pexpr->Pop();
+	const ULONG ulArity = pexpr->UlArity();
+	
+	if (pop->Eopid() == COperator::EopLogicalFullOuterJoin && !fFoundFullOuterJoin)
+	{
+		fFoundFullOuterJoin = true;
+		DrgPexpr *pdrgpexprChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
+		for (ULONG ul = 0; ul < ulArity; ul++)
+		{
+			CExpression *pexprChild = PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec(pmp, (*pexpr)[ul], fFoundFullOuterJoin);
+			pdrgpexprChildren->Append(pexprChild);
+		}
+		
+		pop->AddRef();
+		fFoundFullOuterJoin = false;
+		return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexprChildren);
+	}
+	
+	if (pop->Eopid() == COperator::EopLogicalConstTableGet && fFoundFullOuterJoin)
+	{
+		// replace const table get
+		CLogicalConstTableGet *popCTG = CLogicalConstTableGet::PopConvert(pop);
+		
+		DrgPcoldesc *pdrgpcoldesc = popCTG->Pdrgpcoldesc();
+		pdrgpcoldesc->AddRef();
+		DrgPdrgPdatum *pdrgpdrgpdatum = popCTG->Pdrgpdrgpdatum();
+		pdrgpdrgpdatum->AddRef();
+		COperator *popCTGBelowCTE = GPOS_NEW(pmp) CLogicalConstTableGetSingletonDistSpec(pmp, pdrgpcoldesc, pdrgpdrgpdatum);
+		
+		return GPOS_NEW(pmp) CExpression(pmp, popCTGBelowCTE);
+	}
+	
+	// current operator is not a full outer join, recursively process children
+	DrgPexpr *pdrgpexprChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
+	for (ULONG ul = 0; ul < ulArity; ul++)
+	{
+		CExpression *pexprChild = PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec(pmp, (*pexpr)[ul], fFoundFullOuterJoin);
+		pdrgpexprChildren->Append(pexprChild);
+	}
+	
+	pop->AddRef();
+	return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexprChildren);
+}
+
+//---------------------------------------------------------------------------
+//	@function:
 //		CExpressionPreprocessor::PexprCollapseUnionUnionAll
 //
 //	@doc:
@@ -2353,7 +2424,12 @@ CExpressionPreprocessor::PexprPreprocess
 	GPOS_CHECK_ABORT;
 	pexprCollapsedProjects->Release();
 
-	return pexprSubquery;
+	// (24) replace constant table get with a different version of constant with replicated distribution if its under full outer join
+	CExpression *pexprReplacedConstTblGet = PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec(pmp, pexprSubquery, false);
+	GPOS_CHECK_ABORT;
+	pexprSubquery->Release();
+
+	return pexprReplacedConstTblGet;
 }
 
 // EOF

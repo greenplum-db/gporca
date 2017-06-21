@@ -30,18 +30,20 @@ namespace gpopt
 	{
 
 		private:
-
+			
+			// private copy ctor
+			CPhysicalConstTableGet(const CPhysicalConstTableGet &);
+			
+		protected:
+		
 			// array of column descriptors: the schema of the const table
 			DrgPcoldesc *m_pdrgpcoldesc;
-		
+
 			// array of datum arrays
 			DrgPdrgPdatum *m_pdrgpdrgpdatum;
 			
 			// output columns
 			DrgPcr *m_pdrgpcrOutput;
-			
-			// private copy ctor
-			CPhysicalConstTableGet(const CPhysicalConstTableGet &);
 
 		public:
 		
@@ -299,7 +301,8 @@ namespace gpopt
 				)
 			{
 				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalConstTableGet == pop->Eopid());
+				GPOS_ASSERT(EopPhysicalConstTableGet == pop->Eopid() ||
+							EopPhysicalConstTableGetSingletonDistSpec == pop->Eopid());
 				
 				return dynamic_cast<CPhysicalConstTableGet*>(pop);
 			}

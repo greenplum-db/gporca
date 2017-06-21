@@ -31,6 +31,10 @@ namespace gpopt
 	{
 
 		private:
+			// private copy ctor
+			CLogicalConstTableGet(const CLogicalConstTableGet &);
+		
+		protected:
 			// array of column descriptors: the schema of the const table
 			DrgPcoldesc *m_pdrgpcoldesc;
 		
@@ -39,10 +43,7 @@ namespace gpopt
 			
 			// output columns
 			DrgPcr *m_pdrgpcrOutput;
-			
-			// private copy ctor
-			CLogicalConstTableGet(const CLogicalConstTableGet &);
-			
+		
 			// construct column descriptors from column references
 			DrgPcoldesc *PdrgpcoldescMapping(IMemoryPool *pmp, DrgPcr *pdrgpcr)	const;
 

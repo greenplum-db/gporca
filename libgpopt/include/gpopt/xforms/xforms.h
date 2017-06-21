@@ -25,6 +25,7 @@
 #include "gpopt/xforms/CXformSelect2PartialDynamicIndexGet.h"
 #include "gpopt/xforms/CXformImplementSequence.h"
 #include "gpopt/xforms/CXformImplementConstTableGet.h"
+#include "gpopt/xforms/CXformImplementConstTableGetSingletonDistSpec.h"
 #include "gpopt/xforms/CXformUnnestTVF.h"
 #include "gpopt/xforms/CXformImplementTVF.h"
 #include "gpopt/xforms/CXformImplementTVFNoArgs.h"

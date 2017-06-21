@@ -129,6 +129,10 @@ namespace gpopt
 			static
 			CExpression *PexprProjBelowSubquery(IMemoryPool *pmp, CExpression *pexpr, BOOL fUnderPrList);
 
+			// replace constant table get with a different version of constant table object having replicated distribution spec
+			static
+			CExpression *PexprReplaceConstTblGetWithConstTblGetSingletonDistSpec(IMemoryPool *pmp, CExpression *pexpr, BOOL fFoundFullOuterJoin);
+
 			// collapse cascaded union/union all into an NAry union/union all operator
 			static
 			CExpression *PexprCollapseUnionUnionAll(IMemoryPool *pmp, CExpression *pexpr);
