@@ -66,7 +66,6 @@ CPhysicalDML::CPhysicalDML
 	GPOS_ASSERT(NULL != pdrgpcrSource);
 	GPOS_ASSERT(NULL != pbsModified);
 	GPOS_ASSERT(NULL != pcrAction);
-//	GPOS_ASSERT(NULL != pcrTableOid);
 	GPOS_ASSERT_IMP(CLogicalDML::EdmlDelete == edmlop || CLogicalDML::EdmlUpdate == edmlop,
 					NULL != pcrCtid && NULL != pcrSegmentId);
 
@@ -665,7 +664,6 @@ CPhysicalDML::OsPrint
 	CUtils::OsPrintDrgPcr(os, m_pdrgpcrSource);
 	os	<< "], Action: (";
 	m_pcrAction->OsPrint(os);
-	os << ")";
 	
 	if (m_pcrTableOid != NULL)
 	{
@@ -673,6 +671,7 @@ CPhysicalDML::OsPrint
 		m_pcrTableOid->OsPrint(os);
 		os << ")";
 	}
+	os << ")";
 
 	if (CLogicalDML::EdmlDelete == m_edmlop || CLogicalDML::EdmlUpdate == m_edmlop)
 	{
