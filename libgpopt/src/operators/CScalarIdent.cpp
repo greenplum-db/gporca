@@ -154,9 +154,16 @@ CScalarIdent::FCastedScId
 	// cast(col1)
 	if (COperator::EopScalarCast == pexpr->Pop()->Eopid())
 	{
-		if (COperator::EopScalarIdent == (*pexpr)[0]->Pop()->Eopid())
+		CScalar::EOperatorId eopid = (*pexpr)[0]->Pop()->Eopid();
+		if (COperator::EopScalarIdent == eopid)
 		{
 			return true;
+		}
+		// child of a cast can be a func expr so recurse
+		if (COperator::EopScalarFunc == eopid)
+		{
+			CExpression *pChildExpr = (*pexpr)[0];
+			return CScalarIdent::FCastedScId((*pChildExpr)[0]);
 		}
 	}
 
