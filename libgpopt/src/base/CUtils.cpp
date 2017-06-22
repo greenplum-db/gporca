@@ -5425,6 +5425,10 @@ CUtils::PcrExtractFromScIdOrCastScId
 	else
 	{
 		GPOS_ASSERT(fCastedScIdent);
+		CExpression *pChildExpr = (*pexpr)[0];
+		// child expression may not be a Scalar Ident so recurse
+		if (pChildExpr->Pop()->Eopid() != COperator::EopScalarIdent)
+			return PcrExtractFromScIdOrCastScId((*pChildExpr)[0]);
 		popScIdent = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
 	}
 
