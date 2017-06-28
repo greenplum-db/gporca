@@ -6448,4 +6448,24 @@ CUtils::ExecLocalityType
 	return eelt;
 }
 
+// generate a limit expression on top of the given relational child with the given offset and limit count
+CExpression *
+CUtils::PexprLimit
+       (
+       IMemoryPool *pmp,
+       CExpression *pexpr,
+       ULONG ulOffSet,
+       ULONG ulCount
+       )
+{
+       GPOS_ASSERT(pexpr);
+
+       COrderSpec *pos = GPOS_NEW(pmp) COrderSpec(pmp);
+       CLogicalLimit *popLimit = GPOS_NEW(pmp) CLogicalLimit(pmp, pos, true /* fGlobal */, true /* fHasCount */, false /*fTopLimitUnderDML*/);
+       CExpression *pexprLimitOffset = CUtils::PexprScalarConstInt8(pmp, ulOffSet);
+       CExpression *pexprLimitCount = CUtils::PexprScalarConstInt8(pmp, ulCount);
+
+       return GPOS_NEW(pmp) CExpression(pmp, popLimit, pexpr, pexprLimitOffset, pexprLimitCount);
+}
+
 // EOF
