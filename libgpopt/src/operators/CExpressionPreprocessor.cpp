@@ -175,8 +175,8 @@ CExpressionPreprocessor::PexprTrimExistentialSubqueries
 // Example 2:
 // select * from foo where exists (select * from bar) and  foo.a = 10 AND not exists (select * from x);
 // will be transformed to
-// select * from (select * from foo where foo.a = foo.b AND not exists (select * from x)), (select * from bar LIMIT 1), (select * from x) where true
-// In the above example, foo.a = foo.b AND not exists (select * from x) are applied directly on foo, and then joined with the exists subquery.
+// select * from (select * from foo where foo.a = 10 AND not exists (select * from x)), (select * from bar LIMIT 1), (select * from x) where true
+// In the above example, foo.a = 10 AND not exists (select * from x) are applied directly on foo, and then joined with the exists subquery.
 CExpression *
 CExpressionPreprocessor::PexprSimplifyExistentialPredicates
 	(
