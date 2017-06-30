@@ -1406,7 +1406,7 @@ CPredicateUtils::FIdentIDFConstIgnoreCast
 	CExpression *pexpr
 	)
 {
-	return FIdentCompareConstIgnoreCast((*pexpr)[0], COperator::EopScalarIsDistinctFrom);
+	return FIdentCompareConstIgnoreCast(pexpr, COperator::EopScalarIsDistinctFrom);
 }
 
 // is the given expression of the form (col cmp constant) ignoring casting on either sides
