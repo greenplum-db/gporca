@@ -254,7 +254,7 @@ CStatsPredUtils::Pstatspred
 	CExpression *pexprRight = NULL;
 
 	CStatsPred::EStatsCmpType escmpt = CStatsPred::EstatscmptOther;
-	if (CPredicateUtils::FIdentIDFConstIgnoreCast(pexpr))
+	if (CPredicateUtils::FIdentCompareConstIgnoreCast(pexpr, COperator::EopScalarIsDistinctFrom))
 	{
 		pexprLeft = (*pexpr)[0];
 		pexprRight = (*pexpr)[1];
@@ -274,7 +274,7 @@ CStatsPredUtils::Pstatspred
 		pexprLeft = (*pexpr)[0];
 		pexprRight = (*pexpr)[1];
 
-		GPOS_ASSERT(CPredicateUtils::FIdentCmpConstIgnoreCast(pexpr));
+		GPOS_ASSERT(CPredicateUtils::FIdentCompareConstIgnoreCast(pexpr, COperator::EopScalarCmp));
 
 		COperator *pop = pexpr->Pop();
 		CScalarCmp *popScCmp = CScalarCmp::PopConvert(pop);
@@ -724,7 +724,7 @@ CStatsPredUtils::FPointPredicate
 	)
 {
 	GPOS_ASSERT(NULL != pexprPred);
-	return (CPredicateUtils::FIdentCmpConstIgnoreCast(pexprPred));
+	return (CPredicateUtils::FIdentCompareConstIgnoreCast(pexprPred, COperator::EopScalarCmp));
 }
 
 
@@ -742,7 +742,7 @@ CStatsPredUtils::FPointIDF
 	)
 {
 	GPOS_ASSERT(NULL != pexprPred);
-	return CPredicateUtils::FIdentIDFConstIgnoreCast(pexprPred);
+	return CPredicateUtils::FIdentCompareConstIgnoreCast(pexprPred, COperator::EopScalarIsDistinctFrom);
 }
 
 
