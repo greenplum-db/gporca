@@ -254,7 +254,7 @@ CStatsPredUtils::Pstatspred
 	CExpression *pexprRight = NULL;
 
 	CStatsPred::EStatsCmpType escmpt = CStatsPred::EstatscmptOther;
-	if (CPredicateUtils::FIdentCompareConstIgnoreCast(pexpr, COperator::EopScalarIsDistinctFrom))
+	if (CPredicateUtils::FIdentIDFConstIgnoreCast(pexpr))
 	{
 		pexprLeft = (*pexpr)[0];
 		pexprRight = (*pexpr)[1];
@@ -742,7 +742,7 @@ CStatsPredUtils::FPointIDF
 	)
 {
 	GPOS_ASSERT(NULL != pexprPred);
-	return CPredicateUtils::FIdentCompareConstIgnoreCast(pexprPred, COperator::EopScalarIsDistinctFrom);
+	return CPredicateUtils::FIdentIDFConstIgnoreCast(pexprPred);
 }
 
 

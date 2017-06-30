@@ -199,6 +199,11 @@ namespace gpopt
 			static
 			BOOL FIdentCompareConstIgnoreCast(CExpression *pexpr, COperator::EOperatorId);
 
+			// is the given expression of the form (col IS DISTINCT FROM constant)
+			// either the constant or the column can be casted
+			static
+			BOOL FIdentIDFConstIgnoreCast(CExpression *pexpr);
+
 			// is the given expression of the form NOT (col IS DISTINCT FROM constant)
 			// either the constant or the column can be casted
 			static

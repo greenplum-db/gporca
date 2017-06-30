@@ -1398,7 +1398,18 @@ CPredicateUtils::FCompareIdentToConst
 	return true;
 }
 
+// is the given expression is of the form (col IS DISTINCT FROM const)
+// ignoring cast on either sides
+BOOL
+CPredicateUtils::FIdentIDFConstIgnoreCast
+(
+	CExpression *pexpr
+	)
+{
+	return FIdentCompareConstIgnoreCast((*pexpr)[0], COperator::EopScalarIsDistinctFrom);
+}
 
+// is the given expression of the form (col cmp constant) ignoring casting on either sides
 BOOL
 CPredicateUtils::FIdentCompareConstIgnoreCast
 	(
