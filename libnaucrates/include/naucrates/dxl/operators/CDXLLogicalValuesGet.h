@@ -72,6 +72,18 @@ namespace gpdxl
 				return m_pdrgpdxlcd->UlLength();
 			}
 
+            // number of constant tuples
+            ULONG UlTupleCount() const
+            {
+                return m_pdrgpdrgpdxldatumValuesList->UlLength();
+            }
+
+            // return the const tuple (datum array) at a given position
+            const DrgPdxldatum *PrgPdxldatumConstTuple(ULONG ulTuplePos) const
+            {
+                return (*m_pdrgpdrgpdxldatumValuesList)[ulTuplePos];
+            }
+
 			// output column descriptor at a given position
 			const CDXLColDescr *Pdxlcd
 				(

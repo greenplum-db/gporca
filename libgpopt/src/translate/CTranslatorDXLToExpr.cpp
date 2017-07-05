@@ -183,6 +183,7 @@ CTranslatorDXLToExpr::InitTranslators()
 		{EdxlopScalarArrayComp, 	&gpopt::CTranslatorDXLToExpr::PexprArrayCmp},
 		{EdxlopScalarArrayRef, 		&gpopt::CTranslatorDXLToExpr::PexprArrayRef},
 		{EdxlopScalarArrayRefIndexList, &gpopt::CTranslatorDXLToExpr::PexprArrayRefIndexList},
+		{EdxlopLogicalValuesGet, 	&gpopt::CTranslatorDXLToExpr::PexprLogicalValuesGet},
 	};
 
 	const ULONG ulTranslators = GPOS_ARRAY_SIZE(rgTranslators);
@@ -2420,6 +2421,66 @@ CTranslatorDXLToExpr::PexprLogicalConstTableGet
 	ConstructDXLColId2ColRefMapping(pdxlopConstTable->Pdrgpdxlcd(), popConstTableGet->PdrgpcrOutput());
 
 	return GPOS_NEW(m_pmp) CExpression(m_pmp, popConstTableGet);
+}
+
+// Create a logical value get expression from the corresponding
+// DXL node
+CExpression *
+CTranslatorDXLToExpr::PexprLogicalValuesGet
+(
+	const CDXLNode *pdxlnValuesGet
+	)
+{
+    CDXLLogicalValuesGet *pdxlnValues = CDXLLogicalValuesGet::PdxlopConvert(pdxlnValuesGet->Pdxlop());
+
+    const DrgPdxlcd *pdrgpdxlcd = pdxlnValues->Pdrgpdxlcd();
+
+    // translate the column descriptors
+    DrgPcoldesc *pdrgpcoldesc = GPOS_NEW(m_pmp) DrgPcoldesc(m_pmp);
+    const ULONG ulColumns = pdrgpdxlcd->UlLength();
+
+    for (ULONG ulColIdx = 0; ulColIdx < ulColumns; ulColIdx++)
+    {
+        CDXLColDescr *pdxlcd = (*pdrgpdxlcd)[ulColIdx];
+        const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcd->PmdidType());
+        CName name(m_pmp, pdxlcd->Pmdname()->Pstr());
+
+        const ULONG ulWidth = pdxlcd->UlWidth();
+        CColumnDescriptor *pcoldesc = GPOS_NEW(m_pmp) CColumnDescriptor
+        (
+         m_pmp,
+         pmdtype,
+         name,
+         ulColIdx + 1, // iAttno
+         true, // FNullable
+         ulWidth
+         );
+        pdrgpcoldesc->Append(pcoldesc);
+    }
+
+    // translate values
+    DrgPdrgPdatum *pdrgpdrgpdatum = GPOS_NEW(m_pmp) DrgPdrgPdatum(m_pmp);
+
+    const ULONG ulValues = pdxlnValues->UlTupleCount();
+    for (ULONG ul = 0; ul < ulValues; ul++)
+    {
+        const DrgPdxldatum *pdrgpdxldatum = pdxlnValues->PrgPdxldatumConstTuple(ul);
+        DrgPdatum *pdrgpdatum = CTranslatorDXLToExprUtils::Pdrgpdatum(m_pmp, m_pmda, pdrgpdxldatum);
+        pdrgpdrgpdatum->Append(pdrgpdatum);
+    }
+
+    // create a logical values get operator
+    CLogicalValuesGet *popValuesGet = GPOS_NEW(m_pmp) CLogicalValuesGet
+    (
+     m_pmp,
+     pdrgpcoldesc,
+     pdrgpdrgpdatum
+     );
+
+    // construct the mapping between the DXL ColId and CColRef
+    ConstructDXLColId2ColRefMapping(pdxlnValues->Pdrgpdxlcd(), popValuesGet->PdrgpcrOutput());
+
+    return GPOS_NEW(m_pmp) CExpression(m_pmp, popValuesGet);
 }
 
 //---------------------------------------------------------------------------

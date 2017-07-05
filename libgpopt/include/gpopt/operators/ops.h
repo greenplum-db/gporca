@@ -114,6 +114,7 @@
 #include "gpopt/operators/CLogicalRowTrigger.h"
 #include "gpopt/operators/CLogicalAssert.h"
 #include "gpopt/operators/CLogicalMaxOneRow.h"
+#include "gpopt/operators/CLogicalValuesGet.h"
 
 // physical ops
 #include "gpopt/operators/CPhysicalTableScan.h"

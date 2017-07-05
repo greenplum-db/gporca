@@ -162,6 +162,7 @@ namespace gpopt
 				EopLogicalPartitionSelector,
 				EopLogicalAssert,
 				EopLogicalMaxOneRow,
+				EopLogicalValuesGet,
 				
 				EopScalarCmp,
 				EopScalarIsDistinctFrom,

@@ -284,6 +284,8 @@ add_library(gpopt
             src/operators/CLogicalBitmapTableGet.cpp
             include/gpopt/operators/CLogicalConstTableGet.h
             src/operators/CLogicalConstTableGet.cpp
+            include/gpopt/operators/CLogicalValuesGet.h
+            src/operators/CLogicalValuesGet.cpp
             include/gpopt/operators/CLogicalCTEAnchor.h
             src/operators/CLogicalCTEAnchor.cpp
             include/gpopt/operators/CLogicalCTEConsumer.h

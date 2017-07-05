@@ -238,7 +238,10 @@ namespace gpopt
 
 			// translate a DXL logical const table into the corresponding optimizer object
 			CExpression *PexprLogicalConstTableGet(const CDXLNode *pdxlnConstTableGet);
-						
+
+			// translate a DXL logical value into the corresponding optimizer object
+			CExpression *PexprLogicalValuesGet(const CDXLNode *pdxlnValuesGet);
+
 			// translate a DXL ANY/ALL-quantified subquery into the corresponding subquery expression
 			CExpression *PexprScalarSubqueryQuantified(const CDXLNode *pdxlnSubqueryAny);
 			
