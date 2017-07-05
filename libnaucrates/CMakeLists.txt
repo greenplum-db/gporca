@@ -214,6 +214,8 @@ add_library(naucrates
             src/operators/CDXLLogicalSelect.cpp
             include/naucrates/dxl/operators/CDXLLogicalSetOp.h
             src/operators/CDXLLogicalSetOp.cpp
+	    include/naucrates/dxl/operators/CDXLLogicalValuesGet.h
+	    src/operators/CDXLLogicalValuesGet.cpp
             include/naucrates/dxl/operators/CDXLLogicalTVF.h
             src/operators/CDXLLogicalTVF.cpp
             include/naucrates/dxl/operators/CDXLLogicalUpdate.h
@@ -556,6 +558,8 @@ add_library(naucrates
             src/parser/CParseHandlerLogicalSelect.cpp
             include/naucrates/dxl/parser/CParseHandlerLogicalSetOp.h
             src/parser/CParseHandlerLogicalSetOp.cpp
+            include/naucrates/dxl/parser/CParseHandlerLogicalValuesGet.h
+            src/parser/CParseHandlerLogicalValuesGet.cpp
             include/naucrates/dxl/parser/CParseHandlerLogicalTVF.h
             src/parser/CParseHandlerLogicalTVF.cpp
             include/naucrates/dxl/parser/CParseHandlerLogicalUpdate.h

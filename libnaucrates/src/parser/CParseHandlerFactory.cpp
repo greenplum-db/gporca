@@ -272,6 +272,8 @@ CParseHandlerFactory::Init
 			{EdxltokenLogicalDifference, &PphLgSetOp},
 			{EdxltokenLogicalDifferenceAll, &PphLgSetOp},
 
+			{EdxltokenLogicalValuesGet, &PphLgValuesGet},
+		
 			{EdxltokenStatistics, &PphStats},
 			{EdxltokenStatsDerivedColumn, &PphStatsDerivedColumn},
 			{EdxltokenStatsDerivedRelation, &PphStatsDerivedRelation},
@@ -2765,6 +2767,19 @@ CParseHandlerFactory::PphLgSetOp
 	)
 {
 	return GPOS_NEW(pmp) CParseHandlerLogicalSetOp(pmp, pphm, pphRoot);
+}
+
+
+// Creates a parse handler for parsing a logical value scan operator
+CParseHandlerBase *
+CParseHandlerFactory::PphLgValuesGet
+(
+	IMemoryPool *pmp,
+	CParseHandlerManager *pphm,
+	CParseHandlerBase *pphRoot
+	)
+{
+	return GPOS_NEW(pmp) CParseHandlerLogicalValuesGet(pmp, pphm, pphRoot);
 }
 
 //---------------------------------------------------------------------------

@@ -650,6 +650,8 @@ namespace gpdxl
 		EdxltokenLogicalIntersectAll,
 		EdxltokenLogicalDifference,
 		EdxltokenLogicalDifferenceAll,
+		EdxltokenLogicalValuesGet,
+		EdxltokenValuesList,
 
 		EdxltokenIndexDescr,
 		EdxltokenIndexName,

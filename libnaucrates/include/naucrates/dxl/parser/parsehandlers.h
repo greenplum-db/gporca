@@ -116,6 +116,7 @@
 #include "naucrates/dxl/parser/CParseHandlerLogicalGroupBy.h"
 #include "naucrates/dxl/parser/CParseHandlerLogicalLimit.h"
 #include "naucrates/dxl/parser/CParseHandlerLogicalSetOp.h"
+#include "naucrates/dxl/parser/CParseHandlerLogicalValuesGet.h"
 #include "naucrates/dxl/parser/CParseHandlerLogicalCTEProducer.h"
 #include "naucrates/dxl/parser/CParseHandlerLogicalCTEConsumer.h"
 #include "naucrates/dxl/parser/CParseHandlerLogicalCTEAnchor.h"

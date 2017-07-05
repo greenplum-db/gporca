@@ -117,6 +117,7 @@ CParseHandlerTest::m_rgszQueryDXLFileNames[] =
 		"../data/dxl/parse_tests/q68-ArrayRef1.xml",
 		"../data/dxl/parse_tests/q69-ArrayRef2.xml",
 		"../data/dxl/parse_tests/q75-MinMax.xml",
+		"../data/dxl/parse_tests/q76-ValueScan.xml",
 	};
 
 // files for the statistics tests

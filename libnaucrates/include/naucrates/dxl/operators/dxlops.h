@@ -135,6 +135,7 @@
 #include "naucrates/dxl/operators/CDXLLogicalLimit.h"
 #include "naucrates/dxl/operators/CDXLLogicalConstTable.h"
 #include "naucrates/dxl/operators/CDXLLogicalSetOp.h"
+#include "naucrates/dxl/operators/CDXLLogicalValuesGet.h"
 #include "naucrates/dxl/operators/CDXLLogicalWindow.h"
 
 #include "naucrates/dxl/operators/CDXLLogicalInsert.h"

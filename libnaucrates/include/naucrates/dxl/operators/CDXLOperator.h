@@ -50,6 +50,7 @@ namespace gpdxl
 		EdxlopLogicalUpdate,
 		
 		EdxlopLogicalCTAS,
+		EdxlopLogicalValuesGet,
 		EdxlopPhysicalCTAS,
 		
 		EdxlopScalarCmp,

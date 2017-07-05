@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+    <dxl:Query>
+      <dxl:OutputColumns>
+        <dxl:Ident ColId="1" ColName="column1" TypeMdid="0.23.1.0"/>
+        <dxl:Ident ColId="2" ColName="column2" TypeMdid="0.23.1.0"/>
+      </dxl:OutputColumns>
+      <dxl:CTEList/>
+      <dxl:LogicalValuesGet>
+        <dxl:Columns>
+          <dxl:Column ColId="1" Attno="1" ColName="column1" TypeMdid="0.23.1.0"/>
+          <dxl:Column ColId="2" Attno="2" ColName="column2" TypeMdid="0.23.1.0"/>
+        </dxl:Columns>
+        <dxl:ValuesList>
+          <dxl:ConstTuple>
+            <dxl:Datum TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+            <dxl:Datum TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="2"/>
+          </dxl:ConstTuple>
+          <dxl:ConstTuple>
+            <dxl:Datum TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="3"/>
+            <dxl:Datum TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="4"/>
+          </dxl:ConstTuple>
+        </dxl:ValuesList>
+      </dxl:LogicalValuesGet>
+    </dxl:Query>
+</dxl:DXLMessage>
