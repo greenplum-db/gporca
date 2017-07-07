@@ -942,68 +942,6 @@ CSubqueryHandler::FCreateOuterApply
 	return FCreateOuterApplyForScalarSubquery(pmp, pexprOuter, pexprInner, pexprSubquery, fOuterRefsUnderInner, ppexprNewOuter, ppexprResidualScalar);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CSubqueryHandler::FConvertExistOrQuantToScalarSubquery
-//
-//	@doc:
-//		Helper for converting quantified/existential to count(*)
-//		subqueries that will ultimately be executed using a correlated
-//		execution strategy;
-//
-//
-//---------------------------------------------------------------------------
-BOOL
-CSubqueryHandler::FConvertExistOrQuantToScalarSubquery
-	(
-	IMemoryPool *pmp,
-	CExpression *pexprOuter,
-	CExpression *pexprSubquery,
-	BOOL fDisjunctionOrNegation,
-	ESubqueryCtxt esqctxt,
-	CExpression **ppexprNewOuter,
-	CExpression **ppexprResidualScalar
-	)
-{
-	BOOL fExistential = CUtils::FExistentialSubquery(pexprSubquery->Pop());
-	GPOS_ASSERT(fExistential || CUtils::FQuantifiedSubquery(pexprSubquery->Pop()));
-
-	CExpression *pexprInnerNew = NULL;
-	if (fExistential)
-	{
-		CExpression *pexprNewSubquery = NULL;
-		CXformUtils::ExistentialToAgg(pmp, pexprSubquery, &pexprNewSubquery, ppexprResidualScalar);
-
-		(*pexprNewSubquery)[0]->AddRef();
-		pexprInnerNew = (*pexprNewSubquery)[0];
-		pexprNewSubquery->Release();
-	}
-	else
-	{
-		CExpression *pexprNewSubquery = NULL;
-		CXformUtils::QuantifiedToAgg(pmp, pexprSubquery, &pexprNewSubquery, ppexprResidualScalar);
-		(*pexprNewSubquery)[0]->AddRef();
-		pexprInnerNew = (*pexprNewSubquery)[0];
-		pexprNewSubquery->Release();
-	}
-
-	const CColRef *pcr = CScalarProjectElement::PopConvert((*(*pexprInnerNew)[1])[0]->Pop())->Pcr();
-	if (EsqctxtFilter == esqctxt && !fDisjunctionOrNegation)
-	{
-		*ppexprNewOuter =
-			CUtils::PexprLogicalApply<CLogicalInnerCorrelatedApply>(pmp, pexprOuter, pexprInnerNew, pcr, COperator::EopScalarSubquery);
-	}
-	else
-	{
-		// subquery occurs in a value context or disjunction, we need to create an outer apply expression
-		*ppexprNewOuter =
-			CUtils::PexprLogicalApply<CLogicalLeftOuterCorrelatedApply>(pmp, pexprOuter, pexprInnerNew, pcr, COperator::EopScalarSubquery);
-	}
-
-	return true;
-}
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CSubqueryHandler::FCreateCorrelatedApplyForQuantifiedSubquery
