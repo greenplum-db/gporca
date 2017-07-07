@@ -1649,12 +1649,23 @@ CSubqueryHandler::FRemoveExistentialSubquery
 	{
 		GPOS_ASSERT(EsqctxtFilter == esqctxt);
 
+		CDrvdPropRelational *pdpInner = CDrvdPropRelational::Pdprel(pexprInner->PdpDerive());
 		// for existential subqueries, any column produced by inner expression
 		// can be used to check for empty answers; we use first column for that
-		CColRef *pcr = CDrvdPropRelational::Pdprel(pexprInner->PdpDerive())->PcrsOutput()->PcrFirst();
+		CColRef *pcr = pdpInner->PcrsOutput()->PcrFirst();
 
 		if (COperator::EopScalarSubqueryExists == eopid)
 		{
+			CColRefSet *pcrsOuterRefs = pdpInner->PcrsOuter();
+
+			if (0 == pcrsOuterRefs->CElements())
+			{
+				// add a limit operator on top of the inner child if the subquery does not have
+				// any outer references. Adding Limit for the correlated case hinders pulling up
+				// predicates into an EXISTS join
+				pexprInner = CUtils::PexprLimit(pmp, pexprInner, 0, 1);
+			}
+
 			*ppexprNewOuter = CUtils::PexprLogicalApply<CLogicalLeftSemiApply>(pmp, pexprOuter, pexprInner, pcr, eopid);
 		}
 		else
