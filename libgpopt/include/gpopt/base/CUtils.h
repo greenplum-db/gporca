@@ -1076,7 +1076,7 @@ namespace gpopt
 			static
 			EExecLocalityType ExecLocalityType(CDistributionSpec *pds);
 
-            // generate a limit expression on top of the given relational child with the given offset and limit count
+			// generate a limit expression on top of the given relational child with the given offset and limit count
 			static CExpression *PexprLimit(IMemoryPool *pmp, CExpression *pexpr, ULONG ulOffSet, ULONG ulCount);
 	}; // class CUtils
 

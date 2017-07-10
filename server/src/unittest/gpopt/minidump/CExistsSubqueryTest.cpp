@@ -36,14 +36,7 @@ const CHAR *rgszExistsFileNames[] =
 	};
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CExistsSubqueryTest::EresUnittest
-//
-//	@doc:
-//		Unittest for expressions
-//
-//---------------------------------------------------------------------------
+// unittest for expressions
 GPOS_RESULT
 CExistsSubqueryTest::EresUnittest()
 {
@@ -71,14 +64,7 @@ CExistsSubqueryTest::EresUnittest()
 	return eres;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CExistsSubqueryTest::EresUnittest_RunTests
-//
-//	@doc:
-//		Run all Minidump-based tests with plan matching
-//
-//---------------------------------------------------------------------------
+// run all Minidump-based tests with plan matching
 GPOS_RESULT
 CExistsSubqueryTest::EresUnittest_RunTests()
 {
