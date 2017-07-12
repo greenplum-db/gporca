@@ -403,14 +403,14 @@ CLogicalDML::OsPrint
 	CUtils::OsPrintDrgPcr(os, m_pdrgpcrSource);
 	os	<< "], Action: (";
 	m_pcrAction->OsPrint(os);
-	
+	os << ")";
+
 	if (m_pcrTableOid != NULL)
 	{
 		os << ", Oid: (";
 		m_pcrTableOid->OsPrint(os);
 		os << ")";
 	}
-	os << ")";
 
 	if (EdmlDelete == m_edmlop || EdmlUpdate == m_edmlop)
 	{

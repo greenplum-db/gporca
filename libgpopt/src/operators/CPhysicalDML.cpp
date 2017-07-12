@@ -664,14 +664,14 @@ CPhysicalDML::OsPrint
 	CUtils::OsPrintDrgPcr(os, m_pdrgpcrSource);
 	os	<< "], Action: (";
 	m_pcrAction->OsPrint(os);
-	
+	os << ")";
+
 	if (m_pcrTableOid != NULL)
 	{
 		os << ", Oid: (";
 		m_pcrTableOid->OsPrint(os);
 		os << ")";
 	}
-	os << ")";
 
 	if (CLogicalDML::EdmlDelete == m_edmlop || CLogicalDML::EdmlUpdate == m_edmlop)
 	{
