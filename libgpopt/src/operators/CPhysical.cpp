@@ -47,7 +47,8 @@ CPhysical::CPhysical
 	COperator(pmp),
 	m_phmrcr(NULL),
 	m_pdrgpulpOptReqsExpanded(NULL),
-	m_ulTotalOptRequests(1) // by default, an operator creates a single request for each property
+	m_ulTotalOptRequests(1), // by default, an operator creates a single request for each property
+    m_phmpp(NULL)
 {
 	GPOS_ASSERT(NULL != pmp);
 
@@ -59,6 +60,7 @@ CPhysical::CPhysical
 	UpdateOptRequests(0 /*ulPropIndex*/, 1 /*ulOrderReqs*/);
 
 	m_phmrcr = GPOS_NEW(pmp) HMReqdColsRequest(pmp);
+    m_phmpp = GPOS_NEW(pmp) HMPartPropagation(pmp);
 }
 
 
@@ -264,6 +266,104 @@ CPhysical::CReqdColsRequest::FEqual
 		prcrFst->UlChildIndex() == prcrSnd->UlChildIndex() &&
 		prcrFst->UlScalarChildIndex() == prcrSnd->UlScalarChildIndex() &&
 		prcrFst->Pcrs()->FEqual(prcrSnd->Pcrs());
+}
+
+// Hash function
+ULONG
+CPhysical::CPartPropReq::UlHash
+		(
+				const CPartPropReq *pppr
+		)
+{
+	GPOS_ASSERT(NULL != pppr);
+
+	ULONG ulHash = pppr->Ppps()->UlHash();
+	ulHash = UlCombineHashes(ulHash , pppr->UlChildIndex());
+	ulHash = UlCombineHashes(ulHash , pppr->UlOuterChild());
+	ulHash = UlCombineHashes(ulHash , pppr->UlInnerChild());
+
+	return UlCombineHashes(ulHash , pppr->UlScalarChild());
+}
+
+// Equality function
+BOOL
+CPhysical::CPartPropReq::FEqual
+		(
+				const CPartPropReq *ppprFst,
+				const CPartPropReq *ppprSnd
+		)
+{
+	GPOS_ASSERT(NULL != ppprFst);
+	GPOS_ASSERT(NULL != ppprSnd);
+
+	return
+			ppprFst->UlChildIndex() == ppprSnd->UlChildIndex() &&
+			ppprFst->UlOuterChild() == ppprSnd->UlOuterChild() &&
+			ppprFst->UlInnerChild() == ppprSnd->UlInnerChild() &&
+			ppprFst->UlScalarChild() == ppprSnd->UlScalarChild() &&
+			ppprFst->Ppps()->FMatch(ppprSnd->Ppps());
+}
+
+
+// Create partition propagation request
+CPhysical::CPartPropReq *
+CPhysical::PpprCreate
+		(
+				IMemoryPool *pmp,
+				CExpressionHandle &exprhdl,
+				CPartitionPropagationSpec *pppsRequired,
+				ULONG ulChildIndex
+		)
+{
+	GPOS_ASSERT(exprhdl.Pop() == this);
+	GPOS_ASSERT(NULL != pppsRequired);
+	if (NULL == exprhdl.Pgexpr())
+	{
+		return NULL;
+	}
+
+	ULONG ulOuterChild = (*exprhdl.Pgexpr())[0]->UlId();
+    ULONG ulInnerChild = -1;
+    ULONG ulScalarChild = -1;
+    switch (exprhdl.Pop()->Eopid())
+    {
+        case EopPhysicalMotionBroadcast:
+        case EopPhysicalMotionRandom:
+        case EopPhysicalMotionGather:
+        case EopPhysicalMotionHashDistribute:
+        case EopPhysicalMotionRoutedDistribute:
+        {
+            break;
+        }
+        case EopPhysicalInnerHashJoin:
+        case EopPhysicalInnerNLJoin:
+        case EopPhysicalLeftOuterHashJoin:
+        case EopPhysicalLeftSemiHashJoin:
+        case EopPhysicalLeftAntiSemiHashJoin:
+        case EopPhysicalLeftAntiSemiHashJoinNotIn:
+        case EopPhysicalInnerIndexNLJoin:
+        case EopPhysicalCorrelatedInnerNLJoin:
+        case EopPhysicalLeftOuterNLJoin:
+        case EopPhysicalCorrelatedLeftOuterNLJoin:
+        case EopPhysicalLeftSemiNLJoin:
+        case EopPhysicalCorrelatedLeftSemiNLJoin:
+        case EopPhysicalCorrelatedInLeftSemiNLJoin:
+        case EopPhysicalLeftAntiSemiNLJoin:
+        case EopPhysicalCorrelatedLeftAntiSemiNLJoin:
+        case EopPhysicalLeftAntiSemiNLJoinNotIn:
+        case EopPhysicalCorrelatedNotInLeftAntiSemiNLJoin:
+        {
+            ulInnerChild = (*exprhdl.Pgexpr())[1]->UlId();
+            ulScalarChild = (*exprhdl.Pgexpr())[2]->UlId();
+			break;
+        }
+        default:
+            return NULL;
+    }
+    pppsRequired->AddRef();
+    return  GPOS_NEW(pmp) CPartPropReq(pppsRequired, ulChildIndex, ulOuterChild, ulInnerChild, ulScalarChild);
+
+
 }
 
 //---------------------------------------------------------------------------

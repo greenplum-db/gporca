@@ -35,9 +35,7 @@ CPhysicalJoin::CPhysicalJoin
 	)
 	:
 	CPhysical(pmp)
-{
-	m_phmpp = GPOS_NEW(pmp) HMPartPropagation(pmp);
-}
+{}
 
 
 //---------------------------------------------------------------------------
@@ -49,9 +47,7 @@ CPhysicalJoin::CPhysicalJoin
 //
 //---------------------------------------------------------------------------
 CPhysicalJoin::~CPhysicalJoin()
-{
-	m_phmpp->Release();
-}
+{}
 
 
 //---------------------------------------------------------------------------
@@ -1056,69 +1052,6 @@ CPhysicalJoin::Edm
 
 	// use exact matching for all other children
 	return CEnfdDistribution::EdmExact;
-}
-
-
-// Hash function
-ULONG
-CPhysicalJoin::CPartPropReq::UlHash
-	(
-	const CPartPropReq *pppr
-	)
-{
-	GPOS_ASSERT(NULL != pppr);
-
-	ULONG ulHash = pppr->Ppps()->UlHash();
-	ulHash = UlCombineHashes(ulHash , pppr->UlChildIndex());
-	ulHash = UlCombineHashes(ulHash , pppr->UlOuterChild());
-	ulHash = UlCombineHashes(ulHash , pppr->UlInnerChild());
-
-	return UlCombineHashes(ulHash , pppr->UlScalarChild());
-}
-
-// Equality function
-BOOL
-CPhysicalJoin::CPartPropReq::FEqual
-	(
-	const CPartPropReq *ppprFst,
-	const CPartPropReq *ppprSnd
-	)
-{
-	GPOS_ASSERT(NULL != ppprFst);
-	GPOS_ASSERT(NULL != ppprSnd);
-
-	return
-		ppprFst->UlChildIndex() == ppprSnd->UlChildIndex() &&
-		ppprFst->UlOuterChild() == ppprSnd->UlOuterChild() &&
-		ppprFst->UlInnerChild() == ppprSnd->UlInnerChild() &&
-		ppprFst->UlScalarChild() == ppprSnd->UlScalarChild() &&
-		ppprFst->Ppps()->FMatch(ppprSnd->Ppps());
-}
-
-
-// Create partition propagation request
-CPhysicalJoin::CPartPropReq *
-CPhysicalJoin::PpprCreate
-	(
-	IMemoryPool *pmp,
-	CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired,
-	ULONG ulChildIndex
-	)
-{
-	GPOS_ASSERT(exprhdl.Pop() == this);
-	GPOS_ASSERT(NULL != pppsRequired);
-	if (NULL == exprhdl.Pgexpr())
-	{
-		return NULL;
-	}
-
-	ULONG ulOuterChild = (*exprhdl.Pgexpr())[0]->UlId();
-	ULONG ulInnerChild = (*exprhdl.Pgexpr())[1]->UlId();
-	ULONG ulScalarChild = (*exprhdl.Pgexpr())[2]->UlId();
-
-	pppsRequired->AddRef();
-	return  GPOS_NEW(pmp) CPartPropReq(pppsRequired, ulChildIndex, ulOuterChild, ulInnerChild, ulScalarChild);
 }
 
 

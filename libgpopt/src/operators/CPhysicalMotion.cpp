@@ -149,49 +149,63 @@ CPhysicalMotion::PppsRequired
 	IMemoryPool *pmp,
 	CExpressionHandle &exprhdl,
 	CPartitionPropagationSpec *pppsRequired,
-	ULONG 
-#ifdef GPOS_DEBUG
-	ulChildIndex
-#endif // GPOS_DEBUG
-	,
+	ULONG ulChildIndex,
 	DrgPdp *, //pdrgpdpCtxt,
 	ULONG //ulOptReq
 	)
 {
 	GPOS_ASSERT(0 == ulChildIndex);
 	GPOS_ASSERT(NULL != pppsRequired);
-	
-	CPartIndexMap *ppimReqd = pppsRequired->Ppim();
-	CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
-	
-	DrgPul *pdrgpul = ppimReqd->PdrgpulScanIds(pmp);
-	
-	CPartIndexMap *ppimResult = GPOS_NEW(pmp) CPartIndexMap(pmp);
-	CPartFilterMap *ppfmResult = GPOS_NEW(pmp) CPartFilterMap(pmp);
-	
-	/// get derived part consumers
-	CPartInfo *ppartinfo = exprhdl.Pdprel(0)->Ppartinfo();
-	
-	const ULONG ulPartIndexSize = pdrgpul->UlLength();
-	
-	for (ULONG ul = 0; ul < ulPartIndexSize; ul++)
-	{
-		ULONG ulPartIndexId = *((*pdrgpul)[ul]);
 
-		if (!ppartinfo->FContainsScanId(ulPartIndexId))
+
+	CPartPropReq *pppr = PpprCreate(pmp, exprhdl, pppsRequired, ulChildIndex);
+	CPartitionPropagationSpec *ppps = m_phmpp->PtLookup(pppr);
+	if (NULL == ppps)
+	{
+		CPartIndexMap *ppimReqd = pppsRequired->Ppim();
+		CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
+
+		DrgPul *pdrgpul = ppimReqd->PdrgpulScanIds(pmp);
+
+		CPartIndexMap *ppimResult = GPOS_NEW(pmp) CPartIndexMap(pmp);
+		CPartFilterMap *ppfmResult = GPOS_NEW(pmp) CPartFilterMap(pmp);
+
+		/// get derived part consumers
+		CPartInfo *ppartinfo = exprhdl.Pdprel(0)->Ppartinfo();
+
+		const ULONG ulPartIndexSize = pdrgpul->UlLength();
+
+		for (ULONG ul = 0; ul < ulPartIndexSize; ul++)
 		{
-			// part index id does not exist in child nodes: do not push it below 
-			// the motion
-			continue;
+			ULONG ulPartIndexId = *((*pdrgpul)[ul]);
+
+			if (!ppartinfo->FContainsScanId(ulPartIndexId))
+			{
+				// part index id does not exist in child nodes: do not push it below
+				// the motion
+				continue;
+			}
+
+			ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
+			(void) ppfmResult->FCopyPartFilter(m_pmp, ulPartIndexId, ppfmReqd);
 		}
 
-		ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
-		(void) ppfmResult->FCopyPartFilter(m_pmp, ulPartIndexId, ppfmReqd);
-	}
-		
-	pdrgpul->Release();
+		pdrgpul->Release();
 
-	return GPOS_NEW(pmp) CPartitionPropagationSpec(ppimResult, ppfmResult);
+		ppps = GPOS_NEW(pmp) CPartitionPropagationSpec(ppimResult, ppfmResult);
+#ifdef GPOS_DEBUG
+		BOOL fSuccess =
+#endif // GPOS_DEBUG
+		m_phmpp->FInsert(pppr, ppps);
+		GPOS_ASSERT(fSuccess);
+	}
+	else
+	{
+		pppr->Release();
+	}
+
+	ppps->AddRef();
+	return ppps;
 }
 
 //---------------------------------------------------------------------------
