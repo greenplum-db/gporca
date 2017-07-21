@@ -825,7 +825,6 @@ CXformUtils::ExistentialToLimit
        // +--CLogicalSelect
        //    |--CLogicalGet "customer" ("customer"), Columns: ["cn" (13), "cname" (14), "cloc" (15), "ctid" (16), "xmin" (17), "cmin" (18), "xmax" (19), "cmax" (20), "tableoid" (21), "gp_segment_id" (22)] Key sets: {[0], [3,9]}
        //    +--CScalarSubqueryExists
-       //       +--CLogicalSelect
        //         |--CLogicalGet "product" ("product"), Columns: ["pn" (23), "pname" (24), "pcolor" (25), "ctid" (26), "xmin" (27), "cmin" (28), "xmax" (29), "cmax" (30), "tableoid" (31), "gp_segment_id" (32)] Key sets: {[0], [3,9]}
 
        // Output:
