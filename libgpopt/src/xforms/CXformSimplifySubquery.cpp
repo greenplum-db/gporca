@@ -122,7 +122,7 @@ CXformSimplifySubquery::FSimplifyQuantified
 //		CXformSimplifySubquery::FSimplifyExistential
 //
 //	@doc:
-//		Transform existential subqueries to count(*) subqueries;
+//		Transform existential subqueries to limit with dummy constant projection subqueries;
 //		the function returns true if transformation succeeded
 //
 //---------------------------------------------------------------------------
@@ -138,7 +138,7 @@ CXformSimplifySubquery::FSimplifyExistential
 
 	CExpression *pexprNewSubquery = NULL;
 	CExpression *pexprCmp = NULL;
-	CXformUtils::ExistentialToAgg(pmp, pexprScalar, &pexprNewSubquery, &pexprCmp);
+	CXformUtils::ExistentialToLimit(pmp, pexprScalar, &pexprNewSubquery, &pexprCmp);
 
 	// create a comparison predicate involving subquery expression
 	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
