@@ -167,9 +167,12 @@ CExpressionPreprocessor::PexprTrimExistentialSubqueries
 }
 
 
-
-// a quantified subquery with maxcard 1 is simplified as a scalar subquery
-//
+// Simplify Quantified Subqueries by applying the following heuristics
+// (1) A quantified subquery that compares a column from the subquery to a NULL constant can be reduced to FALSE
+// Example:
+//       SELECT * from bar where NULL in (SELECT a from foo) --> SELECT * from bar where false
+//       SELECT NULL in (SELECT a from foo) from bar         --> SELECT false from bar
+// (2) A quantified subquery with maxcard 1 is simplified as a scalar subquery
 // Example:
 //		a = ANY (select sum(i) from X) --> a = (select sum(i) from X)
 //		a <> ALL (select sum(i) from X) --> a <> (select sum(i) from X)
@@ -186,46 +189,55 @@ CExpressionPreprocessor::PexprSimplifyQuantifiedSubqueries
 	GPOS_ASSERT(NULL != pexpr);
 
 	COperator *pop = pexpr->Pop();
-	if (CUtils::FQuantifiedSubquery(pop) &&
-		1 == CDrvdPropRelational::Pdprel((*pexpr)[0]->PdpDerive())->Maxcard().Ull())
+	if (CUtils::FQuantifiedSubquery(pop))
 	{
-		CExpression *pexprInner = (*pexpr)[0];
+		CExpression *pexprScalar = (*pexpr)[1];
 
-		// skip intermediate unary nodes
-		CExpression *pexprChild = pexprInner;
-		COperator *popChild = pexprChild->Pop();
-		while (NULL != pexprChild && CUtils::FLogicalUnary(popChild))
+		COperator *popScalar = pexprScalar->Pop();
+		if (COperator::EopScalarConst == popScalar->Eopid() && CScalarConst::PopConvert(popScalar)->Pdatum()->FNull())
 		{
-			pexprChild = (*pexprChild)[0];
-			popChild = pexprChild->Pop();
+			return CUtils::PexprScalarConstBool(pmp, false /*fVal*/);
 		}
 
-		// inspect next node
-		BOOL fGbAggWithoutGrpCols =
-				COperator::EopLogicalGbAgg == popChild->Eopid() &&
-				0 == CLogicalGbAgg::PopConvert(popChild)->Pdrgpcr()->UlLength();
-
-		BOOL fOneRowConstTable = COperator::EopLogicalConstTableGet == popChild->Eopid() &&
-				1 == CLogicalConstTableGet::PopConvert(popChild)->Pdrgpdrgpdatum()->UlLength();
-
-		if (fGbAggWithoutGrpCols || fOneRowConstTable)
+		if (1 == CDrvdPropRelational::Pdprel((*pexpr)[0]->PdpDerive())->Maxcard().Ull())
 		{
-			// quantified subquery with max card 1
-			CExpression *pexprScalar = (*pexpr)[1];
-			CScalarSubqueryQuantified *popSubqQuantified =
-					CScalarSubqueryQuantified::PopConvert(pexpr->Pop());
-			const CColRef *pcr = popSubqQuantified->Pcr();
-			pexprInner->AddRef();
-			CExpression *pexprSubquery =
-				GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarSubquery(pmp, pcr, false /*fGeneratedByExist*/, true /*fGeneratedByQuantified*/), pexprInner);
+			CExpression *pexprInner = (*pexpr)[0];
 
-			CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
-			IMDId *pmdid = popSubqQuantified->PmdidOp();
-			const CWStringConst *pstr = pmda->Pmdscop(pmdid)->Mdname().Pstr();
-			pmdid->AddRef();
-			pexprScalar->AddRef();
+			// skip intermediate unary nodes
+			CExpression *pexprChild = pexprInner;
+			COperator *popChild = pexprChild->Pop();
+			while (NULL != pexprChild && CUtils::FLogicalUnary(popChild))
+			{
+				pexprChild = (*pexprChild)[0];
+				popChild = pexprChild->Pop();
+			}
 
-			return CUtils::PexprScalarCmp(pmp, pexprScalar, pexprSubquery, *pstr, pmdid);
+			// inspect next node
+			BOOL fGbAggWithoutGrpCols =
+					COperator::EopLogicalGbAgg == popChild->Eopid() &&
+					0 == CLogicalGbAgg::PopConvert(popChild)->Pdrgpcr()->UlLength();
+
+			BOOL fOneRowConstTable = COperator::EopLogicalConstTableGet == popChild->Eopid() &&
+					1 == CLogicalConstTableGet::PopConvert(popChild)->Pdrgpdrgpdatum()->UlLength();
+
+			if (fGbAggWithoutGrpCols || fOneRowConstTable)
+			{
+				// quantified subquery with max card 1
+				CScalarSubqueryQuantified *popSubqQuantified =
+						CScalarSubqueryQuantified::PopConvert(pexpr->Pop());
+				const CColRef *pcr = popSubqQuantified->Pcr();
+				pexprInner->AddRef();
+				CExpression *pexprSubquery =
+						GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarSubquery(pmp, pcr, false /*fGeneratedByExist*/, true /*fGeneratedByQuantified*/), pexprInner);
+
+				CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
+				IMDId *pmdid = popSubqQuantified->PmdidOp();
+				const CWStringConst *pstr = pmda->Pmdscop(pmdid)->Mdname().Pstr();
+				pmdid->AddRef();
+				pexprScalar->AddRef();
+
+				return CUtils::PexprScalarCmp(pmp, pexprScalar, pexprSubquery, *pstr, pmdid);
+			}
 		}
 	}
 
