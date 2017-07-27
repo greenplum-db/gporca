@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ create table foo(a int, b int);
+ create table bar(c int, d int);
+ insert into bar values (1,1);
+ select NULL in (select f2.a from foo f2) from bar;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
