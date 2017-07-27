@@ -84,6 +84,7 @@
 #include "unittest/gpopt/minidump/CDMLTest.h"
 #include "unittest/gpopt/minidump/CAggTest.h"
 #include "unittest/gpopt/minidump/CExistsSubqueryTest.h"
+#include "unittest/gpopt/minidump/CQuantifiedSubqueryTest.h"
 #include "unittest/gpopt/minidump/CCollapseProjectTest.h"
 #include "unittest/gpopt/minidump/CPhysicalParallelUnionAllTest.h"
 #include "unittest/gpopt/minidump/CPruneColumnsTest.h"
@@ -151,6 +152,7 @@ static gpos::CUnittest rgut[] =
 	GPOS_UNITTEST_STD(CTVFTest),
 	GPOS_UNITTEST_STD(CAggTest),
 	GPOS_UNITTEST_STD(CExistsSubqueryTest),
+	GPOS_UNITTEST_STD(CQuantifiedSubqueryTest),
 	GPOS_UNITTEST_STD(CCollapseProjectTest),
 	GPOS_UNITTEST_STD(CPruneColumnsTest),
 	GPOS_UNITTEST_STD(CPhysicalParallelUnionAllTest),
