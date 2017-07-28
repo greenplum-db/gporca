@@ -167,17 +167,23 @@ CExpressionPreprocessor::PexprTrimExistentialSubqueries
 }
 
 
-
-// a quantified subquery with maxcard 1 is simplified as a scalar subquery
+// Simplify Quantified Subqueries by applying the following heuristics
+// (1) A quantified subquery with maxcard 1 is simplified as a scalar subquery
 //
 // Example:
 //		a = ANY (select sum(i) from X) --> a = (select sum(i) from X)
 //		a <> ALL (select sum(i) from X) --> a <> (select sum(i) from X)
+//
+// (2) A quantified subquery not under a project clause that compares a column from the subquery
+//     to a NULL constant can be reduced to NULL
+//
+//       SELECT * from bar where NULL in (SELECT a from foo) --> SELECT * from bar where NULL
 CExpression *
 CExpressionPreprocessor::PexprSimplifyQuantifiedSubqueries
 	(
 	IMemoryPool *pmp,
-	CExpression *pexpr
+	CExpression *pexpr,
+	BOOL fUnderPrList
 	)
 {
 	// protect against stack overflow during recursion
@@ -186,47 +192,68 @@ CExpressionPreprocessor::PexprSimplifyQuantifiedSubqueries
 	GPOS_ASSERT(NULL != pexpr);
 
 	COperator *pop = pexpr->Pop();
-	if (CUtils::FQuantifiedSubquery(pop) &&
-		1 == CDrvdPropRelational::Pdprel((*pexpr)[0]->PdpDerive())->Maxcard().Ull())
+
+	if (CUtils::FQuantifiedSubquery(pop))
 	{
-		CExpression *pexprInner = (*pexpr)[0];
-
-		// skip intermediate unary nodes
-		CExpression *pexprChild = pexprInner;
-		COperator *popChild = pexprChild->Pop();
-		while (NULL != pexprChild && CUtils::FLogicalUnary(popChild))
+		CExpression *pexprScalar = (*pexpr)[1];
+		COperator *popScalar = pexprScalar->Pop();
+		if (!fUnderPrList && COperator::EopScalarConst == popScalar->Eopid()
+				&& CScalarConst::PopConvert(popScalar)->Pdatum()->FNull())
 		{
-			pexprChild = (*pexprChild)[0];
-			popChild = pexprChild->Pop();
+			return CUtils::PexprScalarConstBool(pmp, false /*fVal*/, true /*fNull*/);
 		}
 
-		// inspect next node
-		BOOL fGbAggWithoutGrpCols =
-				COperator::EopLogicalGbAgg == popChild->Eopid() &&
-				0 == CLogicalGbAgg::PopConvert(popChild)->Pdrgpcr()->UlLength();
-
-		BOOL fOneRowConstTable = COperator::EopLogicalConstTableGet == popChild->Eopid() &&
-				1 == CLogicalConstTableGet::PopConvert(popChild)->Pdrgpdrgpdatum()->UlLength();
-
-		if (fGbAggWithoutGrpCols || fOneRowConstTable)
+		if (1 == CDrvdPropRelational::Pdprel((*pexpr)[0]->PdpDerive())->Maxcard().Ull())
 		{
-			// quantified subquery with max card 1
-			CExpression *pexprScalar = (*pexpr)[1];
-			CScalarSubqueryQuantified *popSubqQuantified =
-					CScalarSubqueryQuantified::PopConvert(pexpr->Pop());
-			const CColRef *pcr = popSubqQuantified->Pcr();
-			pexprInner->AddRef();
-			CExpression *pexprSubquery =
-				GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarSubquery(pmp, pcr, false /*fGeneratedByExist*/, true /*fGeneratedByQuantified*/), pexprInner);
+			CExpression *pexprInner = (*pexpr)[0];
 
-			CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
-			IMDId *pmdid = popSubqQuantified->PmdidOp();
-			const CWStringConst *pstr = pmda->Pmdscop(pmdid)->Mdname().Pstr();
-			pmdid->AddRef();
-			pexprScalar->AddRef();
+			// skip intermediate unary nodes
+			CExpression *pexprChild = pexprInner;
+			COperator *popChild = pexprChild->Pop();
+			while (NULL != pexprChild && CUtils::FLogicalUnary(popChild))
+			{
+				pexprChild = (*pexprChild)[0];
+				popChild = pexprChild->Pop();
+			}
 
-			return CUtils::PexprScalarCmp(pmp, pexprScalar, pexprSubquery, *pstr, pmdid);
+			// inspect next node
+			BOOL fGbAggWithoutGrpCols =
+					COperator::EopLogicalGbAgg == popChild->Eopid() &&
+					0 == CLogicalGbAgg::PopConvert(popChild)->Pdrgpcr()->UlLength();
+
+			BOOL fOneRowConstTable = COperator::EopLogicalConstTableGet == popChild->Eopid() &&
+					1 == CLogicalConstTableGet::PopConvert(popChild)->Pdrgpdrgpdatum()->UlLength();
+
+			if (fGbAggWithoutGrpCols || fOneRowConstTable)
+			{
+				// quantified subquery with max card 1
+				CScalarSubqueryQuantified *popSubqQuantified =
+						CScalarSubqueryQuantified::PopConvert(pexpr->Pop());
+				const CColRef *pcr = popSubqQuantified->Pcr();
+				pexprInner->AddRef();
+				CExpression *pexprSubquery =
+						GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarSubquery(pmp, pcr, false /*fGeneratedByExist*/, true /*fGeneratedByQuantified*/), pexprInner);
+
+				CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
+				IMDId *pmdid = popSubqQuantified->PmdidOp();
+				const CWStringConst *pstr = pmda->Pmdscop(pmdid)->Mdname().Pstr();
+				pmdid->AddRef();
+				pexprScalar->AddRef();
+
+				return CUtils::PexprScalarCmp(pmp, pexprScalar, pexprSubquery, *pstr, pmdid);
+			}
 		}
+	}
+
+	if (COperator::EopScalarProjectList == pop->Eopid())
+	{
+		fUnderPrList = true;
+	}
+
+	if (pop->FLogical())
+	{
+		// only toggle when you hit another logical node
+		fUnderPrList = false;
 	}
 
 	// recursively process children
@@ -234,7 +261,7 @@ CExpressionPreprocessor::PexprSimplifyQuantifiedSubqueries
 	DrgPexpr *pdrgpexprChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
 	for (ULONG ul = 0; ul < ulArity; ul++)
 	{
-		CExpression *pexprChild = PexprSimplifyQuantifiedSubqueries(pmp, (*pexpr)[ul]);
+		CExpression *pexprChild = PexprSimplifyQuantifiedSubqueries(pmp, (*pexpr)[ul], fUnderPrList);
 		pdrgpexprChildren->Append(pexprChild);
 	}
 
@@ -2037,7 +2064,7 @@ CExpressionPreprocessor::PexprPreprocess
 	pexprTrimmed->Release();
 
 	// (6) simplify quantified subqueries
-	CExpression *pexprSubqSimplified = PexprSimplifyQuantifiedSubqueries(pmp, pexprTrimmed2);
+	CExpression *pexprSubqSimplified = PexprSimplifyQuantifiedSubqueries(pmp, pexprTrimmed2, false /* fUnderPrList */);
 	GPOS_CHECK_ABORT;
 	pexprTrimmed2->Release();
 

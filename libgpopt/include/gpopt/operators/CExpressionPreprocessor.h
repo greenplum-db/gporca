@@ -91,7 +91,7 @@ namespace gpopt
 
 			// simplify quantified subqueries
 			static
-			CExpression *PexprSimplifyQuantifiedSubqueries(IMemoryPool *pmp, CExpression *pexpr);
+			CExpression *PexprSimplifyQuantifiedSubqueries(IMemoryPool *pmp, CExpression *pexpr, BOOL fUnderPrList);
 
 			// preliminary unnesting of scalar  subqueries
 			static

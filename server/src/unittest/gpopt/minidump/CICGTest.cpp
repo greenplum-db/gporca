@@ -77,13 +77,8 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/NOT-IN-NotNullBoth.mdp",
 		"../data/dxl/minidump/NOT-IN-NullInner.mdp",
 		"../data/dxl/minidump/NOT-IN-NullOuter.mdp",
-		"../data/dxl/minidump/Correlated-LASJ-With-Outer-Const.mdp",
-		"../data/dxl/minidump/Correlated-LASJ-With-Outer-Col.mdp",
-		"../data/dxl/minidump/Correlated-LASJ-With-Outer-Expr.mdp",
 		"../data/dxl/minidump/Correlated-SemiJoin.mdp",
 		"../data/dxl/minidump/CorrelatedSemiJoin-True.mdp",
-		"../data/dxl/minidump/CorrelatedIN-LeftSemiJoin-True.mdp",
-		"../data/dxl/minidump/CorrelatedIN-LeftSemiNotIn-True.mdp",
 		"../data/dxl/minidump/Correlated-AntiSemiJoin.mdp",
 		"../data/dxl/minidump/CorrelatedAntiSemiJoin-True.mdp",
 		"../data/dxl/minidump/Correlation-With-Casting-1.mdp",
@@ -95,7 +90,6 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/FullOuterJoin.mdp",
 		"../data/dxl/minidump/FullOuterJoin2.mdp",
 		"../data/dxl/minidump/AddEqualityPredicates.mdp",
-		"../data/dxl/minidump/AddPredsInSubqueries.mdp",
 		"../data/dxl/minidump/DeduplicatePredicates.mdp",
 		"../data/dxl/minidump/LeftJoin-With-Pred-On-Inner.mdp",
 		"../data/dxl/minidump/LeftJoin-With-Pred-On-Inner2.mdp",
@@ -109,10 +103,6 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/EquivClassesLimit.mdp",
 		"../data/dxl/minidump/Date-TimeStamp-HashJoin.mdp",
 		"../data/dxl/minidump/TimeStamp-Date-HashJoin.mdp",
-		"../data/dxl/minidump/MultiLevel-CorrelatedExec.mdp",
-		"../data/dxl/minidump/OneLevel-CorrelatedExec.mdp",
-		"../data/dxl/minidump/MultiLevel-IN-Subquery.mdp",
-		"../data/dxl/minidump/Join-With-Subq-Preds-1.mdp",
 
 #ifndef GPOS_32BIT
 		// TODO:  - 05/14/2014: the plan generates a different plan only for
@@ -132,10 +122,6 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/SemiJoin2InnerJoin.mdp",
 		"../data/dxl/minidump/SemiJoin2Select-1.mdp",
 		"../data/dxl/minidump/SemiJoin2Select-2.mdp",
-		"../data/dxl/minidump/AntiSemiJoin2Select-1.mdp",
-		"../data/dxl/minidump/AntiSemiJoin2Select-2.mdp",
-		"../data/dxl/minidump/Subq-On-OuterRef.mdp",
-		"../data/dxl/minidump/Subq-With-OuterRefCol.mdp",
 		"../data/dxl/minidump/ConstTblGetUnderSubqWithOuterRef.mdp",
 		"../data/dxl/minidump/ConstTblGetUnderSubqWithNoOuterRef.mdp",
 		"../data/dxl/minidump/ConstTblGetUnderSubqUnderProjectNoOuterRef.mdp",
@@ -143,8 +129,6 @@ const CHAR *rgszFileNames[] =
 
 		"../data/dxl/minidump/Subq-NoParams.mdp",
 		"../data/dxl/minidump/Subq-JoinWithOuterRef.mdp",
-		"../data/dxl/minidump/SubqAll-To-ScalarSubq.mdp",
-		"../data/dxl/minidump/SubqAll-Limit1.mdp",
 		"../data/dxl/minidump/ProjectUnderSubq.mdp",
 #ifndef GPOS_DEBUG
 		"../data/dxl/minidump/TPCDS-39-InnerJoin-JoinEstimate.mdp",
@@ -165,7 +149,6 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/ProjectWithTextConstant.mdp",
 		"../data/dxl/minidump/Join_OuterChild_DistUniversal.mdp",
 		"../data/dxl/minidump/Nested-Or-Predicates.mdp",
-		"../data/dxl/minidump/OrderByOuterRef.mdp",
 		"../data/dxl/minidump/CTG-Filter.mdp",
 		"../data/dxl/minidump/CTG-Join.mdp",
 		"../data/dxl/minidump/UDA-AnyElement-1.mdp",
@@ -218,7 +201,6 @@ const CHAR *rgszFileNames[] =
 		"../data/dxl/minidump/EffectOfLocalPredOnJoin3.mdp",
 		"../data/dxl/minidump/ProjectSetFunction.mdp",
 		"../data/dxl/minidump/MultipleSubqueriesInSelectClause.mdp",
-		"../data/dxl/minidump/SemiJoin2Select-EnforceSubplan.mdp",
 		"../data/dxl/minidump/EstimateJoinRowsForCastPredicates.mdp",
 		"../data/dxl/minidump/MissingBoolColStats.mdp",
 #ifndef GPOS_DEBUG
