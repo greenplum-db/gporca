@@ -865,7 +865,7 @@ SELECT pn, cn, vn FROM sale s WHERE NOT EXISTS (SELECT * FROM customer WHERE NOT
         </dxl:LogicalGet>
       </dxl:LogicalSelect>
     </dxl:Query>
-	<dxl:Plan Id="0" SpaceSize="4">
+	<dxl:Plan Id="0" SpaceSize="176">
 	  <dxl:Result>
 	    <dxl:Properties>
 	      <dxl:Cost StartupCost="0" TotalCost="2155.027744" Rows="12.000000" Width="12"/>
