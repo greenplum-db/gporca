@@ -12,6 +12,7 @@
 
 #include "gpos/string/CWStringDynamic.h"
 
+#include "naucrates/exception.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/CDXLUtils.h"
@@ -577,6 +578,31 @@ CMDRelationGPDB::PmdidIndex
 {
 	return (*m_pdrgpmdIndexInfo)[ulPos]->Pmdid();
 }
+
+// check if index is partial given its mdid
+BOOL
+CMDRelationGPDB::FPartialIndex
+	(
+	IMDId *pmdid
+	)
+	const
+{
+	const ULONG ulIndexes = UlIndices();
+
+	for (ULONG ul = 0; ul < ulIndexes; ++ul)
+	{
+		if (CMDIdGPDB::FEqualMDId(PmdidIndex(ul), pmdid))
+		{
+			return (*m_pdrgpmdIndexInfo)[ul]->FPartial();
+		}
+	}
+
+	// Not found
+	GPOS_RAISE(ExmaMD, ExmiMDCacheEntryNotFound, pmdid->Wsz());
+
+	return false;
+}
+
 
 //---------------------------------------------------------------------------
 //	@function:

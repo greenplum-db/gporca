@@ -195,6 +195,10 @@ namespace gpmd
 			virtual 
 			IMDId *PmdidIndex(ULONG ulPos) const = 0;
 
+			// check if index is partial given its mdid
+			virtual
+			BOOL FPartialIndex(IMDId *mdid) const;
+
 			// retrieve the id of the metadata cache trigger at the given position
 			virtual
 			IMDId *PmdidTrigger(ULONG ulPos) const = 0;
