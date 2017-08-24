@@ -18,6 +18,7 @@
 #include "naucrates/md/IMDColumn.h"
 #include "naucrates/md/IMDPartConstraint.h"
 #include "naucrates/statistics/IStatistics.h"
+#include "naucrates/md/CMDIndexInfo.h"
 
 namespace gpdxl
 {
@@ -218,6 +219,9 @@ namespace gpmd
 			static
 			const CWStringConst *PstrStorageType(IMDRelation::Erelstoragetype erelstorage);
 	};
+
+	// common structure over relation and external relation metadata for index info
+	typedef CDynamicPtrArray<CMDIndexInfo, CleanupRelease> DrgPmdIndexInfo;
 	
 }
 
