@@ -41,6 +41,10 @@ gives instructions for building and installing.
 
 ## Build GPORCA
 
+#### Using conan dependency manager
+Refer to the steps at: https://github.com/greenplum-db/conan
+
+#### Manually
 Go into `gporca` directory:
 
 ```
