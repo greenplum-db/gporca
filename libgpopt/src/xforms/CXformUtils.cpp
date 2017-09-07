@@ -720,7 +720,7 @@ CXformUtils::FSameDatatype
 //
 //		Example:
 //			For 'exists(select * from r where a = 10)', we produce the following:
-//			New Subquery: (select count(*) as cc from r where a = 10)
+//			New Subquery: (select count(*) as cc from r where a = 10 limit 1)
 //			New Scalar: cc > 0
 //
 //---------------------------------------------------------------------------
@@ -746,7 +746,9 @@ CXformUtils::ExistentialToAgg
 	}
 
 	pexprInner->AddRef();
-	CExpression *pexprInnerNew = CUtils::PexprCountStar(pmp, pexprInner);
+	CExpression *pexprLimit = CUtils::PexprLimit(pmp, pexprInner, 0, 1);
+
+	CExpression *pexprInnerNew = CUtils::PexprCountStar(pmp, pexprLimit);
 	const CColRef *pcrCount = CScalarProjectElement::PopConvert((*(*pexprInnerNew)[1])[0]->Pop())->Pcr();
 
 	*ppexprNewSubquery = GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CScalarSubquery(pmp, pcrCount, true /*fGeneratedByExist*/, false /*fGeneratedByQuantified*/), pexprInnerNew);
