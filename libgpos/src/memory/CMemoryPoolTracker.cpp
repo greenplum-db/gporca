@@ -359,7 +359,24 @@ CMemoryPoolTracker::UpdateStatistics
 	mps = m_mps;
 }
 
-
+//---------------------------------------------------------------------------
+//	@function:
+//		CMemoryPoolTracker::UlSizeOfRawAlloc
+//
+//	@doc:
+//		Get the raw size of a pointer for GPDB Memory Accounting
+//
+//---------------------------------------------------------------------------
+ULONG
+CMemoryPoolTracker::UlSizeOfRawAlloc
+	(
+	const void *pv
+	)
+{
+	GPOS_ASSERT(NULL != pv);
+	const SAllocHeader *pah = static_cast<const SAllocHeader*>(pv);
+	return GPOS_MEM_BYTES_TOTAL(pah->m_ulSize);
+}
 #endif // GPOS_DEBUG
 
 // EOF

@@ -18,6 +18,7 @@
 #include "gpos/io/COstreamString.h"
 #include "gpos/memory/CAutoMemoryPool.h"
 #include "gpos/memory/CCacheFactory.h"
+#include "gpos/memory/CMemoryPoolTracker.h"
 #include "gpos/string/CWStringStatic.h"
 #include "gpos/task/CAutoTaskProxy.h"
 #include "gpos/task/CWorkerPoolManager.h"
@@ -251,6 +252,19 @@ void gpos_terminate()
 	CCacheFactory::Pcf()->Shutdown();
 	CMemoryPoolManager::Pmpm()->Shutdown();
 #endif // GPOS_DEBUG
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		gpos_get_pointer_size
+//
+//	@doc:
+//		Get the size of a pointer allocated by GPOS
+//
+//---------------------------------------------------------------------------
+size_t gpos_get_pointer_size(void *ptr)
+{
+	return (size_t) CMemoryPoolTracker::UlSizeOfRawAlloc(ptr);
 }
 
 // EOF

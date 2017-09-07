@@ -188,6 +188,9 @@ namespace gpos
 			virtual
 			void UpdateStatistics(CMemoryPoolStatistics &mps);
 
+			// determine the size (in bytes) of a raw allocation that includes the header
+			ULONG UlSizeOfRawAlloc(const void *pv);
+
 #endif // GPOS_DEBUG
 
 	};

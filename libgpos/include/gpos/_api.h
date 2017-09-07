@@ -70,6 +70,8 @@ int gpos_exec(gpos_exec_params *params);
 /* shutdown GPOS memory pool, worker pool and message repository */
 void gpos_terminate(void);
 
+size_t gpos_get_pointer_size(void *ptr);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
