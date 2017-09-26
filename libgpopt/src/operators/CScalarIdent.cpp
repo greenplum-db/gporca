@@ -163,6 +163,24 @@ CScalarIdent::FCastedScId
 	return false;
 }
 
+BOOL
+CScalarIdent::FCastedScId
+	(
+	CExpression *pexpr,
+	CColRef *pcr
+	)
+{
+	GPOS_ASSERT(NULL != pexpr);
+
+	if (!FCastedScId(pexpr))
+	{
+		return false;
+	}
+
+	CScalarIdent *pScIdent = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
+
+	return pcr == pScIdent->Pcr();
+}
 
 //---------------------------------------------------------------------------
 //	@function:
