@@ -45,6 +45,10 @@ ORCA is built with [CMake](https://cmake.org), so any build system supported by
 CMake can be used. The team uses [Ninja](https://ninja-build.org) because it's
 really really fast and convenient.
 
+#### Using conan dependency manager
+Refer to the steps at: https://github.com/greenplum-db/conan
+
+#### Manually
 Go into `gporca` directory:
 
 ```
