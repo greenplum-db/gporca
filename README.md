@@ -48,10 +48,8 @@ really really fast and convenient.
 Go into `gporca` directory:
 
 ```
-mkdir build
-cd build
-cmake -GNinja ../
-ninja install
+cmake -GNinja -H. -Bbuild
+ninja install -C build
 ```
 
 <a name="test"></a>
@@ -166,23 +164,18 @@ ready for use in production-level CI environments.
 
 # Advanced Setup
 
-## How to generate make files with different options
+## How to generate build files with different options
 
-Here are few build flavors:
+Here are a few build flavors (commands run from the ORCA checkout directory):
 
 ```
 # debug build
-cmake -GNinja -D CMAKE_BUILD_TYPE=DEBUG ../
+cmake -GNinja -D CMAKE_BUILD_TYPE=DEBUG -H. -Bbuild.debug
 ```
 
 ```
 # release build with debug info
-cmake -GNinja -D CMAKE_BUILD_TYPE=RelWithDebInfo ../
-```
-
-```
-# release build
-cmake -GNinja -D CMAKE_BUILD_TYPE=RELEASE ../
+cmake -GNinja -D CMAKE_BUILD_TYPE=RelWithDebInfo -H. -Bbuild.release
 ```
 
 ## Explicitly Specifying GP-Xerces For Build
@@ -280,7 +273,7 @@ GPORCA has four libraries:
 By default, GPORCA will be installed under /usr/local. You can change this by
 setting CMAKE_INSTALL_PREFIX when running cmake, for example:
 ```
-cmake -GNinja -D CMAKE_INSTALL_PREFIX=/home/user/gporca ../
+cmake -GNinja -D CMAKE_INSTALL_PREFIX=/home/user/gporca -H. -Bbuild
 ```
 
 By default, the header files are located in:
@@ -301,13 +294,9 @@ the library is located at:
 
 Build and install:
 ```
-make install
+ninja install -C build
 ```
 
-Build and install with verbose output
-```
-make VERBOSE=1 install
-```
 
 ## Cleanup
 
