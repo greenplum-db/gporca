@@ -238,18 +238,12 @@ And for 64-bit x86:
 cmake -GNinja -D CMAKE_TOOLCHAIN_FILE=../cmake/x86_64.toolchain.cmake ../
 ```
 
-## How to speed-up the build (or debug it)
+## How to debug the build
 
-For faster build use the -j option of make. For instance, the following command runs make on 7 job slots
-
-```
-make -j7
-```
-
-Show all commands being run as part of make (for debugging purpose)
+Show all command lines while building (for debugging purpose)
 
 ```
-make VERBOSE=1
+ninja -v -C build
 ```
 
 ### Extended Tests
