@@ -85,6 +85,11 @@ namespace gpopt
 			virtual
 			IOstream &OsPrint(IOstream &os) const = 0;
 
+#ifdef GPOS_DEBUG
+			// debug print for interactive debugging sessions only
+			void DbgPrint();
+#endif // GPOS_DEBUG
+
 	}; // class CDrvdProp
 
  	// shorthand for printing

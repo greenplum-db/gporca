@@ -358,6 +358,11 @@ namespace gpopt
 			static
 			CPartIndexMap *PpimCombine(IMemoryPool *pmp, const CPartIndexMap &pimFst, const CPartIndexMap &pimSnd);
 
+#ifdef GPOS_DEBUG
+			// debug print for interactive debugging sessions only
+			void DbgPrint() const;
+#endif // GPOS_DEBUG
+
 	}; // class CPartIndexMap
 
  	// shorthand for printing

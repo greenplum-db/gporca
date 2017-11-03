@@ -13,6 +13,10 @@
 #include "gpopt/base/CPartIndexMap.h"
 #include "gpopt/base/CPartitionPropagationSpec.h"
 
+#ifdef GPOS_DEBUG
+#include "gpos/error/CAutoTrace.h"
+#endif // GPOS_DEBUG
+
 using namespace gpopt;
 
 // initialization of static variables
@@ -1061,6 +1065,15 @@ CPartIndexMap::OsPrintPartCnstrMap
 
 	return os;
 }
+
+#ifdef GPOS_DEBUG
+void
+CPartIndexMap::DbgPrint() const
+{
+	CAutoTrace at(m_pmp);
+	(void) this->OsPrint(at.Os());
+}
+#endif // GPOS_DEBUG
 
 namespace gpopt {
 

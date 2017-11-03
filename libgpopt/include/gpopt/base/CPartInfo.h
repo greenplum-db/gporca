@@ -115,6 +115,11 @@ namespace gpopt
 					// copy part info entry into given memory pool
 					CPartInfoEntry *PpartinfoentryCopy(IMemoryPool *pmp);
 
+#ifdef GPOS_DEBUG
+					// debug print for interactive debugging sessions only
+					void DbgPrint();
+#endif // GPOS_DEBUG
+
 			}; // CPartInfoEntry
 
 			typedef CDynamicPtrArray<CPartInfoEntry, CleanupRelease> DrgPpartentries;
@@ -193,6 +198,11 @@ namespace gpopt
 				CPartInfo *ppartinfoFst,
 				CPartInfo *ppartinfoSnd
 				);
+
+#ifdef GPOS_DEBUG
+			// debug print for interactive debugging sessions only
+			void DbgPrint() const;
+#endif // GPOS_DEBUG
 
 	}; // CPartInfo
 
