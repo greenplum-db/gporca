@@ -14,6 +14,7 @@
 #include "gpopt/base/CPartitionPropagationSpec.h"
 
 #ifdef GPOS_DEBUG
+#include "gpopt/base/COptCtxt.h"
 #include "gpos/error/CAutoTrace.h"
 #endif // GPOS_DEBUG
 
@@ -202,10 +203,24 @@ CPartIndexMap::CPartTableInfo::OsPrint
 	(
 	IOstream &os
 	)
+	const
 {
-	os << m_ulScanId;
+	os << CPartTableInfo::SzManipulatorType(Epim());
+	os << "<Scan Id: " << m_ulScanId << ">";
+	os << ", <Propagators: " << m_ulPropagators << ">";
 	return os;
 }
+
+#ifdef GPOS_DEBUG
+void
+CPartIndexMap::CPartTableInfo::DbgPrint() const
+{
+
+	IMemoryPool *pmp = COptCtxt::PoctxtFromTLS()->Pmp();
+	CAutoTrace at(pmp);
+	(void) this->OsPrint(at.Os());
+}
+#endif
 
 //---------------------------------------------------------------------------
 //	@function:
