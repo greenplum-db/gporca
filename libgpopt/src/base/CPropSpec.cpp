@@ -21,7 +21,7 @@ using namespace gpopt;
 #ifdef GPOS_DEBUG
 // print distribution spec
 void
-CPropSpec::DbgPrint()
+CPropSpec::DbgPrint() const
 {
 	IMemoryPool *pmp = COptCtxt::PoctxtFromTLS()->Pmp();
 	CAutoTrace at(pmp);

@@ -24,14 +24,14 @@ namespace gpopt {
 	CDrvdProp::CDrvdProp()
 	{}
 
-	IOstream &operator << (IOstream &os, CDrvdProp &drvdprop)
+	IOstream &operator << (IOstream &os, const CDrvdProp &drvdprop)
 	{
 		return drvdprop.OsPrint(os);
 	}
 
 #ifdef GPOS_DEBUG
 	void
-	CDrvdProp::DbgPrint()
+	CDrvdProp::DbgPrint() const
 	{
 		IMemoryPool *pmp = COptCtxt::PoctxtFromTLS()->Pmp();
 		CAutoTrace at(pmp);

@@ -112,6 +112,7 @@ CPartInfo::CPartInfoEntry::OsPrint
 	(
 	IOstream &os
 	)
+	const
 {
 	os << m_ulScanId;
 
@@ -120,7 +121,7 @@ CPartInfo::CPartInfoEntry::OsPrint
 
 #ifdef GPOS_DEBUG
 void
-CPartInfo::CPartInfoEntry::DbgPrint()
+CPartInfo::CPartInfoEntry::DbgPrint() const
 {
 	IMemoryPool *pmp = COptCtxt::PoctxtFromTLS()->Pmp();
 	CAutoTrace at(pmp);

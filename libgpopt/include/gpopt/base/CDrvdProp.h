@@ -87,13 +87,13 @@ namespace gpopt
 
 #ifdef GPOS_DEBUG
 			// debug print for interactive debugging sessions only
-			void DbgPrint();
+			void DbgPrint() const;
 #endif // GPOS_DEBUG
 
 	}; // class CDrvdProp
 
  	// shorthand for printing
-	IOstream &operator << (IOstream &os, CDrvdProp &drvdprop);
+	IOstream &operator << (IOstream &os, const CDrvdProp &drvdprop);
 
 }
 
