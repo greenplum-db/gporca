@@ -29,7 +29,6 @@
 
 using namespace gpopt;
 
-#define GPOPT_DP_JOIN_ORDERING_SIZE_THRESHOLD	10
 #define GPOPT_DP_JOIN_ORDERING_CONNECTEDNESS_THRESHOLD	0.5
 #define GPOPT_DP_JOIN_ORDERING_TOPK	10
 
@@ -1056,8 +1055,7 @@ CJoinOrderDP::PexprExpand()
 		(void) pbs->FExchangeSet(ul);
 	}
 
-	if (GPOPT_DP_JOIN_ORDERING_SIZE_THRESHOLD < m_ulComps &&
-		GPOPT_DP_JOIN_ORDERING_CONNECTEDNESS_THRESHOLD < DMaxConnectedness(pbs))
+	if (GPOPT_DP_JOIN_ORDERING_CONNECTEDNESS_THRESHOLD < DMaxConnectedness(pbs))
 	{
 		// terminate early if computation cost is expected to be large
 		pbs->Release();
