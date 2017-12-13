@@ -520,7 +520,8 @@ CJoinOrderDP::PexprBestJoinOrderDP
 	CDouble dMinCost(0.0);
 	CExpression *pexprResult = NULL;
 
-	DrgPbs *pdrgpbsSubsets = PdrgpbsSubsets(m_pmp, pbs);
+	DrgPbs *pdrgpbsSubsets = PdrgpbsMinCutBranch(pbs);
+
 	const ULONG ulSubsets = pdrgpbsSubsets->UlLength();
 	for (ULONG ul = 0; ul < ulSubsets; ul++)
 	{
@@ -662,6 +663,201 @@ CJoinOrderDP::PdrgpbsSubsets
 	return pdrgpbsSubsets;
 }
 
+CBitSet *
+CJoinOrderDP::PbsNeighbours(CBitSet *c)
+{
+	CBitSet *result = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	CBitSetIter bsi(*c);
+	while (bsi.FAdvance())
+	{
+		result->Union(m_rgpbsAdj[bsi.UlBit()]);
+	}
+	result->Difference(c);
+	return result;
+}
+
+CBitSet *
+CJoinOrderDP::PbsNeighbours(ULONG v)
+{
+	CBitSet *result = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	result->Union(m_rgpbsAdj[v]);
+	(void) result->FExchangeClear(v);
+	return result;
+}
+
+CBitSet *
+CJoinOrderDP::PbsReachable(CBitSet *S, CBitSet *C, ULONG L)
+{
+	CBitSet *R = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	(void) R->FExchangeSet(L);
+
+	CBitSet *N = PbsNeighbours(L);
+	N->Intersection(S);
+	N->Difference(C);
+
+	while (N->CElements() != 0)
+	{
+		R->Union(N);
+		CBitSet *N0 = PbsNeighbours(N);
+		N0->Intersection(S);
+		N0->Difference(C);
+		N->Release();
+		N = N0;
+	}
+
+	N->Release();
+	return R;
+}
+
+
+// A New, Highly Efficient, and Easy To Implement Top-Down Join Enumeration Algorithm
+// by Pit Fender, Guido Moerkotte
+CBitSet *
+CJoinOrderDP::PbsMinCutBranch(DrgPbs *subsets, CBitSet *S, CBitSet *C, CBitSet *X, ULONG L)
+{
+	CBitSet *X_ = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	CBitSet *R = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	CBitSet *Rtmp = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	CBitSet *N_L = PbsNeighbours(L);
+	CBitSet *N_C = PbsNeighbours(C);
+	CBitSet *NL = GPOS_NEW(m_pmp) CBitSet(m_pmp, *N_L);
+	NL->Intersection(S);
+	NL->Difference(C);
+	NL->Difference(X);
+
+	CBitSet *NX = GPOS_NEW(m_pmp) CBitSet(m_pmp, *N_L);
+	NX->Intersection(S);
+	NX->Difference(C);
+	NX->Intersection(X);
+
+	CBitSet *NB = GPOS_NEW(m_pmp) CBitSet(m_pmp, *N_C);
+	NB->Intersection(S);
+	NB->Difference(C);
+	NB->Difference(NL);
+	NB->Difference(X);
+
+	CBitSet *NB0 = GPOS_NEW(m_pmp) CBitSet(m_pmp, *NB);
+	NB0->Intersection(Rtmp);
+	while (NL->CElements() != 0 || NX->CElements() != 0 || NB0->CElements() != 0)
+	{
+		CBitSet *A = GPOS_NEW(m_pmp) CBitSet(m_pmp, *NB);
+		A->Union(NL);
+		A->Intersection(Rtmp);
+
+		CBitSet *C_ = GPOS_NEW(m_pmp) CBitSet(m_pmp, *C);
+		ULONG v = 0;
+
+		if (A->CElements() != 0)
+		{
+			// case 1
+			CBitSetIter bsi(*A);
+			(void) bsi.FAdvance();
+			v = bsi.UlBit();
+			C_->FExchangeSet(v);
+			CBitSet *unused = PbsMinCutBranch(subsets, S, C_, X_, v);
+			unused->Release();
+			(void) NL->FExchangeClear(v);
+			(void) NB->FExchangeClear(v);
+		}
+		else
+		{
+			X_->Clear();
+			X_->Union(X);
+
+			if (NL->CElements() != 0)
+			{
+				// case 2
+				CBitSetIter bsi(*NL);
+				(void) bsi.FAdvance();
+				v = bsi.UlBit();
+				(void) C_->FExchangeSet(v);
+				Rtmp->Release();
+				Rtmp = PbsMinCutBranch(subsets, S, C_, X_, v);
+				(void) NL->FExchangeClear(v);
+			}
+			else
+			{
+				// case 3
+				CBitSetIter bsi(*NX);
+				(void) bsi.FAdvance();
+				v = bsi.UlBit();
+				(void) C_->FExchangeSet(v);
+				Rtmp->Release();
+				Rtmp = PbsReachable(S, C_, v);
+			}
+
+			NX->Difference(Rtmp);
+
+			CBitSet *RX = GPOS_NEW(m_pmp) CBitSet(m_pmp, *Rtmp);
+			RX->Intersection(X);
+			if (RX->CElements() != 0)
+			{
+				CBitSet *NL0 = GPOS_NEW(m_pmp) CBitSet(m_pmp, *NL);
+				NL0->Difference(Rtmp);
+				NX->Union(NL0);
+				NL->Intersection(Rtmp);
+				NB->Intersection(Rtmp);
+				NL0->Release();
+			}
+			RX->Release();
+
+			CBitSet *S_ = GPOS_NEW(m_pmp) CBitSet(m_pmp, *S);
+			S_->Difference(Rtmp);
+			S_->Intersection(X);
+			if (S_->CElements() != 0)
+			{
+				NL->Difference(Rtmp);
+				NB->Difference(Rtmp);
+			}
+			else
+			{
+				subsets->Append(GPOS_NEW(m_pmp) CBitSet(m_pmp, *Rtmp));
+			}
+			S_->Release();
+			R->Union(Rtmp);
+		}
+
+		C_->Release();
+		A->Release();
+		(void) X_->FExchangeSet(v);
+
+		NB0->Clear();
+		NB0->Union(NB);
+		NB0->Intersection(Rtmp);
+	}
+	(void) R->FExchangeSet(L);
+	X_->Release();
+	Rtmp->Release();
+	N_L->Release();
+	N_C->Release();
+	NL->Release();
+	NB->Release();
+	NX->Release();
+	NB0->Release();
+	return R;
+}
+
+DrgPbs *
+CJoinOrderDP::PdrgpbsMinCutBranch(CBitSet *pbs)
+{
+	DrgPbs *pdrgpbsSubsets = GPOS_NEW(m_pmp) DrgPbs(m_pmp);
+	CBitSet *C = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+	CBitSet *X = GPOS_NEW(m_pmp) CBitSet(m_pmp);
+
+	CBitSetIter bsi(*pbs);
+	if (bsi.FAdvance())
+	{
+		ULONG L = bsi.UlBit();
+		(void) C->FExchangeSet(L);
+		CBitSet *unused = PbsMinCutBranch(pdrgpbsSubsets, pbs, C, X, L);
+		unused->Release();
+	}
+
+	C->Release();
+	X->Release();
+
+	return pdrgpbsSubsets;
+}
 
 //---------------------------------------------------------------------------
 //	@function:

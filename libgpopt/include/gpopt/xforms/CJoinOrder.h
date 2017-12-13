@@ -109,6 +109,9 @@ namespace gpopt
 			// number of components
 			ULONG m_ulComps;
 			
+			// neighbors array
+			CBitSet **m_rgpbsAdj;
+
 			// compute cover of each edge
 			void ComputeEdgeCover();
 			

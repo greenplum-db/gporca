@@ -228,6 +228,7 @@ CJoinOrder::CJoinOrder
 	
 	m_ulComps = pdrgpexpr->UlLength();
 	m_rgpcomp = GPOS_NEW_ARRAY(pmp, Pcomp, m_ulComps);
+	m_rgpbsAdj = GPOS_NEW_ARRAY(pmp, CBitSet *, m_ulComps);
 	
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
@@ -237,6 +238,8 @@ CJoinOrder::CJoinOrder
 		
 		// component always covers itself
 		(void) m_rgpcomp[ul]->m_pbs->FExchangeSet(ul);
+
+		m_rgpbsAdj[ul] = GPOS_NEW(pmp) CBitSet(pmp);
 	}
 
 	m_ulEdges = pdrgpexprConj->UlLength();
@@ -269,8 +272,10 @@ CJoinOrder::~CJoinOrder()
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
 		m_rgpcomp[ul]->Release();
+		m_rgpbsAdj[ul]->Release();
 	}
 	GPOS_DELETE_ARRAY(m_rgpcomp);
+	GPOS_DELETE_ARRAY(m_rgpbsAdj);
 
 	for (ULONG ul = 0; ul < m_ulEdges; ul++)
 	{
@@ -303,7 +308,14 @@ CJoinOrder::ComputeEdgeCover()
 
 			if (!pcrsUsed->FDisjoint(pcrsOutput))
 			{
-				(void) m_rgpedge[ulEdge]->m_pbs->FExchangeSet(ulComp);
+				CBitSet *pbs = m_rgpedge[ulEdge]->m_pbs;
+				CBitSetIter bsi(*pbs);
+				while (bsi.FAdvance())
+				{
+					(void) m_rgpbsAdj[bsi.UlBit()]->FExchangeSet(ulComp);
+				}
+				m_rgpbsAdj[ulComp]->Union(pbs);
+				(void) pbs->FExchangeSet(ulComp);
 			}
 		}
 	}

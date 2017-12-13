@@ -104,9 +104,6 @@ namespace gpos
 			// find link with offset less or equal to given value
 			CBitSetLink *PbslLocate(ULONG, CBitSetLink * = NULL) const;
 			
-			// reset set
-			void Clear();
-			
 			// compute target offset
 			ULONG UlOffset(ULONG) const;
 			
@@ -131,6 +128,9 @@ namespace gpos
 			// clear given bit; return previous value
 			BOOL FExchangeClear(ULONG ulBit);
 			
+			// reset set
+			void Clear();
+
 			// union sets
 			void Union(const CBitSet *);
 			

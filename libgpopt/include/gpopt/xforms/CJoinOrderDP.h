@@ -166,6 +166,18 @@ namespace gpopt
 			// add expression to cost map
 			void InsertExpressionCost(CExpression *pexpr, CDouble dCost, BOOL fValidateInsert);
 
+			CBitSet *PbsNeighbours(ULONG v);
+
+			CBitSet *PbsNeighbours(CBitSet *C);
+
+			CBitSet *PbsReachable(CBitSet *S, CBitSet *C, ULONG L);
+
+			// implementation of min cut branch partitioning algorithm
+			CBitSet *PbsMinCutBranch(DrgPbs *subsets, CBitSet *S, CBitSet *C, CBitSet *X, ULONG L);
+
+			// generate all subsets of connected components
+			DrgPbs *PdrgpbsMinCutBranch(CBitSet *pbs);
+
 			// generate all subsets of the given array of elements
 			static
 			void GenerateSubsets(IMemoryPool *pmp, CBitSet *pbsCurrent, ULONG *pulElems, ULONG ulSize, ULONG ulIndex, DrgPbs *pdrgpbsSubsets);
