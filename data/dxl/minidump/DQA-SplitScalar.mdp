@@ -20,7 +20,7 @@ drop table if exists foo;
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="128"/>
-      <dxl:TraceFlags Value="101013,102120,103001,103014,103015,103022,103023,105000"/>
+      <dxl:TraceFlags Value="101013,102120,103001,103014,103015,103022,103023,104005,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.16.1.0" Name="bool" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="1" PassByValue="true">
@@ -330,7 +330,7 @@ drop table if exists foo;
         </dxl:LogicalGet>
       </dxl:LogicalGroupBy>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="11">
+    <dxl:Plan Id="0" SpaceSize="8">
       <dxl:Aggregate AggregationStrategy="Plain" StreamSafe="false">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="431.120390" Rows="1.000000" Width="8"/>
