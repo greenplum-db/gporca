@@ -20,171 +20,85 @@ if (COMPILER_HAS_WNO_LONG_LONG)
 endif()
 
 add_executable(gporca_test
-               include/unittest/base.h
-               include/unittest/dxl/statistics/CCardinalityTestUtils.h
-               include/unittest/dxl/statistics/CStatisticsTest.h
-               include/unittest/dxl/statistics/CJoinCardinalityTest.h
-               include/unittest/gpopt/base/CConstraintTest.h
-               include/unittest/gpopt/CTestUtils.inl
-               include/unittest/gpopt/metadata/CPartConstraintTest.h
-
                src/startup/main.cpp
-               include/unittest/gpopt/CTestUtils.h
-               src/unittest/CTestUtils.cpp
-               include/unittest/gpopt/CConstExprEvaluatorForDates.h
                src/unittest/CConstExprEvaluatorForDates.cpp
-               include/unittest/gpopt/CSubqueryTestUtils.h
                src/unittest/CSubqueryTestUtils.cpp
-               include/unittest/dxl/CParseHandlerManagerTest.h
-               src/unittest/dxl/CParseHandlerManagerTest.cpp
-               include/unittest/gpopt/mdcache/CMDProviderTest.h
-               src/unittest/dxl/CMDProviderTest.cpp
-               include/unittest/dxl/CDXLMemoryManagerTest.h
+               src/unittest/CTestUtils.cpp
                src/unittest/dxl/CDXLMemoryManagerTest.cpp
-               include/unittest/dxl/CXMLSerializerTest.h
-               src/unittest/dxl/CXMLSerializerTest.cpp
-               include/unittest/dxl/CDXLUtilsTest.h
                src/unittest/dxl/CDXLUtilsTest.cpp
-               include/unittest/dxl/CParseHandlerTest.h
+               src/unittest/dxl/CMDProviderTest.cpp
+               src/unittest/dxl/CParseHandlerManagerTest.cpp
                src/unittest/dxl/CParseHandlerTest.cpp
-               include/unittest/dxl/base/CDatumTest.h
-               include/unittest/dxl/statistics/CCardinalityTestUtils.h
-               src/unittest/dxl/statistics/CCardinalityTestUtils.cpp
-               include/unittest/dxl/statistics/CStatisticsTest.h
-               src/unittest/dxl/statistics/CStatisticsTest.cpp
-               include/unittest/dxl/statistics/CJoinCardinalityTest.h
-               src/unittest/dxl/statistics/CJoinCardinalityTest.cpp
+               src/unittest/dxl/CXMLSerializerTest.cpp
                src/unittest/dxl/base/CDatumTest.cpp
-               include/unittest/gpopt/translate/CTranslatorExprToDXLTest.h
-               src/unittest/gpopt/translate/CTranslatorExprToDXLTest.cpp
-               include/unittest/gpopt/translate/CTpchTest.h
-               src/unittest/gpopt/translate/CTpchTest.cpp
-               include/unittest/gpopt/translate/CTranslatorDXLToExprTest.h
-               src/unittest/gpopt/translate/CTranslatorDXLToExprTest.cpp
-               include/unittest/gpopt/search/CTreeMapTest.h
-               src/unittest/gpopt/search/CTreeMapTest.cpp
-               include/unittest/gpopt/search/COptimizationJobsTest.h
-               src/unittest/gpopt/search/COptimizationJobsTest.cpp
-               include/unittest/gpopt/search/CSchedulerTest.h
-               src/unittest/gpopt/search/CSchedulerTest.cpp
-               include/unittest/gpopt/search/CSearchStrategyTest.h
-               src/unittest/gpopt/search/CSearchStrategyTest.cpp
-               include/unittest/gpopt/minidump/CAggTest.h
-               src/unittest/gpopt/minidump/CAggTest.cpp
-               include/unittest/gpopt/minidump/CExistsSubqueryTest.h
-               src/unittest/gpopt/minidump/CExistsSubqueryTest.cpp
-               include/unittest/gpopt/minidump/CCollapseProjectTest.h
-               src/unittest/gpopt/minidump/CCollapseProjectTest.cpp
-               include/unittest/gpopt/minidump/CArrayExpansionTest.h
-               src/unittest/gpopt/minidump/CArrayExpansionTest.cpp
-               include/unittest/gpopt/minidump/CJoinOrderDPTest.h
-               src/unittest/gpopt/minidump/CJoinOrderDPTest.cpp
-               include/unittest/gpopt/minidump/CPruneColumnsTest.h
-               src/unittest/gpopt/minidump/CPruneColumnsTest.cpp
-               include/unittest/gpopt/minidump/CMissingStatsTest.h
-               src/unittest/gpopt/minidump/CMissingStatsTest.cpp
-               include/unittest/gpopt/minidump/CBitmapTest.h
-               src/unittest/gpopt/minidump/CBitmapTest.cpp
-               include/unittest/gpopt/minidump/CPartTblTest.h
-               src/unittest/gpopt/minidump/CPartTblTest.cpp
-               include/unittest/gpopt/minidump/CDMLTest.h
-               src/unittest/gpopt/minidump/CDMLTest.cpp
-               include/unittest/gpopt/minidump/CMinidumpWithConstExprEvaluatorTest.h
-               src/unittest/gpopt/minidump/CMinidumpWithConstExprEvaluatorTest.cpp
-               include/unittest/gpopt/minidump/CMiniDumperDXLTest.h
-               src/unittest/gpopt/minidump/CMiniDumperDXLTest.cpp
-               include/unittest/gpopt/minidump/CMultilevelPartitionTest.h
-               src/unittest/gpopt/minidump/CMultilevelPartitionTest.cpp
-               include/unittest/gpopt/minidump/CDirectDispatchTest.h
-               src/unittest/gpopt/minidump/CDirectDispatchTest.cpp
-               include/unittest/gpopt/minidump/CCTETest.h
-               src/unittest/gpopt/minidump/CCTETest.cpp
-               include/unittest/gpopt/minidump/CExternalTableTest.h
-               src/unittest/gpopt/minidump/CExternalTableTest.cpp
-               include/unittest/gpopt/minidump/CEscapeMechanismTest.h
-               src/unittest/gpopt/minidump/CEscapeMechanismTest.cpp
-               include/unittest/gpopt/minidump/CWindowTest.h
-               src/unittest/gpopt/minidump/CWindowTest.cpp
-               include/unittest/gpopt/minidump/CICGTest.h
-               src/unittest/gpopt/minidump/CICGTest.cpp
-               include/unittest/gpopt/minidump/CSetopTest.h
-               src/unittest/gpopt/minidump/CSetopTest.cpp
-               include/unittest/gpopt/minidump/CIndexTest.h
-               src/unittest/gpopt/minidump/CIndexTest.cpp
-               include/unittest/gpopt/minidump/CPullUpProjectElementTest.h
-               src/unittest/gpopt/minidump/CPullUpProjectElementTest.cpp
-               include/unittest/gpopt/minidump/CTpcdsTest.h
-               src/unittest/gpopt/minidump/CTpcdsTest.cpp
-               include/unittest/gpopt/minidump/CTVFTest.h
-               src/unittest/gpopt/minidump/CTVFTest.cpp
-               include/unittest/gpopt/xforms/CDecorrelatorTest.h
-               src/unittest/gpopt/xforms/CDecorrelatorTest.cpp
-               include/unittest/gpopt/xforms/CSubqueryHandlerTest.h
-               src/unittest/gpopt/xforms/CSubqueryHandlerTest.cpp
-               include/unittest/gpopt/xforms/CXformTest.h
-               src/unittest/gpopt/xforms/CXformTest.cpp
-               include/unittest/gpopt/xforms/CXformFactoryTest.h
-               src/unittest/gpopt/xforms/CXformFactoryTest.cpp
-               include/unittest/gpopt/xforms/CJoinOrderTest.h
-               src/unittest/gpopt/xforms/CJoinOrderTest.cpp
-               include/unittest/gpopt/engine/CEngineTest.h
-               src/unittest/gpopt/engine/CEngineTest.cpp
-               include/unittest/gpopt/engine/CEnumeratorTest.h
-               src/unittest/gpopt/engine/CEnumeratorTest.cpp
-               include/unittest/gpopt/operators/CExpressionTest.h
-               src/unittest/gpopt/operators/CExpressionTest.cpp
-               include/unittest/gpopt/operators/CContradictionTest.h
-               src/unittest/gpopt/operators/CContradictionTest.cpp
-               include/unittest/gpopt/operators/CExpressionPreprocessorTest.h
-               src/unittest/gpopt/operators/CExpressionPreprocessorTest.cpp
-               include/unittest/gpopt/operators/CPredicateUtilsTest.h
-               src/unittest/gpopt/operators/CPredicateUtilsTest.cpp
-               include/unittest/gpopt/mdcache/CMDAccessorTest.h
-               src/unittest/gpopt/mdcache/CMDAccessorTest.cpp
-               include/unittest/gpopt/eval/CConstExprEvaluatorDXLTest.h
-               src/unittest/gpopt/eval/CConstExprEvaluatorDXLTest.cpp
-               include/unittest/gpopt/eval/CConstExprEvaluatorDefaultTest.h
-               src/unittest/gpopt/eval/CConstExprEvaluatorDefaultTest.cpp
-               include/unittest/gpopt/base/CConstraintTest.h
-               src/unittest/gpopt/base/CConstraintTest.cpp
-               include/unittest/gpopt/base/CKeyCollectionTest.h
-               src/unittest/gpopt/base/CKeyCollectionTest.cpp
-               include/unittest/gpopt/base/CColumnFactoryTest.h
-               src/unittest/gpopt/base/CColumnFactoryTest.cpp
-               include/unittest/gpopt/base/CStateMachineTest.h
-               src/unittest/gpopt/base/CStateMachineTest.cpp
-               include/unittest/gpopt/base/CColRefSetIterTest.h
+               src/unittest/dxl/statistics/CCardinalityTestUtils.cpp
+               src/unittest/dxl/statistics/CJoinCardinalityTest.cpp
+               src/unittest/dxl/statistics/CStatisticsTest.cpp
                src/unittest/gpopt/base/CColRefSetIterTest.cpp
-               include/unittest/gpopt/base/CColRefSetTest.h
                src/unittest/gpopt/base/CColRefSetTest.cpp
-               include/unittest/gpopt/base/CEquivalenceClassesTest.h
-               src/unittest/gpopt/base/CEquivalenceClassesTest.cpp
-               include/unittest/gpopt/base/CFunctionalDependencyTest.h
-               src/unittest/gpopt/base/CFunctionalDependencyTest.cpp
-               include/unittest/gpopt/base/CMaxCardTest.h
-               src/unittest/gpopt/base/CMaxCardTest.cpp
-               include/unittest/gpopt/base/CRangeTest.h
-               src/unittest/gpopt/base/CRangeTest.cpp
-               include/unittest/gpopt/base/CDistributionSpecTest.h
+               src/unittest/gpopt/base/CColumnFactoryTest.cpp
+               src/unittest/gpopt/base/CConstraintTest.cpp
                src/unittest/gpopt/base/CDistributionSpecTest.cpp
-               include/unittest/gpopt/base/COrderSpecTest.h
+               src/unittest/gpopt/base/CEquivalenceClassesTest.cpp
+               src/unittest/gpopt/base/CFunctionalDependencyTest.cpp
+               src/unittest/gpopt/base/CKeyCollectionTest.cpp
+               src/unittest/gpopt/base/CMaxCardTest.cpp
                src/unittest/gpopt/base/COrderSpecTest.cpp
-               include/unittest/gpopt/csq/CCorrelatedExecutionTest.h
-               src/unittest/gpopt/csq/CCorrelatedExecutionTest.cpp
-               include/unittest/gpopt/cost/CCostTest.h
+               src/unittest/gpopt/base/CRangeTest.cpp
+               src/unittest/gpopt/base/CStateMachineTest.cpp
                src/unittest/gpopt/cost/CCostTest.cpp
-               include/unittest/gpopt/metadata/CPartConstraintTest.h
-               src/unittest/gpopt/metadata/CPartConstraintTest.cpp
-               include/unittest/gpopt/metadata/CTableDescriptorTest.h
-               src/unittest/gpopt/metadata/CTableDescriptorTest.cpp
-               include/unittest/gpopt/metadata/CColumnDescriptorTest.h
+               src/unittest/gpopt/csq/CCorrelatedExecutionTest.cpp
+               src/unittest/gpopt/engine/CEngineTest.cpp
+               src/unittest/gpopt/engine/CEnumeratorTest.cpp
+               src/unittest/gpopt/eval/CConstExprEvaluatorDXLTest.cpp
+               src/unittest/gpopt/eval/CConstExprEvaluatorDefaultTest.cpp
+               src/unittest/gpopt/mdcache/CMDAccessorTest.cpp
                src/unittest/gpopt/metadata/CColumnDescriptorTest.cpp
-               include/unittest/gpopt/metadata/CIndexDescriptorTest.h
                src/unittest/gpopt/metadata/CIndexDescriptorTest.cpp
-               include/unittest/gpopt/metadata/CNameTest.h
                src/unittest/gpopt/metadata/CNameTest.cpp
-               include/unittest/gpopt/minidump/CPhysicalParallelUnionAllTest.h
+               src/unittest/gpopt/metadata/CPartConstraintTest.cpp
+               src/unittest/gpopt/metadata/CTableDescriptorTest.cpp
+               src/unittest/gpopt/minidump/CAggTest.cpp
+               src/unittest/gpopt/minidump/CArrayExpansionTest.cpp
+               src/unittest/gpopt/minidump/CBitmapTest.cpp
+               src/unittest/gpopt/minidump/CCTETest.cpp
+               src/unittest/gpopt/minidump/CCollapseProjectTest.cpp
+               src/unittest/gpopt/minidump/CDMLTest.cpp
+               src/unittest/gpopt/minidump/CDirectDispatchTest.cpp
+               src/unittest/gpopt/minidump/CEscapeMechanismTest.cpp
+               src/unittest/gpopt/minidump/CExistsSubqueryTest.cpp
+               src/unittest/gpopt/minidump/CExternalTableTest.cpp
+               src/unittest/gpopt/minidump/CICGTest.cpp
+               src/unittest/gpopt/minidump/CIndexTest.cpp
+               src/unittest/gpopt/minidump/CJoinOrderDPTest.cpp
+               src/unittest/gpopt/minidump/CMiniDumperDXLTest.cpp
+               src/unittest/gpopt/minidump/CMinidumpWithConstExprEvaluatorTest.cpp
+               src/unittest/gpopt/minidump/CMissingStatsTest.cpp
+               src/unittest/gpopt/minidump/CMultilevelPartitionTest.cpp
+               src/unittest/gpopt/minidump/CPartTblTest.cpp
                src/unittest/gpopt/minidump/CPhysicalParallelUnionAllTest.cpp
+               src/unittest/gpopt/minidump/CPruneColumnsTest.cpp
+               src/unittest/gpopt/minidump/CPullUpProjectElementTest.cpp
+               src/unittest/gpopt/minidump/CSetopTest.cpp
+               src/unittest/gpopt/minidump/CTVFTest.cpp
+               src/unittest/gpopt/minidump/CTpcdsTest.cpp
+               src/unittest/gpopt/minidump/CWindowTest.cpp
+               src/unittest/gpopt/operators/CContradictionTest.cpp
+               src/unittest/gpopt/operators/CExpressionPreprocessorTest.cpp
+               src/unittest/gpopt/operators/CExpressionTest.cpp
+               src/unittest/gpopt/operators/CPredicateUtilsTest.cpp
+               src/unittest/gpopt/search/COptimizationJobsTest.cpp
+               src/unittest/gpopt/search/CSchedulerTest.cpp
+               src/unittest/gpopt/search/CSearchStrategyTest.cpp
+               src/unittest/gpopt/search/CTreeMapTest.cpp
+               src/unittest/gpopt/translate/CTpchTest.cpp
+               src/unittest/gpopt/translate/CTranslatorDXLToExprTest.cpp
+               src/unittest/gpopt/translate/CTranslatorExprToDXLTest.cpp
+               src/unittest/gpopt/xforms/CDecorrelatorTest.cpp
+               src/unittest/gpopt/xforms/CJoinOrderTest.cpp
+               src/unittest/gpopt/xforms/CSubqueryHandlerTest.cpp
+               src/unittest/gpopt/xforms/CXformFactoryTest.cpp
+               src/unittest/gpopt/xforms/CXformTest.cpp
         )
 target_link_libraries(gporca_test
                       gpdbcost
