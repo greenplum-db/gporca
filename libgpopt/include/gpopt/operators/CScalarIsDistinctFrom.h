@@ -81,6 +81,10 @@ namespace gpopt
 			virtual
 			CScalarIsDistinctFrom *PopCommutedOp(IMemoryPool *pmp, COperator *pop);
 
+			// boolean expression evaluation
+			virtual
+			EBoolEvalResult Eber(DrgPul *pdrgpulChildren) const;
+
 	}; // class CScalarIsDistinctFrom
 
 }

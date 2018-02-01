@@ -372,6 +372,7 @@ CNormalizer::FSimplifySelectOnOuterJoin
 	CExpression *pexprOuterJoinPred = (*pexprOuterJoin)[2];
 
 	CColRefSet *pcrsOutput = CDrvdPropRelational::Pdprel(pexprOuterJoinInnerChild->PdpDerive())->PcrsOutput();
+
 	if (!GPOS_FTRACE(EopttraceDisableOuterJoin2InnerJoinRewrite) &&
 		CPredicateUtils::FNullRejecting(pmp, pexprPred, pcrsOutput))
 	{

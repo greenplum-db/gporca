@@ -2404,11 +2404,18 @@ CPredicateUtils::FNullRejecting
 		// scalar expression must not have volatile functions, functions with SQL, subquery or non-scalar functions
 		return false;
 	}
+	// scalar
+//	BOOL wasOuter = false;
+//	if (!pcrs->FSubset(pdpscalar->PcrsUsed()))
+//	{
+//		return false;
+//	}
 
 	// create another expression copy where we replace columns included in the set with NULL values
 	CExpression *pexprColsReplacedWithNulls = PexprReplaceColsWithNulls(pmp, pexprScalar, pcrs);
 
 	// evaluate the resulting expression
+
 	CScalar::EBoolEvalResult eber = CScalar::EberEvaluate(pmp, pexprColsReplacedWithNulls);
 	pexprColsReplacedWithNulls->Release();
 
