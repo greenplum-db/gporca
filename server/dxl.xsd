@@ -1188,7 +1188,7 @@
 		</xsd:complexContent>	
 	</xsd:complexType>
 
-	<xsd:complexType name="dxl:SubPlanTestExpr">
+	<xsd:complexType name="SubPlanTestExpr">
 		<xsd:sequence>
 			<xsd:group ref="dxl:ScalarOp" minOccurs="0" maxOccurs="1"/>
 		</xsd:sequence>
