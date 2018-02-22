@@ -96,6 +96,8 @@
 
 #include "unittest/gpopt/operators/CContradictionTest.h"
 #include "unittest/gpopt/operators/CExpressionPreprocessorTest.h"
+#include "unittest/gpopt/operators/InjectLimitUnderConstUnionTest.h"
+
 #include "unittest/gpopt/operators/CExpressionTest.h"
 #include "unittest/gpopt/operators/CPredicateUtilsTest.h"
 #include "unittest/gpopt/operators/CScalarIsDistinctFromTest.h"
@@ -142,6 +144,7 @@ static gpos::CUnittest rgut[] =
 	GPOS_UNITTEST_STD(CMDProviderTest),
 	GPOS_UNITTEST_STD(CMiniDumperDXLTest),
 	GPOS_UNITTEST_STD(CExpressionPreprocessorTest),
+	GPOS_UNITTEST_STD(InjectLimitUnderConstUnionTest),
 	GPOS_UNITTEST_STD(CWindowTest),
 	GPOS_UNITTEST_STD(CICGTest),
 	GPOS_UNITTEST_STD(CMultilevelPartitionTest),

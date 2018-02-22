@@ -353,6 +353,7 @@ add_orca_test(COrderSpecTest)
 add_orca_test(CRangeTest)
 add_orca_test(CPredicateUtilsTest)
 add_orca_test(CPartConstraintTest)
+add_orca_test(InjectLimitUnderConstUnion)
 
 if (NOT (${CMAKE_SYSTEM_NAME} MATCHES "SunOS"))
   add_orca_test(CSchedulerTest)

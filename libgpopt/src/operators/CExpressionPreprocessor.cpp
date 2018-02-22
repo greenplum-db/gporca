@@ -106,6 +106,70 @@ CExpressionPreprocessor::PexprPruneSuperfluousEquality
 	return GPOS_NEW(pmp) CExpression(pmp, pop, pdrgpexprChildren);
 }
 
+// helper function to determine if all scalar project elements are scalar consts
+BOOL CExpressionPreprocessor::CheckScalarProjectAllConst
+		(
+				CExpression *scalarProjectList
+		)
+{
+	// loop through project list and return early if any project element's child is not a scalar const
+	const ULONG ulArity = scalarProjectList->UlArity();
+	for (ULONG j = 0; j < ulArity; j++)
+	{
+		CExpression *scalarProjectElem = (*scalarProjectList)[j];
+		GPOS_ASSERT(scalarProjectElem->Pop()->Eopid() == COperator::EopScalarProjectElement);
+		if ((*scalarProjectElem)[0]->Pop()->Eopid() != COperator::EopScalarConst)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+// injects a limit under any child of a logical union which has only scalar consts in its project list
+CExpression *
+CExpressionPreprocessor::InjectLimitUnderConstUnion
+	(
+	IMemoryPool *pmp,
+	CExpression *pexpr
+	)
+{
+	// TODO: handle other set operations
+	DrgPexpr *logicalUnionChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
+
+	for (ULONG ul = 0; ul < pexpr->UlArity(); ul++)
+	{
+		CExpression *pexprChild = (*pexpr)[ul];
+		CExpression *pexprToAppend;
+
+		if (pexpr->Pop()->Eopid() == COperator::EopLogicalUnion &&
+			pexprChild->Pop()->Eopid() == COperator::EopLogicalProject &&
+			(*pexprChild)[0]->Pop()->Eopid() == COperator::EopLogicalGet &&
+			(*pexprChild)[1]->Pop()->Eopid() == COperator::EopScalarProjectList &&
+			CExpressionPreprocessor::CheckScalarProjectAllConst((*pexprChild)[1])
+				)
+		{
+			CExpression *logicalGet = (*pexprChild)[0];
+			CExpression *scalarProjectList = (*pexprChild)[1];
+
+			// All children are constant so make a logical limit
+			logicalGet->AddRef();
+			CExpression *logicalLimit = CUtils::PexprLimit(pmp, logicalGet, 0, 1);
+
+			scalarProjectList->AddRef();
+			pexprToAppend = CUtils::PexprLogicalProject(pmp, logicalLimit, scalarProjectList, false);
+		}
+		else
+		{
+			pexprToAppend = InjectLimitUnderConstUnion(pmp, pexprChild);
+		}
+		logicalUnionChildren->Append(pexprToAppend);
+	}
+
+	pexpr->Pop()->AddRef();
+	return GPOS_NEW(pmp) CExpression(pmp, pexpr->Pop(), logicalUnionChildren);
+}
+
 // an existential subquery whose inner expression is a GbAgg
 // with no grouping columns is replaced with a Boolean constant
 //
@@ -2261,7 +2325,11 @@ CExpressionPreprocessor::PexprPreprocess
 	GPOS_CHECK_ABORT;
 	pexrReorderedScalarCmpChildren->Release();
 
-	return pexprExistWithPredFromINSubq;
+	CExpression *pexprUnionWithLimit = InjectLimitUnderConstUnion(pmp, pexprExistWithPredFromINSubq);
+	GPOS_CHECK_ABORT;
+	pexprExistWithPredFromINSubq->Release();
+
+	return pexprUnionWithLimit;
 }
 
 // EOF
