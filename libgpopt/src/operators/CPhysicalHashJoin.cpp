@@ -241,7 +241,7 @@ CPhysicalHashJoin::PrsRequired
 CRewindabilitySpec *
 CPhysicalHashJoin::PrsDerive
 	(
-	IMemoryPool * /* pmp */,
+	IMemoryPool *,
 	CExpressionHandle &exprhdl
 	)
 	const
