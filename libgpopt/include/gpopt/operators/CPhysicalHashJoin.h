@@ -202,6 +202,14 @@ namespace gpopt
 				return GPOS_NEW(pmp) COrderSpec(pmp);
 			}
 
+			virtual
+			CRewindabilitySpec *PrsDerive
+				(
+				IMemoryPool *pmp,
+				CExpressionHandle &exprhdl
+				)
+				const;
+
 			//-------------------------------------------------------------------------------------
 			// Enforced Properties
 			//-------------------------------------------------------------------------------------
