@@ -379,7 +379,7 @@
       </dxl:LogicalGroupBy>
     </dxl:Query>
   </dxl:Thread>
-  <dxl:Plan Id="0" SpaceSize="110000">
+  <dxl:Plan Id="0" SpaceSize="111440">
     <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
       <dxl:Properties>
         <dxl:Cost StartupCost="0" TotalCost="67.421875" Rows="1.000000" Width="4"/>

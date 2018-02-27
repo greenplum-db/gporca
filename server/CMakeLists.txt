@@ -127,6 +127,9 @@ CastedInClauseWithMCV FilterScalarCast;
 CProjectTest:
 ProjectWithConstant ProjectWithTextConstant ProjectSetFunction;
 
+CHashJoinPropertyTest:
+HashJoinIsRewindableWhenOuterChildIsRewindable;
+
 CPartTbl1Test:
 NoPartConstraint-WhenNoDefaultPartsAndIndices
 PartConstraint-WhenIndicesAndNoDefaultParts PartConstraint-WithOnlyDefaultPartInfo

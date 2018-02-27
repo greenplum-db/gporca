@@ -237,6 +237,28 @@ CPhysicalHashJoin::PrsRequired
 	return PrsPassThru(pmp, exprhdl, prsRequired, 0 /*ulChildIndex*/);
 }
 
+
+CRewindabilitySpec *
+CPhysicalHashJoin::PrsDerive
+	(
+	IMemoryPool *,
+	CExpressionHandle &exprhdl
+	)
+	const
+{
+	CRewindabilitySpec *prsOuter = exprhdl.Pdpplan(0 /*ulChildIndex*/)->Prs();
+	GPOS_ASSERT(NULL != prsOuter);
+
+	// Hash Join is rewindable as long as the outer side is, because the hash
+	// operator implicitly materializes the inner.
+	// Note that the most correct thing here would be to downgrade
+	// ErtMarkRestore to ErtNone, but we won't exercise that code until we
+	// support merge join.
+	prsOuter->AddRef();
+	return prsOuter;
+}
+
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalHashJoin::PdsMatch
