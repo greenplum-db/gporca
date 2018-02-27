@@ -346,7 +346,7 @@ CPhysicalJoin::PdsRequired
 CDistributionSpec *
 CPhysicalJoin::PdsDerive
 	(
-	IMemoryPool *, // pmp,
+	IMemoryPool *pmp,
 	CExpressionHandle &exprhdl
 	)
 	const
@@ -380,9 +380,27 @@ CPhysicalJoin::PdsDerive
 		// spec during distribution spec matching.
 		CDistributionSpecHashed *pdsOuterHashed = CDistributionSpecHashed::PdsConvert(pdsOuter);
 		CDistributionSpecHashed *pdsInnerHashed = CDistributionSpecHashed::PdsConvert(pdsInner);
-		pdsInnerHashed->SetHashedEquiv(pdsOuterHashed);
+
+		// return early if outer and inner hash specs match
+		if (pdsOuterHashed == pdsInnerHashed)
+		{
+			pdsInnerHashed->AddRef();
+			return pdsInnerHashed;
+		}
+
+		// need to identify equivalent specs recursively
+		// create an array of hash equivalent distribution specs of outer
+		DrgPds *prgPdsEquiv = GPOS_NEW(pmp) DrgPds(pmp);
+		pdsOuterHashed->AppendHashEquivDistSpec(prgPdsEquiv);
+
+		// if there is no intersection between outer and inner, set
+		// inner spec hashed equivalent to outer spec else return
+		// inner spec unmodified
+		pdsInnerHashed->SetHashedEquiv(prgPdsEquiv, pdsOuterHashed);
 		pdsInnerHashed->AddRef();
+		prgPdsEquiv->Release();
 		return pdsInnerHashed;
+
 	}
 
 	// otherwise, return outer distribution

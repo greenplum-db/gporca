@@ -115,7 +115,7 @@ namespace gpopt
 
 			// set equivalent hashed distribution, caller should not increment
 			// the reference count of the input argument 'pdshashedEquiv'
-			void SetHashedEquiv(CDistributionSpecHashed *pdshashedEquiv);
+			void SetHashedEquiv(DrgPds *prgPdsHashedEquiv, CDistributionSpecHashed *pdshashedEquiv);
 
 			// columns used by distribution expressions
 			virtual
@@ -199,6 +199,9 @@ namespace gpopt
 
 				return pdsHashed;
 			}
+
+			virtual
+			void AppendHashEquivDistSpec(DrgPds *pdrgpds);
 
 	}; // class CDistributionSpecHashed
 

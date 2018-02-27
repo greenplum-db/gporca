@@ -388,25 +388,50 @@ CDistributionSpecHashed::PcrsUsed
 void
 CDistributionSpecHashed::SetHashedEquiv
 	(
+	DrgPds *prgPdsHashed,
 	CDistributionSpecHashed *pdshashedEquiv
 	)
 {
-	if (pdshashedEquiv == NULL || pdshashedEquiv == this)
+	ULONG ulArity = prgPdsHashed->UlLength();
+	GPOS_ASSERT(ulArity >= 1);
+
+	// if outer spec already has matching equivalent
+	// specs to inner spec, avoid self referencing
+	for (ULONG ul = 0; ul < ulArity; ul++)
 	{
-		// avoid self referencing
-		return;
+		CDistributionSpecHashed *pdsHashed = CDistributionSpecHashed::PdsConvert((*prgPdsHashed)[ul]);
+		GPOS_ASSERT(pdsHashed);
+		if (pdsHashed == this)
+			return;
 	}
-	else if (m_pdshashedEquiv == NULL)
+
+	// if no intersection is found between outer and inner specs,
+	// set inner hash equivalent spec same as outer
+	if (m_pdshashedEquiv == NULL)
 	{
 		pdshashedEquiv->AddRef();
 		m_pdshashedEquiv = pdshashedEquiv;
 	}
 	else
 	{
-		m_pdshashedEquiv->SetHashedEquiv(pdshashedEquiv);
+		// recurse down on the inner hashed equivalent specs
+		m_pdshashedEquiv->SetHashedEquiv(prgPdsHashed, pdshashedEquiv);
 	}
 }
 
+void
+CDistributionSpecHashed::AppendHashEquivDistSpec
+	(
+	 DrgPds *pdrgpds
+	)
+{
+	this->AddRef();
+	pdrgpds->Append(this);
+	if (m_pdshashedEquiv != NULL)
+	{
+		m_pdshashedEquiv->AppendHashEquivDistSpec(pdrgpds);
+	}
+}
 
 //---------------------------------------------------------------------------
 //	@function:
