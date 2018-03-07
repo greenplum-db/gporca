@@ -38,7 +38,7 @@ CHistogramTest::EresUnittest()
 		GPOS_UNITTEST_FUNC(CHistogramTest::EresUnittest_CHistogramInt4),
 		GPOS_UNITTEST_FUNC(CHistogramTest::EresUnittest_CHistogramBool),
 		GPOS_UNITTEST_FUNC(CHistogramTest::EresUnittest_Skew),
-		// TODO: GPOS_UNITTEST_FUNC(CHistogramTest::EresUnittest_CHistogramValid),
+		GPOS_UNITTEST_FUNC(CHistogramTest::EresUnittest_CHistogramValid)
 		};
 
 	CAutoMemoryPool amp;
@@ -184,7 +184,7 @@ CHistogramTest::EresUnittest_CHistogramBool()
 }
 
 
-// check for well-formed histogram. Expected to hit an assert.
+// check for well-formed histogram. Expected to fail
 GPOS_RESULT
 CHistogramTest::EresUnittest_CHistogramValid()
 {
@@ -207,9 +207,18 @@ CHistogramTest::EresUnittest_CHistogramValid()
 	CAutoP<CHistogram> ahist;
 	ahist = phist;
 
-	GPOS_RTL_ASSERT(phist->FValid() && "Histogram must be well formed");
+	{
+		CAutoTrace at(pmp);
+		at.Os() << std::endl << "Invalid Histogram"<< std::endl;
+		phist->OsPrint(at.Os());
+	}
 
-	return GPOS_FAILED;
+	if(phist->FValid())
+	{
+		return GPOS_FAILED;
+	}
+
+	return GPOS_OK;
 }
 
 // generates example int histogram having tuples not covered by buckets,
