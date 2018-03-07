@@ -21,7 +21,7 @@ namespace gpnaucrates
 	//		CBucketTest
 	//
 	//	@doc:
-	//		Static unit tests for statistics objects
+	//		Static unit testing operations on histogram buckets
 	//
 	//---------------------------------------------------------------------------
 	class CBucketTest

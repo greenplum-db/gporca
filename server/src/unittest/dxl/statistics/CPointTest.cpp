@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2011 EMC Corp.
+//	Copyright (C) 2018 Pivotal Inc.
 //
 //	@filename:
-//		CBucketTest.cpp
+//		CPointTest.cpp
 //
 //	@doc:
 //		Tests for CPoint

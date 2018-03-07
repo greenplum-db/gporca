@@ -55,14 +55,6 @@ namespace gpnaucrates
 				CDouble m_dVal; // double value
 			}; // SStatsCmpValElem
 
-			// triplet consisting of MCV input file, histogram input file and merged output file
-			struct SMergeTestElem
-			{
-				const CHAR *szInputMCVFile;
-				const CHAR *szInputHistFile;
-				const CHAR *szMergedFile;
-			};
-
 			// test case for disjunctive filter evaluation
 			struct SStatsFilterSTestCase
 			{
@@ -121,11 +113,6 @@ namespace gpnaucrates
 				LINT lValUpper,
 				DrgPstatspred *pgrgpstatspred
 				);
-
-			// generate int histogram having tuples not covered by buckets,
-			// including null fraction and nDistinctRemain
-			static
-			CHistogram* PhistExampleInt4Remain(IMemoryPool *pmp);
 
 			static
 			CHistogram* PhistExampleInt4Dim(IMemoryPool *pmp);
@@ -296,16 +283,6 @@ namespace gpnaucrates
 			static
 			GPOS_RESULT EresUnittest_UnionAll();
 
-			// histogram basic tests
-			static
-			GPOS_RESULT EresUnittest_CHistogramValid();
-
-			static
-			GPOS_RESULT EresUnittest_CHistogramInt4();
-
-			static
-			GPOS_RESULT EresUnittest_CHistogramBool();
-
 			// statistics basic tests
 			static
 			GPOS_RESULT EresUnittest_CStatisticsBasic();
@@ -349,18 +326,6 @@ namespace gpnaucrates
 			// exercise stats derivation during optimization
 			static
 			GPOS_RESULT EresUnittest_CStatisticsSelectDerivation();
-
-			// skew basic tests
-			static
-			GPOS_RESULT EresUnittest_Skew();
-
-			// sort MCVs tests
-			static
-			GPOS_RESULT EresUnittest_SortInt4MCVs();
-
-			// merge MCVs and histogram
-			static
-			GPOS_RESULT EresUnittest_MergeHistMCV();
 
 			// test for accumulating cardinality in disjunctive and conjunctive predicates
 	 		static
