@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table s(s1 int, s2 int, s3) distributed by (s1);
+
+explain select * from s a full join s b on (a.s1 = b.s1);
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:Stacktrace>1    0x0000000001475605 gpos::CException::Raise + 113

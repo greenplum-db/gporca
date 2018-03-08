@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+TPCDS Query
 select item.i_item_id, item.i_item_desc, item.i_current_price
 from item, store_sales
 where ss_item_sk=i_item_sk and  i_current_price &gt;= 62::numeric AND i_current_price &lt;= 92::numeric AND (i_manufact_id = ANY (ARRAY[129, 270, 821, 423]))

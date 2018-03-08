@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table t39(c499 int, c500 int, c501 int, c502 int, c503 int, c504 int) distributed by (c499);
+
+explain select * from (select avg(c504) as a, sum(c504) as s, max(c504) as m from t39 group by c504)x, (select 1) y(c) where a = c;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

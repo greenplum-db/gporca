@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table aint (i int);
+create table bbigint (i bigint);
+insert into aint select i from generate_series(1,100) i;
+insert into bbigint select i*10000000 from generate_series(1,100) i;
+explain select * from aint, bbigint where aint.i = bbigint.i;
+
+drop table aint;
+drop table bbigint;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

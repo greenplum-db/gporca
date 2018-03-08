@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table x (i int, j int) distributed by(i);
+create table y (i int, j int) distributed by(i);
+create table z (i int, j int) distributed by(i);
+
+insert into x select i, i%2 from generate_series(1,10) i;
+insert into y select i, i%2 from generate_series(1,10) i;
+insert into z select i, i%2 from generate_series(1,1000) i;
+
+explain select (select x.i from x left join y on (x.i + y.i = x.i)) from z;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>

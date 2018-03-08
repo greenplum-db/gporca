@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table r(a int, b int) distributed by (a);
+create table s(c int, d int) distributed by (c);
+
+insert into r select i + 1, i%3 from generate_series(1,20) i; 
+insert into s select i%7,i%2 from generate_series(1,30) i;
+
+explain select * from r left join s on (a = c) where d = 2 OR d is NULL;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>

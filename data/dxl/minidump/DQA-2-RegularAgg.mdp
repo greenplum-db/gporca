@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table r (a int, b int, c int) distributed by (a);
+insert into r select i%2, i%5, i%5 from generate_series(1,1001232) i;
+
+explain select count(distinct a), sum(a), avg(c) from r group by b;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

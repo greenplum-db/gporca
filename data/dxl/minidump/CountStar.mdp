@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table x(i int, j int);
+create table y(i int, j int);
+insert into x select i, i from generate_series(1,10000) i;
+insert into y select i%10, i%2 from generate_series(1,10) i;
+
+explain select (select count(*) from x) from y;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

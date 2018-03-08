@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table tt1(i int, j int) distributed by (i);
+create table tt2(I int, j int) distributed by (i);
+
+explain select * from tt1 left join tt2 on( tt1.i = tt2.i and tt1.i = tt1.j AND tt2.i = tt2.j);
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:Stacktrace>1    0x00000000013a350d gpos::CException::Raise + 189

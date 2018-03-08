@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+TPC-DS based query I think
+
+select *
+from (select * from store_sales left join store_returns on (ss_ticket_number = sr_ticket_number)x
+where sr_ticket_number is null;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>

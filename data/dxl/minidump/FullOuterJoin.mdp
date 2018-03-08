@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table t(t1 int, t2 int, t3 int) distributed by (t1);
+create table s(s1 int, s2 int, s3 int) distributed by (s1);
+
+explain select * from t full join s on (t1 = s1);
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:Stacktrace/>

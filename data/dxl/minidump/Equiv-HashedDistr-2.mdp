@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+TPC-H Query
+
+with x as (select ps_suppkey from lineitem, partsupp where l_suppkey = ps_suppkey)
+select * from x x1 inner join x2 on (ps_suppkey);
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

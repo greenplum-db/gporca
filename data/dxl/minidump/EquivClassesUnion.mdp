@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table foo(a int, b int, c int) distributed by (a);
+create table bar(x int, y int, z int) distributed by (x);
+
+explain 
+(select * from foo where a = b)
+UNION
+(select * from foo where y = z);
+
+drop table foo;
+drop table bar;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

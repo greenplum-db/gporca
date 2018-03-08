@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table foo(x int, y int) distributed by (x);
+insert into foo select i, i%50 from generate_series(1,100) i;
+
+explain select * from foo where ((x < 30) AND (x = y)) limit 1;
+
+drop table foo;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

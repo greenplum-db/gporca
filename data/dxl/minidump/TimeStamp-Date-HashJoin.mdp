@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table d1 (i int, d date);
+create table d2 (i int, d timestamp);
+
+explain select * from d1, d2 where d2.d = d1.d;
+
+drop table d1;
+drop table d2;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table bar (b1 int, b2 int);
+create table foo (a int, b int);
+
+insert into bar select i, i%10 bar from generate_series(1,982808) i;
+insert into foo select i, i%3 bar from generate_series(1,20) i;
+
+explain select * from bar, foo where bar.b2 = 2 and bar.b1 = foo.a;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>

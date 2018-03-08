@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table mrs_t1(x int);
+
+insert into mrs_t1 select i from generate_series(1,10) i;
+explain select * from (SELECT 1) x where (1 < ANY (select x from mrs_t1));
+
+drop table mrs_t1;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

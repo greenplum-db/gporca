@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table r(r1 int, r2 int, r3 int) distributed by (r1);
+create table s(s1 int, s2 int, s3 int) distributed by (s1);
+create table t(t1 int, t2 int, t3 int) distributed by (t1);
+
+explain select * from r, t, s where (r1 = s1 AND s2 = t1 AND (s2 = r2 OR r2 = s3))
+
+drop table r;
+drop table s;
+drop table t;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

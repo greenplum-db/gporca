@@ -5,7 +5,7 @@ create table bar(a int, b int);
 create table zoo(a int, b int);
 create table mar(a int, b int);
 
-explain select * from foo left join bar on foo.a=bar.a left join zoo on zoo.a=bar.a left join mar on zoo.a = mar.a;
+explain select * from foo left join bar on (foo.a=bar.a) left join zoo on (zoo.a=bar.a) left join mar on (zoo.a = mar.a);
                                      QUERY PLAN
  Gather Motion 3:1  (slice1; segments: 3)  (cost=0.00..1724.00 rows=4 width=32)
    ->  Hash Left Join  (cost=0.00..1724.00 rows=2 width=32)

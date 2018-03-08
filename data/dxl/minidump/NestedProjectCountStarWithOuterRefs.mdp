@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table x (i int, j int) distributed by (i);
+create table y (i int, j int) distributed by (i);
+
+insert into x select i, i from generate_series(1,10000) i;
+insert into y select i, i%2 from generate_series(1,10) i;
+
+explain select (select c+1 from (select count(*) +1 from x where x.j = y.j) z(c)) from y;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

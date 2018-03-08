@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table x (i int, j int) distributed by (i);
+insert into foo select i, i%2 from generate_series(1,10) i;
+explain select sum(i) from (select * from x limit 10) x(i,j);
+
+drop table x;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

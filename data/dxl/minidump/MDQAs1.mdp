@@ -4,7 +4,7 @@
 SQL:
 
  create table t1(a int, b int) Distributed by (a);
- select sum(distinct a), avg(distinct b) from t1;
+ explain select sum(distinct a), avg(distinct b) from t1;
 -->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>

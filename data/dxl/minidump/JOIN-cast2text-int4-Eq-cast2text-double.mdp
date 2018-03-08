@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table aint (i int);
+create table cdouble (i numeric(10,10));
+insert into aint select i from generate_series(1,100) i;
+insert into cdouble select i from generate_series(1,100) i;
+
+explain select * from aint, cdouble where aint.i::text = cdouble.i::text;
+
+drop table aint;
+drop table cdouble;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

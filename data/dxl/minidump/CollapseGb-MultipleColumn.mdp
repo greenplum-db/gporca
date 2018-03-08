@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table foo (i int, j int) distributed by (i);
+
+insert into foo select i, i%10 from generate_series(1,10000) i;
+explain select i,j from (select i,j from foo group by i,j order by i,j) x(i, j) group by i,j order by i,j;
+
+drop table foo;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

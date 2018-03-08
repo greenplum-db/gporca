@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+CREATE TABLE foo (a varchar(16));
+CREATE TABLE bar (b varchar(16));
+
+explain select * from foo, bar where a::text = b::text;
+
+drop table foo;
+drop table bar;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

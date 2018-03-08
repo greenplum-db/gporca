@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<!--
+create table a (i int, j varchar(10));
+create table b (i int, j varchar(10));
+
+insert into a select i, 'x' from generate_series(1,100) i;
+insert into b select i, 'x' from generate_series(1,100) i;
+
+explain select * from a, b where a.j::text = b.j::text;
+drop table b;
+drop table a;
+-->
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
