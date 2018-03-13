@@ -13,6 +13,7 @@
 
 #include "naucrates/md/IMDRelation.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/exception.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -40,6 +41,10 @@ IMDRelation::PstrDistrPolicy
 		case EreldistrRandom:
 			return CDXLTokens::PstrToken(EdxltokenRelDistrRandom);
 		default:
+			GPOS_RAISE(
+					   gpdxl::ExmaDXL,
+					   gpdxl::ExmiExpr2DXLUnsupportedFeature,
+					   GPOS_WSZ_LIT("unsupported distribution policy"));
 			return NULL;
 	}
 }
