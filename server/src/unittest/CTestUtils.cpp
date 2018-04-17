@@ -4211,15 +4211,15 @@ CTestUtils::PdatumGeneric
 	CDXLDatumGeneric *pdxldatum = NULL;
 	if (CMDTypeGenericGPDB::FTimeRelatedType(pmdidType))
 	{
-		pdxldatum = GPOS_NEW(pmp) CDXLDatumStatsDoubleMappable(pmp, pmdidType, IDefaultTypeModifier, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize, CDouble(lValue));
+		pdxldatum = GPOS_NEW(pmp) CDXLDatumStatsDoubleMappable(pmp, pmdidType, IDefaultTypeModifier, OidInvalidCollation, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize, CDouble(lValue));
 	}
 	else if (pmdidType->FEquals(&CMDIdGPDB::m_mdidBPChar))
 	{
-		pdxldatum = GPOS_NEW(pmp) CDXLDatumStatsLintMappable(pmp, pmdidType, IDefaultTypeModifier, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize, lValue);
+		pdxldatum = GPOS_NEW(pmp) CDXLDatumStatsLintMappable(pmp, pmdidType, IDefaultTypeModifier, OidInvalidCollation, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize, lValue);
 	}
 	else
 	{
-		pdxldatum = GPOS_NEW(pmp) CDXLDatumGeneric(pmp, pmdidType, IDefaultTypeModifier, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize);
+		pdxldatum = GPOS_NEW(pmp) CDXLDatumGeneric(pmp, pmdidType, IDefaultTypeModifier, OidInvalidCollation, pmdtype->FByValue() /*fConstByVal*/, false /*fConstNull*/, pba, ulbaSize);
 	}
 
 	IDatum *pdatum = pmdtype->Pdatum(pmp, pdxldatum);

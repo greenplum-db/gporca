@@ -51,6 +51,8 @@ class CDatumGenericGPDB : public IDatumGeneric
 
 		INT m_iTypeModifier;
 
+		OID m_oidCollation;
+
 		// long int value used for statistic computation
 		LINT m_lValue;
 
@@ -63,6 +65,20 @@ class CDatumGenericGPDB : public IDatumGeneric
 	public:
 
 		// ctor
+		CDatumGenericGPDB
+			(
+			IMemoryPool *pmp,
+			IMDId *pmdid,
+			INT iTypeModifier,
+			OID oidCollation,
+			const void *pv,
+			ULONG ulSize,
+			BOOL fNull,
+			LINT lValue,
+			CDouble dValue
+			);
+
+		// ctor for missing collation oid (ensure backwards-compatability)
 		CDatumGenericGPDB
 			(
 			IMemoryPool *pmp,
@@ -85,6 +101,9 @@ class CDatumGenericGPDB : public IDatumGeneric
 
 		virtual
 		INT ITypeModifier() const;
+
+		virtual
+		OID OidCollation() const;
 
 		// accessor of size
 		virtual

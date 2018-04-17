@@ -103,7 +103,7 @@ CMDTypeGenericGPDB::CMDTypeGenericGPDB
 	m_pstr = CDXLUtils::PstrSerializeMDObj(m_pmp, this, false /*fSerializeHeader*/, false /*fIndent*/);
 
 	m_pmdid->AddRef();
-	m_pdatumNull = GPOS_NEW(m_pmp) CDatumGenericGPDB(m_pmp, m_pmdid, IDefaultTypeModifier, NULL /*pba*/, 0 /*ulLength*/, true /*fConstNull*/, 0 /*lValue */, 0 /*dValue */);
+	m_pdatumNull = GPOS_NEW(m_pmp) CDatumGenericGPDB(m_pmp, m_pmdid, IDefaultTypeModifier, OidInvalidCollation, NULL /*pba*/, 0 /*ulLength*/, true /*fConstNull*/, 0 /*lValue */, 0 /*dValue */);
 }
 
 //---------------------------------------------------------------------------
@@ -282,7 +282,7 @@ CMDTypeGenericGPDB::Pdatum
 	}
 
 	m_pmdid->AddRef();
-	return GPOS_NEW(m_pmp) CDatumGenericGPDB(m_pmp, m_pmdid, pdxldatum->ITypeModifier(), pdxldatum->Pba(), pdxldatum->UlLength(),
+	return GPOS_NEW(m_pmp) CDatumGenericGPDB(m_pmp, m_pmdid, pdxldatum->ITypeModifier(), pdxldatum->OidCollation(), pdxldatum->Pba(), pdxldatum->UlLength(),
 											 pdxldatum->FNull(), lValue, dValue);
 }
 
@@ -322,6 +322,7 @@ CMDTypeGenericGPDB::Pdatum
 						pmp,
 						m_pmdid,
 						pdxldatumGeneric->ITypeModifier(),
+						pdxldatumGeneric->OidCollation(),
 						pdxldatumGeneric->Pba(),
 						pdxldatumGeneric->UlLength(),
 						pdxldatumGeneric->FNull(),
@@ -367,7 +368,7 @@ CMDTypeGenericGPDB::Pdxldatum
 		dValue = pdatumgeneric->DStatsMapping();
 	}
 
-	return Pdxldatum(pmp, m_pmdid, pdatumgeneric->ITypeModifier(), m_fByValue, pdatumgeneric->FNull(), pba, ulLength, lValue, dValue);
+	return Pdxldatum(pmp, m_pmdid, pdatumgeneric->ITypeModifier(), pdatumgeneric->OidCollation(), m_fByValue, pdatumgeneric->FNull(), pba, ulLength, lValue, dValue);
 }
 
 //---------------------------------------------------------------------------
@@ -403,6 +404,7 @@ CMDTypeGenericGPDB::Pdxldatum
 	IMemoryPool *pmp,
 	IMDId *pmdid,
 	INT iTypeModifier,
+	OID oidCollation,
 	BOOL fByVal,
 	BOOL fNull,
 	BYTE *pba,
@@ -420,15 +422,69 @@ CMDTypeGenericGPDB::Pdxldatum
 		case GPDB_NUMERIC:
 		case GPDB_FLOAT4:
 		case GPDB_FLOAT8:
-			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, fByVal, fNull, pba,
+			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, oidCollation, fByVal, fNull, pba,
 																	ulLength, lValue, dValue);
 		// has lint mapping
 		case GPDB_CHAR:
 		case GPDB_VARCHAR:
 		case GPDB_TEXT:
 		case GPDB_CASH:
-			return CMDTypeGenericGPDB::PdxldatumStatsLintMappable(pmp, pmdid, iTypeModifier, fByVal, fNull, pba, ulLength, lValue, dValue);
+			return CMDTypeGenericGPDB::PdxldatumStatsLintMappable(pmp, pmdid, iTypeModifier, oidCollation, fByVal, fNull, pba, ulLength, lValue, dValue);
 		// time-related types
+		case GPDB_DATE:
+		case GPDB_TIME:
+		case GPDB_TIMETZ:
+		case GPDB_TIMESTAMP:
+		case GPDB_TIMESTAMPTZ:
+		case GPDB_ABSTIME:
+		case GPDB_RELTIME:
+		case GPDB_INTERVAL:
+		case GPDB_TIMEINTERVAL:
+			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, oidCollation, fByVal, fNull, pba,
+																	ulLength, lValue, dValue);
+		// network-related types
+		case GPDB_INET:
+		case GPDB_CIDR:
+		case GPDB_MACADDR:
+			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, oidCollation, fByVal, fNull, pba, ulLength, lValue, dValue);
+		default:
+			return GPOS_NEW(pmp) CDXLDatumGeneric(pmp, pmdid, iTypeModifier, oidCollation, fByVal, fNull, pba, ulLength);
+	}
+}
+
+// Pdxldatum for missing collation oid (ensure backwards-compatability)
+CDXLDatum *
+CMDTypeGenericGPDB::Pdxldatum
+		(
+		IMemoryPool *pmp,
+		IMDId *pmdid,
+		INT iTypeModifier,
+		BOOL fByVal,
+		BOOL fNull,
+		BYTE *pba,
+		ULONG ulLength,
+		LINT lValue,
+		CDouble dValue
+		)
+{
+	GPOS_ASSERT(IMDId::EmdidGPDB == pmdid->Emdidt());
+
+	const CMDIdGPDB * const pmdidGPDB = CMDIdGPDB::PmdidConvert(pmdid);
+	switch (pmdidGPDB->OidObjectId())
+	{
+		// numbers
+		case GPDB_NUMERIC:
+		case GPDB_FLOAT4:
+		case GPDB_FLOAT8:
+			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, fByVal, fNull, pba,
+																	ulLength, lValue, dValue);
+			// has lint mapping
+		case GPDB_CHAR:
+		case GPDB_VARCHAR:
+		case GPDB_TEXT:
+		case GPDB_CASH:
+			return CMDTypeGenericGPDB::PdxldatumStatsLintMappable(pmp, pmdid, iTypeModifier, fByVal, fNull, pba, ulLength, lValue, dValue);
+			// time-related types
 		case GPDB_DATE:
 		case GPDB_TIME:
 		case GPDB_TIMETZ:
@@ -440,7 +496,7 @@ CMDTypeGenericGPDB::Pdxldatum
 		case GPDB_TIMEINTERVAL:
 			return CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, fByVal, fNull, pba,
 																	ulLength, lValue, dValue);
-		// network-related types
+			// network-related types
 		case GPDB_INET:
 		case GPDB_CIDR:
 		case GPDB_MACADDR:
@@ -449,7 +505,6 @@ CMDTypeGenericGPDB::Pdxldatum
 			return GPOS_NEW(pmp) CDXLDatumGeneric(pmp, pmdid, iTypeModifier, fByVal, fNull, pba, ulLength);
 	}
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -465,6 +520,7 @@ CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable
 	IMemoryPool *pmp,
 	IMDId *pmdid,
 	INT iTypeModifier,
+	OID oidCollation,
 	BOOL fByValue,
 	BOOL fNull,
 	BYTE *pba,
@@ -472,6 +528,25 @@ CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable
 	LINT ,
 	CDouble dValue
 	)
+{
+	GPOS_ASSERT(CMDTypeGenericGPDB::FHasByteDoubleMapping(pmdid));
+	return GPOS_NEW(pmp) CDXLDatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, oidCollation, fByValue, fNull, pba, ulLength, dValue);
+}
+
+// PdxldatumStatsDoubleMappable for missing collation oid (ensure backwards-compatability)
+CDXLDatum *
+CMDTypeGenericGPDB::PdxldatumStatsDoubleMappable
+		(
+		IMemoryPool *pmp,
+		IMDId *pmdid,
+		INT iTypeModifier,
+		BOOL fByValue,
+		BOOL fNull,
+		BYTE *pba,
+		ULONG ulLength,
+		LINT ,
+		CDouble dValue
+		)
 {
 	GPOS_ASSERT(CMDTypeGenericGPDB::FHasByteDoubleMapping(pmdid));
 	return GPOS_NEW(pmp) CDXLDatumStatsDoubleMappable(pmp, pmdid, iTypeModifier, fByValue, fNull, pba, ulLength, dValue);
@@ -492,6 +567,7 @@ CMDTypeGenericGPDB::PdxldatumStatsLintMappable
 	IMemoryPool *pmp,
 	IMDId *pmdid,
 	INT iTypeModifier,
+	OID oidCollation,
 	BOOL fByValue,
 	BOOL fNull,
 	BYTE *pba,
@@ -499,6 +575,25 @@ CMDTypeGenericGPDB::PdxldatumStatsLintMappable
 	LINT lValue,
 	CDouble // dValue
 	)
+{
+	GPOS_ASSERT(CMDTypeGenericGPDB::FHasByteLintMapping(pmdid));
+	return GPOS_NEW(pmp) CDXLDatumStatsLintMappable(pmp, pmdid, iTypeModifier, oidCollation, fByValue, fNull, pba, ulLength, lValue);
+}
+
+// PdxldatumStatsLintMappable for missing collation oid (ensure backwards-compatability)
+CDXLDatum *
+CMDTypeGenericGPDB::PdxldatumStatsLintMappable
+		(
+		IMemoryPool *pmp,
+		IMDId *pmdid,
+		INT iTypeModifier,
+		BOOL fByValue,
+		BOOL fNull,
+		BYTE *pba,
+		ULONG ulLength,
+		LINT lValue,
+		CDouble // dValue
+		)
 {
 	GPOS_ASSERT(CMDTypeGenericGPDB::FHasByteLintMapping(pmdid));
 	return GPOS_NEW(pmp) CDXLDatumStatsLintMappable(pmp, pmdid, iTypeModifier, fByValue, fNull, pba, ulLength, lValue);
@@ -542,7 +637,7 @@ CMDTypeGenericGPDB::PdxldatumNull
 {
 	m_pmdid->AddRef();
 
-	return Pdxldatum(pmp, m_pmdid, IDefaultTypeModifier, m_fByValue, true /*fConstNull*/, NULL /*pba*/, 0 /*ulLength*/, 0 /*lValue */, 0 /*dValue */);
+	return Pdxldatum(pmp, m_pmdid, IDefaultTypeModifier, OidInvalidCollation, m_fByValue, true /*fConstNull*/, NULL /*pba*/, 0 /*ulLength*/, 0 /*lValue */, 0 /*dValue */);
 }
 
 //---------------------------------------------------------------------------

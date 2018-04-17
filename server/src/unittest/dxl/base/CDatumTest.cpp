@@ -262,6 +262,7 @@ CDatumTest::PdatumGeneric
 							pmp,
 							pmdidChar,
 							IDefaultTypeModifier,
+							OidInvalidCollation,
 							szVal,
 							5 /*ulLength*/,
 							fNull,

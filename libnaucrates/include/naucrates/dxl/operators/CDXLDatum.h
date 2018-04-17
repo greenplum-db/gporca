@@ -51,6 +51,8 @@ namespace gpdxl
 
 			const INT m_iTypeModifier;
 
+			OID m_oidCollation;
+
 			// is the datum NULL
 			BOOL m_fNull;
 	
@@ -78,6 +80,17 @@ namespace gpdxl
 				IMemoryPool *pmp,
 				IMDId *pmdidType,
 				INT iTypeModifier,
+				OID oidCollation,
+				BOOL fNull,
+				ULONG ulLength
+				);
+
+			// ctor for missing collation oid (ensure backwards-compatability)
+			CDXLDatum
+				(
+				IMemoryPool *pmp,
+				IMDId *pmdidType,
+				INT iTypeModifier,
 				BOOL fNull,
 				ULONG ulLength
 				);
@@ -98,6 +111,9 @@ namespace gpdxl
 
 			INT
 			ITypeModifier() const;
+
+			OID
+			OidCollation() const;
 
 			// is datum NULL
 			virtual

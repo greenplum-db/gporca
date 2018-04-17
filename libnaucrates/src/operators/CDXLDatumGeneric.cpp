@@ -35,15 +35,35 @@ CDXLDatumGeneric::CDXLDatumGeneric
 	IMemoryPool *pmp,
 	IMDId *pmdidType,
 	INT iTypeModifier,
+	OID oidCollation,
 	BOOL fByVal,
 	BOOL fNull,
 	BYTE *pba,
 	ULONG ulLength
 	)
 	:
-	CDXLDatum(pmp, pmdidType, iTypeModifier, fNull, ulLength),
+	CDXLDatum(pmp, pmdidType, iTypeModifier, oidCollation, fNull, ulLength),
 	m_fByVal(fByVal),
 	m_pba(pba)
+{
+	GPOS_ASSERT_IMP(m_fNull, (m_pba == NULL) && (m_ulLength == 0));
+}
+
+// ctor for missing collation oid (ensure backwards-compatability)
+CDXLDatumGeneric::CDXLDatumGeneric
+		(
+		IMemoryPool *pmp,
+		IMDId *pmdidType,
+		INT iTypeModifier,
+		BOOL fByVal,
+		BOOL fNull,
+		BYTE *pba,
+		ULONG ulLength
+		)
+		:
+		CDXLDatum(pmp, pmdidType, iTypeModifier, fNull, ulLength),
+		m_fByVal(fByVal),
+		m_pba(pba)
 {
 	GPOS_ASSERT_IMP(m_fNull, (m_pba == NULL) && (m_ulLength == 0));
 }
@@ -93,6 +113,10 @@ CDXLDatumGeneric::Serialize
 	if (IDefaultTypeModifier != ITypeModifier())
 	{
 		pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenTypeMod), m_iTypeModifier);
+	}
+	if (OidInvalidCollation != OidCollation())
+	{
+		pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenCollation), m_oidCollation);
 	}
 	pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenIsNull), m_fNull);
 	pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenIsByValue), m_fByVal);

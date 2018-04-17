@@ -54,6 +54,20 @@ namespace gpdxl
 				IMemoryPool *pmp,
 				IMDId *pmdidType,
 				INT iTypeModifier,
+				OID oidCollation,
+				BOOL fByVal,
+				BOOL fNull,
+				BYTE *pba,
+				ULONG ulLength,
+				LINT lValue
+				);
+
+			// ctor for missing collation oid (ensure backwards-compatability)
+			CDXLDatumStatsLintMappable
+				(
+				IMemoryPool *pmp,
+				IMDId *pmdidType,
+				INT iTypeModifier,
 				BOOL fByVal,
 				BOOL fNull,
 				BYTE *pba,
