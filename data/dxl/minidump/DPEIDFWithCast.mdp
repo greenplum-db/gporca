@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+create table foo_p (i int)
+partition by list(i)
+(partition p1 values(1, 2, 3) with (appendonly = true),
+ partition p2 values(4)
+);
+
+insert into foo_p select i%3+1 from generate_series(1,100)i;
+
+explain select * from foo_p where i::int8 IS DISTINCT FROM 4;
+-->
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
