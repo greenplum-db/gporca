@@ -445,7 +445,7 @@ CConstraintInterval::PciIntervalFromScalarIDF
 	GPOS_ASSERT(NULL != pexpr);
 	GPOS_ASSERT(CPredicateUtils::FIDF(pexpr));
 
-	if (CPredicateUtils::FIdentIDFConst(pexpr))
+	if (CPredicateUtils::FIdentIDFConstIgnoreCast(pexpr))
 	{
 		// column
 #ifdef GPOS_DEBUG
