@@ -703,6 +703,10 @@ namespace gpopt
 			static
 			BOOL FHasOp(const CExpression *pexpr, const COperator::EOperatorId *peopid, ULONG ulOps);
 
+			// check if given expression tree has the given operator
+			static
+			BOOL FHasOp(const CExpression *pexpr, const COperator::EOperatorId eopid);
+
 			// return number of inlinable CTEs in the given expression
 			static
 			ULONG UlInlinableCTEs(CExpression *pexpr, ULONG ulDepth = 1);

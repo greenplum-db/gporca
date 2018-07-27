@@ -196,7 +196,7 @@ CSetop4Test:
 PushSelectDownUnionAllOfCTG Push-Subplan-Below-Union Intersect-OuterRefs
 PushSelectWithOuterRefBelowUnion PushGbBelowUnion UnionGbSubquery MS-UnionAll-4
 AnyPredicate-Over-UnionOfConsts EquivClassesUnion EquivClassesIntersect
-IndexScanWithNestedCTEAndSetOp;
+IndexScanWithNestedCTEAndSetOp LogicalUnionDynamicGet_SubqueryPushThru LogicalUnionDynamicGet_NestedSubqueryPushThru;
 
 CEquivClassTest:
 Equiv-HashedDistr-1 Equiv-HashedDistr-2 EquivClassesAndOr EquivClassesLimit IndexNLJoin_Cast_NoMotion;
