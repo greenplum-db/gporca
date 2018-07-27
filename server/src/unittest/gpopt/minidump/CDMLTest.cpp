@@ -28,6 +28,8 @@ ULONG CDMLTest::m_ulDMLTestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszDMLFileNames[] =
 	{
+	"../data/dxl/minidump/PartitionEliminationIDFWithCast.mdp",
+	"../data/dxl/minidump/PartitionEliminationIDFWithCast2.mdp",
 	"../data/dxl/minidump/Insert.mdp",
 	"../data/dxl/minidump/InsertRandomDistr.mdp",
 	"../data/dxl/minidump/InsertMismatchedDistrubution.mdp",

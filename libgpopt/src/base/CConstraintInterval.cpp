@@ -23,7 +23,7 @@
 #include "naucrates/md/IMDScalarOp.h"
 #include "gpopt/base/CDatumSortedSet.h"
 #include "gpos/common/CAutoRef.h"
-
+#include "gpopt/base/CCastUtils.h"
 using namespace gpopt;
 
 //---------------------------------------------------------------------------
@@ -445,25 +445,27 @@ CConstraintInterval::PciIntervalFromScalarIDF
 	GPOS_ASSERT(NULL != pexpr);
 	GPOS_ASSERT(CPredicateUtils::FIDF(pexpr));
 
-	if (CPredicateUtils::FIdentIDFConst(pexpr))
+	if (CPredicateUtils::FIdentIDFConstIgnoreCast(pexpr))
 	{
+		CExpression *pexprRight = (*pexpr)[1];
+		GPOS_ASSERT(COperator::EopScalarConst == pexprRight->Pop()->Eopid() || CScalarConst::FCastedConst(pexprRight));
 		// column
 #ifdef GPOS_DEBUG
-		CScalarIdent *popScId = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
-		GPOS_ASSERT (pcr == (CColRef *) popScId->Pcr());
+		CExpression *pexprLeft = (*pexpr)[0];
+		GPOS_ASSERT(COperator::EopScalarIdent == pexprLeft->Pop()->Eopid() || CScalarIdent::FCastedScId(pexprLeft));
+		const CColRef *pcrExtracted = CCastUtils::PcrExtractFromScIdOrCastScId(pexprLeft);
+		GPOS_ASSERT (pcr == pcrExtracted);
 #endif // GPOS_DEBUG
 
-		// constant
-		CScalarConst *popScConst = CScalarConst::PopConvert((*pexpr)[1]->Pop());
 		// operator
 		CScalarIsDistinctFrom *popScCmp = CScalarIsDistinctFrom::PopConvert(pexpr->Pop());
 
-		GPOS_ASSERT (CScalar::EopScalarConst == popScConst->Eopid());
-		GPOS_ASSERT (IMDType::EcmptIDF == popScCmp->Ecmpt());
+		// constant
+		CScalarConst *popScConst = CScalarConst::PopExtractFromConstOrCastConst(pexprRight);
+		GPOS_ASSERT(NULL != popScConst);
 
 		IDatum *pdatum = popScConst->Pdatum();
 		CConstraintInterval *pcri = NULL;
-
 		if (pdatum->FNull())
 		{
 			// col IS DISTINCT FROM NULL
