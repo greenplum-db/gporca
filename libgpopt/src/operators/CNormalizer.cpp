@@ -736,12 +736,23 @@ CNormalizer::PushThruSetOp
 	GPOS_ASSERT(NULL != pexprConj);
 	GPOS_ASSERT(NULL != ppexprResult);
 
+	// if there is a dynamic get in the pexprConj, we do not want to push through to the
+	// multiple children of the set op. The dynamic scan ids need to different for every
+	// child. This is better handled as a transform.
+	// TODO: implement this as a transform
+	if (CUtils::FHasOp(pexprConj, COperator::EopLogicalDynamicGet))
+	{
+		*ppexprResult = NULL;
+		return;
+	}
+
 	CLogicalSetOp *popSetOp = CLogicalSetOp::PopConvert(pexprSetOp->Pop());
 	DrgPcr *pdrgpcrOutput = popSetOp->PdrgpcrOutput();
 	CColRefSet *pcrsOutput = GPOS_NEW(pmp) CColRefSet(pmp, pdrgpcrOutput);
 	DrgDrgPcr *pdrgpdrgpcrInput = popSetOp->PdrgpdrgpcrInput();
 	DrgPexpr *pdrgpexprNewChildren = GPOS_NEW(pmp) DrgPexpr(pmp);
 	const ULONG ulArity = pexprSetOp->UlArity();
+
 	for (ULONG ul = 0; ul < ulArity; ul++)
 	{
 		CExpression *pexprChild = (*pexprSetOp)[ul];
@@ -950,7 +961,8 @@ CNormalizer::PushThru
 	if (NULL != pfnpt)
 	{
 		pfnpt(pmp, pexprLogical, pexprConj, ppexprResult);
-		return;
+		if (NULL != *ppexprResult)
+			return;
 	}
 
 	// can't push predicates through, start a new normalization path

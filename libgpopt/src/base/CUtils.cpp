@@ -3048,6 +3048,19 @@ CUtils::FHasOp
 	return false;
 }
 
+// check if given expression tree has the given operator
+// wrapper for above FHasOp function
+BOOL
+CUtils::FHasOp
+	(
+	const gpopt::CExpression *pexpr,
+	const COperator::EOperatorId eopid
+	)
+{
+	const COperator::EOperatorId rgeopid [1] = {eopid};
+	return FHasOp(pexpr, rgeopid, 1);
+}
+
 // return number of inlinable CTEs in the given expression
 ULONG
 CUtils::UlInlinableCTEs
