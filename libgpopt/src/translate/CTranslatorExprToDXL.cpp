@@ -5332,6 +5332,45 @@ CTranslatorExprToDXL::PdxlnDML
 
 	CDXLNode *pdxlnChild = Pdxln(pexprChild, pdrgpcrSource, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, false /*fRemap*/, false /*fRoot*/);
 
+	// add a redistribute motion if the target table is randomly distributed and trace flag is set
+	BOOL is_table_randomly_distributed = ptabdesc->Ereldistribution() == IMDRelation::EreldistrRandom;
+	CDXLNode *random_motion_dxl_node = NULL;
+	if (is_table_randomly_distributed && GPOS_FTRACE(EopttraceForceRedistributeOnInsertOnRandomDistrTables))
+	{
+		CDXLPhysicalRandomMotion *random_motion_dxl_op = GPOS_NEW(m_pmp) CDXLPhysicalRandomMotion(m_pmp, false);
+		random_motion_dxl_node = GPOS_NEW(m_pmp) CDXLNode(m_pmp, random_motion_dxl_op);
+
+		CDXLProperties *child_dxl_prop = pdxlnChild->Pdxlprop();
+		child_dxl_prop->AddRef();
+		random_motion_dxl_node->SetProperties(child_dxl_prop);
+
+		// construct project list
+		CDXLNode *child_proj_list_dxl_node = (*pdxlnChild)[0];
+		CDXLNode *proj_list_dxl_node = CTranslatorExprToDXLUtils::PdxlnProjListFromChildProjList(m_pmp, m_pcf, m_phmcrdxln, child_proj_list_dxl_node);
+
+		// set redistribution segment info n:n
+		DrgPi *segment_id_array = GPOS_NEW(m_pmp) DrgPi(m_pmp);
+		ULONG num_of_segments = COptCtxt::PoctxtFromTLS()->Pcm()->UlHosts();
+		for (ULONG i = 0; i < num_of_segments; i++)
+		{
+			segment_id_array->Append(GPOS_NEW(m_pmp) INT(i));
+		}
+		segment_id_array->AddRef();
+		random_motion_dxl_op->SetSegmentInfo(segment_id_array, segment_id_array);
+
+		// construct an empty filter node
+		CDXLNode *filter_dxl_node = PdxlnFilter(NULL /*pdxlnCond*/);
+
+		// construct sort column list
+		CDXLNode *sort_col_list_dxl_node = GPOS_NEW(m_pmp) CDXLNode(m_pmp, GPOS_NEW(m_pmp) CDXLScalarSortColList(m_pmp));
+
+		// add children
+		random_motion_dxl_node->AddChild(proj_list_dxl_node);
+		random_motion_dxl_node->AddChild(filter_dxl_node);
+		random_motion_dxl_node->AddChild(sort_col_list_dxl_node);
+		random_motion_dxl_node->AddChild(pdxlnChild);
+	}
+
 	CDXLTableDescr *pdxltabdesc = Pdxltabdesc(ptabdesc, NULL /*pdrgpcrOutput*/);
 	DrgPul *pdrgpul = CUtils::Pdrgpul(m_pmp, pdrgpcrSource);
 
@@ -5361,7 +5400,14 @@ CTranslatorExprToDXL::PdxlnDML
 	pdxlnDML->SetProperties(pdxlprop);
 
 	pdxlnDML->AddChild(pdxlnPrL);
-	pdxlnDML->AddChild(pdxlnChild);
+	if (random_motion_dxl_node)
+	{
+		pdxlnDML->AddChild(random_motion_dxl_node);
+	}
+	else
+	{
+		pdxlnDML->AddChild(pdxlnChild);
+	}
 
 #ifdef GPOS_DEBUG
 	pdxlnDML->Pdxlop()->AssertValid(pdxlnDML, false /* fValidateChildren */);
