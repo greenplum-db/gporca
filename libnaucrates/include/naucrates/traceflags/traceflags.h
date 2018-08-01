@@ -200,6 +200,10 @@ namespace gpos
 		// is nestloop params enabled, it is only enabled in GPDB 6.x onwards.
 		EopttraceIndexedNLJOuterRefAsParams = 106000,
 
+		// force redistribute motion on insert statement on randomly distributed tables
+		// for proper data distribution
+		EopttraceForceRedistributeOnInsertOnRandomDistrTables = 106001,
+
 		// max
 		EopttraceSentinel = 199999
 	};
