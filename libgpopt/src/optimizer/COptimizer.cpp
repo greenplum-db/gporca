@@ -38,6 +38,8 @@
 #include "gpopt/optimizer/COptimizer.h"
 #include "gpopt/cost/ICostModel.h"
 
+#include "gpopt/operators/CExpressionPostProcessor.h"
+
 #include <fstream>
 
 using namespace gpos;
@@ -269,10 +271,14 @@ COptimizer::PdxlnOptimize
 			CExpression *pexprPlan = PexprOptimize(pmp, pqc, pdrgpss);
 			GPOS_CHECK_ABORT;
 
-			PrintQueryOrPlan(pmp, pexprPlan);
+			// post process the plan expression
+			CExpressionPostProcessor plan_post_processor;
+			CExpression *post_processsed_plan = plan_post_processor.PostProcessPlan(pmp, pexprPlan);
+
+			PrintQueryOrPlan(pmp, post_processsed_plan);
 
 			// translate plan into DXL
-			pdxlnPlan = Pdxln(pmp, pmda, pexprPlan, pqc->PdrgPcr(), pdrgpmdname, ulHosts);
+			pdxlnPlan = Pdxln(pmp, pmda, post_processsed_plan, pqc->PdrgPcr(), pdrgpmdname, ulHosts);
 			GPOS_CHECK_ABORT;
 
 			if (fMinidump)
@@ -291,6 +297,7 @@ COptimizer::PdxlnOptimize
 			// cleanup
 			pexprTranslated->Release();
 			pexprPlan->Release();
+			post_processsed_plan->Release();
 			GPOS_DELETE(pqc);
 		}
 	}
@@ -429,5 +436,4 @@ COptimizer::Pdxln
 	
 	return pdxlnPlan;
 }
-
 // EOF

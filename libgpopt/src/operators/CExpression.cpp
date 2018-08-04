@@ -1536,4 +1536,97 @@ CExpression::FValidPartEnforcers
 	return true;
 }
 
+void
+CExpression::CopyExpressionProp
+	(
+	CExpression *expr
+	)
+{
+	CDrvdPropPlan *drvd_prop_plan = expr->GetDrvdPropPlan();
+	drvd_prop_plan->AddRef();
+	this->SetDrvdPropPlan(drvd_prop_plan);
+
+	CDrvdPropRelational *drvd_prop_relational = expr->GetDrvdPropRelational();
+	drvd_prop_relational->AddRef();
+	this->SetDrvdPropRelational(drvd_prop_relational);
+
+	CReqdPropPlan *reqd_prop_plan = expr->Prpp();
+	reqd_prop_plan->AddRef();
+	this->SetReqdPropPlan(reqd_prop_plan);
+
+	CCost cost = expr->Cost();
+	this->SetCost(cost);
+
+	IStatistics *stats = expr->Pstats();
+	stats->AddRef();
+	this->SetStats(stats);
+}
+
+void
+CExpression::SetDrvdPropPlan
+	(
+	CDrvdPropPlan *drvd_prop_plan
+	)
+{
+	GPOS_ASSERT(NULL != drvd_prop_plan);
+	GPOS_ASSERT(NULL == m_pdpplan);
+	m_pdpplan = drvd_prop_plan;
+}
+
+CDrvdPropPlan *
+CExpression::GetDrvdPropPlan() const
+{
+	return m_pdpplan;
+}
+
+CDrvdPropRelational *
+CExpression::GetDrvdPropRelational() const
+{
+	return m_pdprel;
+}
+
+void
+CExpression::SetDrvdPropRelational
+	(
+	CDrvdPropRelational *drvd_prop_relational
+	)
+{
+	GPOS_ASSERT(NULL == m_pdprel);
+	GPOS_ASSERT(NULL != drvd_prop_relational);
+	m_pdprel = drvd_prop_relational;
+}
+
+void
+CExpression::SetReqdPropPlan
+	(
+	CReqdPropPlan *reqd_prop_plan
+	)
+{
+	GPOS_ASSERT(NULL == m_prpp);
+	GPOS_ASSERT(NULL != reqd_prop_plan);
+	m_prpp = reqd_prop_plan;
+}
+
+void
+CExpression::SetStats
+	(
+	IStatistics *stats
+	)
+{
+	GPOS_ASSERT(NULL == m_pstats);
+	GPOS_ASSERT(NULL != stats);
+	m_pstats = stats;
+}
+
+void
+CExpression::SetCost
+	(
+	CCost cost
+	)
+{
+	GPOS_ASSERT(m_cost == GPOPT_INVALID_COST);
+	m_cost = cost;
+}
+
+
 // EOF
