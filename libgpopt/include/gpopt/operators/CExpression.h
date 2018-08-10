@@ -16,6 +16,7 @@
 #include "gpos/common/CDynamicPtrArray.h"
 
 #include "naucrates/statistics/CStatistics.h"
+#include "gpopt/base/CDrvdPropPlan.h"
 #include "gpopt/cost/CCost.h"
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CCostContext.h"
@@ -25,12 +26,13 @@
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/base/CPrintPrefix.h"
 #include "gpopt/operators/COperator.h"
+#include "gpopt/base/CDrvdPropRelational.h"
 
 
 namespace gpopt
 {
 	// cleanup function for arrays
-	class CExpression;	
+	class CExpression;
 	typedef CDynamicPtrArray<CExpression, CleanupRelease> DrgPexpr;
 
 	// array of arrays of expression pointers
@@ -233,8 +235,7 @@ namespace gpopt
 			// get expression's derived property given its type
 			CDrvdProp *Pdp(const CDrvdProp::EPropType ept) const;
 
-			// get derived statistics object
-			const IStatistics *Pstats() const
+			IStatistics *Pstats() const
 			{
 				return m_pstats;
 			}
@@ -319,6 +320,24 @@ namespace gpopt
 			// rehydrate expression from a given cost context and child expressions
 			static
 			CExpression *PexprRehydrate(IMemoryPool *pmp, CCostContext *pcc, DrgPexpr *pdrgpexpr, CDrvdPropCtxtPlan *pdpctxtplan);
+
+			CDrvdPropRelational *GetDrvdPropRelational() const;
+
+			void SetDrvdPropPlan(CDrvdPropPlan *drvd_prop_plan);
+
+			CDrvdPropPlan *GetDrvdPropPlan() const;
+
+			void SetStats(IStatistics *stats);
+
+			void SetCost(CCost cost);
+
+			void SetReqdPropPlan(CReqdPropPlan *reqd_prop_plan);
+
+			void SetDrvdPropRelational(CDrvdPropRelational *drvd_prop_relational);
+
+			// copy relational, derived, required, statistics and cost of input expression
+			void
+			CopyExpressionProp(CExpression *expr);
 
 
 	}; // class CExpression

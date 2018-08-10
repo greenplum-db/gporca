@@ -15,6 +15,7 @@
 
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
 #include "gpopt/search/CSearchStage.h"
+#include "gpopt/operators/CExpressionPostProcessor.h"
 
 namespace gpdxl
 {

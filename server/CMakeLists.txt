@@ -228,6 +228,11 @@ CNonRedistributableColTest:
 JOIN-NonRedistributableCol DQA-NonRedistributableCol
 MotionHazard-NoMaterializeHashAggUnderResult;
 
+CRandomDataInsertionTest:
+AddRedistributeBeforeInsert-1 AddRedistributeBeforeInsert-2 AddRedistributeBeforeInsert-3
+AddRedistributeBeforeInsert-4 AddRedistributeBeforeInsert-5 DontAddRedistributeBeforeInsert-1
+DontAddRedistributeBeforeInsert-2;
+
 CInvalidCostContextTest:
 SpoolShouldInvalidateUnresolvedDynamicScans;
 
