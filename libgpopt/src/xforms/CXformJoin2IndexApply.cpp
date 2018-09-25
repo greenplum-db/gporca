@@ -381,6 +381,7 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 	}
 
 	CLogical *popGet = CLogical::PopConvert(pexprInner->Pop());
+	CExpression *pexprResidual = NULL;
 	CExpression *pexprLogicalIndexGet = CXformUtils::PexprBitmapTableGet
 										(
 										mp,
@@ -389,7 +390,8 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 										ptabdescInner,
 										pexprScalar,
 										outer_refs,
-										pcrsReqd
+										pcrsReqd,
+										&pexprResidual
 										);
 	if (NULL != pexprLogicalIndexGet)
 	{
@@ -397,6 +399,12 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 		// and add it to xform results
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
+
+		if (NULL == pexprResidual)
+		{
+			pexprResidual = CUtils::PexprScalarConstBool(mp, true);
+		}
+
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
@@ -404,7 +412,7 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 				PopLogicalApply(mp, colref_array),
 				pexprOuter,
 				pexprLogicalIndexGet,
-				CPredicateUtils::PexprConjunction(mp, NULL /*pdrgpexpr*/)
+				pexprResidual
 				);
 		pxfres->Add(pexprIndexApply);
 	}
