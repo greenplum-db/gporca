@@ -274,7 +274,7 @@
         </dxl:TableDescriptor>
         <dxl:RedistributeMotion InputSegments="-1" OutputSegments="0,1,2">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.000047" Rows="1.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000048" Rows="1.000000" Width="8"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="8" Alias="test_func_pg_stats">

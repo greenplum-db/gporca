@@ -425,7 +425,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
     <dxl:Plan Id="0" SpaceSize="10779">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="2155.876000" Rows="70.000000" Width="10"/>
+          <dxl:Cost StartupCost="0" TotalCost="2155.876273" Rows="70.000000" Width="10"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="u_vtgnr">
@@ -442,7 +442,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
         <dxl:SortingColumnList/>
         <dxl:Result>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="2155.872857" Rows="70.000000" Width="10"/>
+            <dxl:Cost StartupCost="0" TotalCost="2155.873130" Rows="70.000000" Width="10"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="u_vtgnr">
@@ -466,7 +466,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
           <dxl:OneTimeFilter/>
           <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="2155.870554" Rows="70.000000" Width="18"/>
+              <dxl:Cost StartupCost="0" TotalCost="2155.870827" Rows="70.000000" Width="18"/>
             </dxl:Properties>
             <dxl:GroupingColumns>
               <dxl:GroupingColumn ColId="0"/>
@@ -508,7 +508,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
             <dxl:Filter/>
             <dxl:Sort SortDiscardDuplicates="false">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="2155.868661" Rows="70.000000" Width="44"/>
+                <dxl:Cost StartupCost="0" TotalCost="2155.868934" Rows="70.000000" Width="44"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="u_vtgnr">
@@ -546,7 +546,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
               <dxl:LimitOffset/>
               <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="2155.823873" Rows="70.000000" Width="44"/>
+                  <dxl:Cost StartupCost="0" TotalCost="2155.824146" Rows="70.000000" Width="44"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="0" Alias="u_vtgnr">
@@ -663,7 +663,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
                       </dxl:ProjElem>
                     </dxl:ProjList>
                     <dxl:Filter/>
-                    <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false">
+                    <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
                       <dxl:Properties>
                         <dxl:Cost StartupCost="0" TotalCost="2155.816824" Rows="70.000000" Width="39"/>
                       </dxl:Properties>
@@ -749,7 +749,7 @@ AND u_folio = (SELECT max(u_folio)  FROM q68t792_temp c WHERE a.u_vtgnr = c.u_vt
                         </dxl:SortingColumnList>
                         <dxl:LimitCount/>
                         <dxl:LimitOffset/>
-                        <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false">
+                        <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
                           <dxl:Properties>
                             <dxl:Cost StartupCost="0" TotalCost="1293.405479" Rows="70.000000" Width="36"/>
                           </dxl:Properties>

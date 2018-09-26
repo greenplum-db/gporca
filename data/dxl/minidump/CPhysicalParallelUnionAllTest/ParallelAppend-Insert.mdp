@@ -193,7 +193,7 @@ INSERT INTO t VALUES (11),(12),(13);
     <dxl:Plan Id="0" SpaceSize="0">
       <dxl:DMLInsert Columns="0" ActionCol="3" OidCol="0" CtidCol="0" SegmentIdCol="0" InputSorted="false">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="0.031272" Rows="3.000000" Width="4"/>
+          <dxl:Cost StartupCost="0" TotalCost="0.031273" Rows="3.000000" Width="4"/>
         </dxl:Properties>
         <dxl:DirectDispatchInfo/>
         <dxl:ProjList>
@@ -215,7 +215,7 @@ INSERT INTO t VALUES (11),(12),(13);
         </dxl:TableDescriptor>
         <dxl:Result>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="0.000022" Rows="3.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="0.000023" Rows="3.000000" Width="8"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="column1">
@@ -229,7 +229,7 @@ INSERT INTO t VALUES (11),(12),(13);
           <dxl:OneTimeFilter/>
           <dxl:Append IsTarget="false" IsZapped="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="0.000014" Rows="3.000000" Width="4"/>
+              <dxl:Cost StartupCost="0" TotalCost="0.000015" Rows="3.000000" Width="4"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="column1">
@@ -239,7 +239,7 @@ INSERT INTO t VALUES (11),(12),(13);
             <dxl:Filter/>
             <dxl:RedistributeMotion InputSegments="0" OutputSegments="0,1,2" DuplicateSensitive="true">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="0.000014" Rows="1.000000" Width="4"/>
+                <dxl:Cost StartupCost="0" TotalCost="0.000015" Rows="1.000000" Width="4"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="column1">
@@ -268,7 +268,7 @@ INSERT INTO t VALUES (11),(12),(13);
             </dxl:RedistributeMotion>
             <dxl:RedistributeMotion InputSegments="0" OutputSegments="0,1,2" DuplicateSensitive="true">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="0.000014" Rows="1.000000" Width="4"/>
+                <dxl:Cost StartupCost="0" TotalCost="0.000015" Rows="1.000000" Width="4"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="1" Alias="column1">
@@ -297,7 +297,7 @@ INSERT INTO t VALUES (11),(12),(13);
             </dxl:RedistributeMotion>
             <dxl:RedistributeMotion InputSegments="0" OutputSegments="0,1,2" DuplicateSensitive="true">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="0.000014" Rows="1.000000" Width="4"/>
+                <dxl:Cost StartupCost="0" TotalCost="0.000015" Rows="1.000000" Width="4"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="2" Alias="column1">

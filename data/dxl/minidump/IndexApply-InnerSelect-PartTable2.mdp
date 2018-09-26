@@ -403,7 +403,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
     <dxl:Plan Id="0" SpaceSize="23295">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="1324469.354741" Rows="1.000000" Width="16"/>
+          <dxl:Cost StartupCost="0" TotalCost="1324469.354742" Rows="1.000000" Width="16"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="a">
@@ -423,7 +423,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
         <dxl:SortingColumnList/>
         <dxl:HashJoin JoinType="In">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="1324469.354681" Rows="1.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="1324469.354682" Rows="1.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">
@@ -447,7 +447,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
               <dxl:Ident ColId="18" ColName="a" TypeMdid="0.23.1.0"/>
             </dxl:Comparison>
           </dxl:HashCondList>
-          <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="true">
+          <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="true" OuterRefAsParam="false">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="437.000853" Rows="1.000000" Width="16"/>
             </dxl:Properties>
@@ -582,7 +582,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
           </dxl:NestedLoopJoin>
           <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="1324032.353435" Rows="1.000000" Width="4"/>
+              <dxl:Cost StartupCost="0" TotalCost="1324032.353436" Rows="1.000000" Width="4"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="18" Alias="a">
@@ -596,7 +596,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
                 <dxl:Ident ColId="18" ColName="a" TypeMdid="0.23.1.0"/>
               </dxl:HashExpr>
             </dxl:HashExprList>
-            <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false">
+            <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="1324032.353429" Rows="1.000000" Width="4"/>
               </dxl:Properties>
