@@ -368,7 +368,7 @@ explain insert into tbl_cds_buysell_orders_new (a,b,c)
     <dxl:Plan Id="0" SpaceSize="2">
       <dxl:DMLInsert Columns="0,1,2,10,11,12,13" ActionCol="14" OidCol="0" CtidCol="0" SegmentIdCol="0" InputSorted="false">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="42587.627692" Rows="1000000.000000" Width="12"/>
+          <dxl:Cost StartupCost="0" TotalCost="42590.612796" Rows="1000000.000000" Width="12"/>
         </dxl:Properties>
         <dxl:DirectDispatchInfo/>
         <dxl:ProjList>
@@ -410,7 +410,7 @@ explain insert into tbl_cds_buysell_orders_new (a,b,c)
         </dxl:TableDescriptor>
         <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="920.961026" Rows="1000000.000000" Width="32"/>
+            <dxl:Cost StartupCost="0" TotalCost="923.946129" Rows="1000000.000000" Width="32"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">

@@ -469,7 +469,7 @@ explain select * from foo,bar where foo.a = bar.d;
     <dxl:Plan Id="0" SpaceSize="8">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="882.419239" Rows="1.000000" Width="16"/>
+          <dxl:Cost StartupCost="0" TotalCost="882.561530" Rows="1.000000" Width="16"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="a">
@@ -489,7 +489,7 @@ explain select * from foo,bar where foo.a = bar.d;
         <dxl:SortingColumnList/>
         <dxl:HashJoin JoinType="Inner">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="882.419179" Rows="1.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="882.561470" Rows="1.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">
@@ -515,7 +515,7 @@ explain select * from foo,bar where foo.a = bar.d;
           </dxl:HashCondList>
           <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="433.464552" Rows="100430.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="433.606843" Rows="100430.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="9" Alias="c">

@@ -293,7 +293,7 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
     <dxl:Plan Id="0" SpaceSize="24">
       <dxl:Result>
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="1293.001123" Rows="1.000000" Width="4"/>
+          <dxl:Cost StartupCost="0" TotalCost="1293.001132" Rows="1.000000" Width="4"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="16" Alias="?column?">
@@ -304,14 +304,14 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
         <dxl:OneTimeFilter/>
         <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="1293.001119" Rows="1.000000" Width="1"/>
+            <dxl:Cost StartupCost="0" TotalCost="1293.001128" Rows="1.000000" Width="1"/>
           </dxl:Properties>
           <dxl:ProjList/>
           <dxl:Filter/>
           <dxl:SortingColumnList/>
           <dxl:Result>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="1293.001115" Rows="1.000000" Width="1"/>
+              <dxl:Cost StartupCost="0" TotalCost="1293.001125" Rows="1.000000" Width="1"/>
             </dxl:Properties>
             <dxl:ProjList/>
             <dxl:Filter>
@@ -345,7 +345,7 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
             <dxl:OneTimeFilter/>
             <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="1293.001082" Rows="1.000000" Width="24"/>
+                <dxl:Cost StartupCost="0" TotalCost="1293.001092" Rows="1.000000" Width="24"/>
               </dxl:Properties>
               <dxl:GroupingColumns>
                 <dxl:GroupingColumn ColId="0"/>
@@ -376,7 +376,7 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
               <dxl:Filter/>
               <dxl:Sort SortDiscardDuplicates="false">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="1293.001044" Rows="1.000000" Width="34"/>
+                  <dxl:Cost StartupCost="0" TotalCost="1293.001053" Rows="1.000000" Width="34"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="0" Alias="cidr">
@@ -404,7 +404,7 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
                 <dxl:LimitOffset/>
                 <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="1293.001044" Rows="1.000000" Width="34"/>
+                    <dxl:Cost StartupCost="0" TotalCost="1293.001053" Rows="1.000000" Width="34"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="0" Alias="cidr">
@@ -510,7 +510,7 @@ SELECT 1 FROM inverse WHERE NOT (cidr <<= ANY(SELECT * FROM inverse));
                         </dxl:SortingColumnList>
                         <dxl:LimitCount/>
                         <dxl:LimitOffset/>
-                        <dxl:NestedLoopJoin JoinType="Left" IndexNestedLoopJoin="false">
+                        <dxl:NestedLoopJoin JoinType="Left" IndexNestedLoopJoin="false" OuterRefAsParam="false">
                           <dxl:Properties>
                             <dxl:Cost StartupCost="0" TotalCost="1293.000896" Rows="1.000000" Width="22"/>
                           </dxl:Properties>

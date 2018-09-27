@@ -267,7 +267,7 @@ explain insert into pt2 select * from r;
     <dxl:Plan Id="0" SpaceSize="2">
       <dxl:DMLInsert Columns="0,1,2" ActionCol="11" OidCol="0" CtidCol="0" SegmentIdCol="0" InputSorted="false">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.031317" Rows="1.000000" Width="16"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.031318" Rows="1.000000" Width="16"/>
         </dxl:Properties>
         <dxl:DirectDispatchInfo/>
         <dxl:ProjList>
@@ -297,7 +297,7 @@ explain insert into pt2 select * from r;
         </dxl:TableDescriptor>
         <dxl:Result>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.000067" Rows="1.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000068" Rows="1.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">
@@ -317,7 +317,7 @@ explain insert into pt2 select * from r;
           <dxl:OneTimeFilter/>
           <dxl:PartitionSelector RelationMdid="0.1695223.1.1" PartitionLevels="1" ScanId="0">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.000059" Rows="1.000000" Width="16"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000060" Rows="1.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="a">
@@ -347,7 +347,7 @@ explain insert into pt2 select * from r;
             </dxl:PrintableFilter>
             <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="431.000051" Rows="1.000000" Width="16"/>
+                <dxl:Cost StartupCost="0" TotalCost="431.000052" Rows="1.000000" Width="16"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="a">
