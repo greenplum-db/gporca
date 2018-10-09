@@ -28,7 +28,8 @@ ULONG CAggTest::m_ulAggTestCounter = 0;  // start from first test
 // minidump files
 const CHAR *rgszAggFileNames[] =
 {
-	"../data/dxl/minidump/DQA-KeepOuterReference.mdp",
+	"../data/dxl/minidump/eager_agg.mdp",
+    "../data/dxl/minidump/DQA-KeepOuterReference.mdp",
 	"../data/dxl/minidump/ScalarSubqueryCountStarInJoin.mdp",
 	"../data/dxl/minidump/ScalarCorrelatedSubqueryCountStar.mdp",
 	"../data/dxl/minidump/ScalarSubqueryCountStar.mdp",
@@ -81,7 +82,7 @@ const CHAR *rgszAggFileNames[] =
 	"../data/dxl/minidump/ProjectCountStar.mdp",
 	"../data/dxl/minidump/ProjectOutsideCountStar.mdp",
 	"../data/dxl/minidump/NestedProjectCountStarWithOuterRefs.mdp",
-	};
+ };
 
 
 //---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
       <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
-      <dxl:CTEConfig CTEInliningCutoff="0"/> 
+      <dxl:CTEConfig CTEInliningCutoff="0"/>
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:TraceFlags Value="103027,103001,103002"/>
     </dxl:OptimizerConfig>
@@ -69,6 +69,25 @@
         <dxl:SumAgg Mdid="0.2107.1.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
+      <dxl:GPDBAgg Mdid="0.2114.1.0" Name="sum" IsSplittable="true" HashAggCapable="true">
+        <dxl:ResultType Mdid="0.1700.1.0"/>
+        <dxl:IntermediateResultType Mdid="0.1700.1.0"/>
+      </dxl:GPDBAgg>
+      <dxl:Type Mdid="0.1700.1.0" Name="numeric" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="false" PassByValue="false">
+        <dxl:EqualityOp Mdid="0.1752.1.0"/>
+        <dxl:InequalityOp Mdid="0.1753.1.0"/>
+        <dxl:LessThanOp Mdid="0.1754.1.0"/>
+        <dxl:LessThanEqualsOp Mdid="0.1755.1.0"/>
+        <dxl:GreaterThanOp Mdid="0.1756.1.0"/>
+        <dxl:GreaterThanEqualsOp Mdid="0.1757.1.0"/>
+        <dxl:ComparisonOp Mdid="0.1769.1.0"/>
+        <dxl:ArrayType Mdid="0.1231.1.0"/>
+        <dxl:MinAgg Mdid="0.2146.1.0"/>
+        <dxl:MaxAgg Mdid="0.2130.1.0"/>
+        <dxl:AvgAgg Mdid="0.2103.1.0"/>
+        <dxl:SumAgg Mdid="0.2114.1.0"/>
+        <dxl:CountAgg Mdid="0.2147.1.0"/>
+      </dxl:Type>
       <dxl:GPDBScalarOp Mdid="0.410.1.0" Name="=" ComparisonType="Eq">
         <dxl:LeftType Mdid="0.20.1.0"/>
         <dxl:RightType Mdid="0.20.1.0"/>
@@ -77,6 +96,10 @@
         <dxl:Commutator Mdid="0.410.1.0"/>
         <dxl:InverseOp Mdid="0.411.1.0"/>
       </dxl:GPDBScalarOp>
+      <dxl:GPDBAgg Mdid="0.2107.1.0" Name="sum" IsSplittable="true">
+        <dxl:ResultType Mdid="0.1700.1.0"/>
+        <dxl:IntermediateResultType Mdid="0.1700.1.0"/>
+      </dxl:GPDBAgg>
       <dxl:ColumnStatistics Mdid="1.761868.1.1.8" Name="gp_segment_id" Width="4.000000"/>
       <dxl:ColumnStatistics Mdid="1.761868.1.1.1" Name="j" Width="4.000000">
         <dxl:StatsBucket Frequency="0.500000" DistinctValues="1.000000">

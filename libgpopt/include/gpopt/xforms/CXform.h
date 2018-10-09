@@ -167,7 +167,7 @@ namespace gpopt
 				ExfSimplifyGbAgg,
 				ExfCollapseGbAgg,
 				ExfPushGbBelowJoin,
-				ExfPushGbDedupBelowJoin,
+                ExfPushGbDedupBelowJoin,
 				ExfPushGbWithHavingBelowJoin,
 				ExfPushGbBelowUnion,
 				ExfPushGbBelowUnionAll,
@@ -215,6 +215,7 @@ namespace gpopt
 				ExfLeftOuterJoinWithInnerSelect2BitmapIndexGetApply,
 				ExfLeftOuterJoinWithInnerSelect2IndexGetApply,
 				ExfExpandNAryJoinGreedy,
+                ExfEagerAgg,
 				ExfInvalid,
 				ExfSentinel = ExfInvalid
 			};
