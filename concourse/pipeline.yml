@@ -6,8 +6,9 @@ resources:
 - name: gpdb_src
   type: git
   source:
-    branch: master
-    uri: https://github.com/greenplum-db/gpdb
+    branch: 4.3_STABLE
+    private_key: {{gpdb-git-key}}
+    uri: git@github.com:greenplum-db/gpdb4.git 
     ignore_paths:
       - README.md
       - LICENSE
@@ -17,7 +18,7 @@ resources:
 - name: orca_github_release
   type: github-release
   source:
-    user: greenplum-db
+    user: greenplum-db 
     repository: gporca
     access_token: {{gporcabot_access_token}}
 
@@ -34,7 +35,7 @@ resources:
 - name: orca_src
   type: git
   source:
-    branch: master
+    branch: 2X
     uri: https://github.com/greenplum-db/gporca
 
 - name: bin_xerces_centos5
@@ -64,41 +65,44 @@ resources:
     secret_access_key: {{s3_secret_access_key}}
     versioned_file: bin_orca_centos5_release.tar.gz
 
-- name: regression_diffs
-  type: s3
+- name: centos-gpdb-dev-5
+  type: docker-image
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{bucket-name}}
-    region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: regression.diffs
+    repository: pivotaldata/centos-gpdb-dev
+    tag: "5"
 
-- name: regression_out
-  type: s3
+- name: centos-gpdb-dev-6
+  type: docker-image
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{bucket-name}}
-    region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: regression.out
+    repository: pivotaldata/centos-gpdb-dev
+    tag: "6"
 
-- name: bin_gpdb_centos6
+- name: ccache_gpdb_centos5
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{bucket-name}}
+    access_key_id: {{bucket-access-key-id}}
+    bucket: {{gpdb-artifacts-bucket}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: bin_gpdb_with_orca_centos6.tar.gz
+    secret_access_key: {{bucket-secret-access-key}}
+    versioned_file: ccache_gpdb_centos5/ccache_gpdb.tar.gz
 
-- name: bin_orca_tar_conan
+- name: bin_gpdb_centos
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
     secret_access_key: {{s3_secret_access_key}}
-    versioned_file: bin_orca_conan.tar.gz
+    versioned_file: bin_gpdb_centos/bin_gpdb.tar.gz
+
+- name: sync_tools_gpdb_centos
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{bucket-name}}
+    region_name: {{aws-region}}
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: sync_tools_gpdb_centos/sync_tools_gpdb.tar.gz
 
 ########
 # JOBS #
@@ -123,12 +127,6 @@ jobs:
     file: orca_src/concourse/publish_tag.yml
   - task: check_existing_tag
     file: orca_src/concourse/check_existing_tag.yml
-  - task: upload_orca_source_bintray
-    file: orca_src/concourse/upload_orca_source_bintray.yml
-    params:
-      BINTRAY_USER: {{bintray_user}}
-      BINTRAY_REMOTE: {{bintray_remote}}
-      BINTRAY_USER_KEY: {{bintray_user_key}}
   - put: orca_github_release
     params:
       name: orca_github_release_stage/tag.txt
@@ -186,9 +184,15 @@ jobs:
     params:
       from: package_tarball_debug/bin_orca_centos5_debug.tar.gz
 
-- name: build_gpdb
+- name: compile_gpdb_centos
   plan:
   - aggregate:
+    - get: gpdb_src
+      trigger: true
+    - get: centos-gpdb-dev-5
+    - get: ccache_snapshot
+      resource: ccache_gpdb_centos5
+    - get: centos-gpdb-dev-6
     - &get_released_orca
       get: bin_orca
       resource: orca_github_release
@@ -202,112 +206,128 @@ jobs:
       resource: bin_xerces_centos5
       passed:
       - xerces_centos5
-    - get: gpdb_src
-      params:
-        submodules: none
-  - task: build_with_orca
-    file: gpdb_src/concourse/tasks/build_with_orca.yml
-  - task: package_tarball
-    file: gpdb_src/concourse/tasks/package_tarball.yml
-  - put: bin_gpdb_centos6
+  - task: get_ivy_dependencies
+    file: gpdb_src/ci/concourse/get_ivy_dependencies.yml
+    image: centos-gpdb-dev-6
     params:
-      file: package_tarball/bin_gpdb.tar.gz
+      IVYREPO_HOST: {{ivyrepo_host}}
+      IVYREPO_REALM: {{ivyrepo_realm}}
+      IVYREPO_USER: {{ivyrepo_user}}
+      IVYREPO_PASSWD: {{ivyrepo_passwd}}
+      TASK_OS: centos
+      TASK_OS_VERSION: 6
+      TARGET_OS: centos
+      TARGET_OS_VERSION: 5
+  - task: compile_gpdb
+    file: gpdb_src/ci/concourse/compile_gpdb.yml
+    image: centos-gpdb-dev-5
+    params:
+      TARGET_OS: centos
+      TARGET_OS_VERSION: 5
+      BLD_TARGETS: clients connectivity loaders
+  - aggregate:
+    - put: bin_gpdb_centos
+      params:
+        file: gpdb_artifacts/bin_gpdb.tar.gz
+    - put: sync_tools_gpdb_centos
+      params:
+        file: gpdb_artifacts/sync_tools_gpdb.tar.gz
+    - put: ccache_gpdb_centos5
+      params:
+        file: gpdb_artifacts/ccache_gpdb.tar.gz
 
-- name: gpdb_icg_with_orca
+- name: icg_orca_centos
   plan:
   - aggregate:
-    - <<: *get_released_orca
-      passed:
-      - build_gpdb
-    - get: bin_xerces
-      resource: bin_xerces_centos5
-      passed:
-      - build_gpdb
-    - get: bin_gpdb
-      resource: bin_gpdb_centos6
-      passed:
-      - build_gpdb
-      trigger: true
     - get: gpdb_src
       passed:
-      - build_gpdb
-      params:
-        submodules: none
-  - task: icg_with_orca
-    timeout: 64m
-    file: gpdb_src/concourse/tasks/test_with_orca.yml
-    on_failure:
-      aggregate:
-      - put: regression_diffs
-        params:
-          file: icg_output/regression.diffs
-      - put: regression_out
-        params:
-          file: icg_output/regression.out
+      - compile_gpdb_centos
+    - get: sync_tools_gpdb
+      passed:
+      - compile_gpdb_centos
+      resource: sync_tools_gpdb_centos
+    - get: bin_gpdb
+      passed:
+      - compile_gpdb_centos
+      trigger: true
+      resource: bin_gpdb_centos
+    - get: centos-gpdb-dev-5
+  - task: ic_gpdb
+    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    params:
+      BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off optimizer=on
+      MAKE_TEST_COMMAND: installcheck-good
+      TEST_OS: centos
+    image: centos-gpdb-dev-5
 
-- name: gpdb_icg_with_planner
+- name: icg_planner_centos
   plan:
   - aggregate:
-    - <<: *get_released_orca
+    - get: gpdb_src
       passed:
-      - build_gpdb
-    - get: bin_xerces
-      resource: bin_xerces_centos5
+      - compile_gpdb_centos
+    - get: sync_tools_gpdb
       passed:
-      - build_gpdb
+      - compile_gpdb_centos
+      resource: sync_tools_gpdb_centos
     - get: bin_gpdb
-      resource: bin_gpdb_centos6
       passed:
-      - build_gpdb
+      - compile_gpdb_centos
       trigger: true
-    - get: gpdb_src
-      passed:
-      - build_gpdb
-      params:
-        submodules: none
-  - task: icg_with_planner
-    timeout: 45m
-    file: gpdb_src/concourse/tasks/test_with_planner.yml
-    on_failure:
-      aggregate:
-      - put: regression_diffs
-        params:
-          file: icg_output/regression.diffs
-      - put: regression_out
-        params:
-          file: icg_output/regression.out
-- name: build_orca_using_conan
-  plan:
-  - aggregate:
-    - get: orca_src
-      passed:
-      - orca_publish_tag
-      trigger: true
-    - get: gpdb_src
-      params:
-        submodules: none
-  - task: build_orca
-    file: gpdb_src/concourse/tasks/build_orca_using_conan.yml
+      resource: bin_gpdb_centos
+    - get: centos-gpdb-dev-5
+  - task: ic_gpdb
+    file: gpdb_src/ci/concourse/ic_gpdb.yml
     params:
-      BINTRAY_REMOTE: {{bintray_remote}}
-      BINTRAY_REMOTE_URL: {{bintray_remote_url}}
-  - put: bin_orca_tar_conan
-    params:
-      file: bin_orca/bin_orca_conan.tar.gz
-- name: build_gpdb_using_conan_orca
+      BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off
+      MAKE_TEST_COMMAND: installcheck-good
+      TEST_OS: centos
+    image: centos-gpdb-dev-5
+
+- name: icb_orca_centos
   plan:
   - aggregate:
     - get: gpdb_src
       passed:
-      - build_orca_using_conan
-    - get: bin_orca
+      - compile_gpdb_centos
+    - get: sync_tools_gpdb
       passed:
-      - build_orca_using_conan
-      resource: bin_orca_tar_conan
-      params:
-        globs: bin_orca_conan.tar.gz
+      - compile_gpdb_centos
+      resource: sync_tools_gpdb_centos
+    - get: bin_gpdb
+      passed:
+      - compile_gpdb_centos
       trigger: true
-  - task: build_with_orca
-    file: gpdb_src/concourse/tasks/build_gpdb_with_orca_gen_by_conan.yml
-  - task: package_tarball
-    file: gpdb_src/concourse/tasks/package_tarball.yml
+      resource: bin_gpdb_centos
+    - get: centos-gpdb-dev-5
+  - task: ic_gpdb
+    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    params:
+      BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off optimizer=on
+      MAKE_TEST_COMMAND: installcheck-bugbuster
+      TEST_OS: centos
+    image: centos-gpdb-dev-5
+
+- name: icb_planner_centos
+  plan:
+  - aggregate:
+    - get: gpdb_src
+      passed:
+      - compile_gpdb_centos
+    - get: sync_tools_gpdb
+      passed:
+      - compile_gpdb_centos
+      resource: sync_tools_gpdb_centos
+    - get: bin_gpdb
+      passed:
+      - compile_gpdb_centos
+      trigger: true
+      resource: bin_gpdb_centos
+    - get: centos-gpdb-dev-5
+  - task: ic_gpdb
+    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    params:
+      BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off
+      MAKE_TEST_COMMAND: installcheck-bugbuster
+      TEST_OS: centos
+    image: centos-gpdb-dev-5
