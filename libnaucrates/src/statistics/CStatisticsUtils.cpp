@@ -725,7 +725,8 @@ CStatisticsUtils::UpdateDisjStatistics
 												input_disjunct_rows,
 												result_histogram,
 												local_rows,
-												&output_rows
+												&output_rows,
+												false /* mergeNullsNDV - false to indicate not to double count */
 												);
 
 			GPOS_DELETE(previous_histogram);
@@ -984,7 +985,8 @@ CStatisticsUtils::CreateHistHashMapAfterMergingDisjPreds
 													cumulative_rows,
 													disj_child_histogram,
 													num_rows_disj_child,
-													&output_rows
+													&output_rows,
+													false /* mergeNullsNDV - false to indicate not to double count */
 													);
 
 				AddHistogram

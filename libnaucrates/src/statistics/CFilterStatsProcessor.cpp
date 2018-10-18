@@ -387,6 +387,7 @@ CFilterStatsProcessor::MakeHistHashMapDisjFilter
 
 	CDouble cumulative_rows(CStatistics::MinRows.Get());
 
+	BOOL is_eq_predicate = true;
 	// iterate over filters and update corresponding histograms
 	const ULONG filters = disjunctive_pred_stats->GetNumPreds();
 	for (ULONG ul = 0; ul < filters; ul++)
@@ -395,6 +396,7 @@ CFilterStatsProcessor::MakeHistHashMapDisjFilter
 
 		// get the components of the statistics filter
 		ULONG colid = child_pred_stats->GetColId();
+
 
 		if (CStatsPredUtils::IsUnsupportedPredOnDefinedCol(child_pred_stats))
 		{
@@ -479,9 +481,32 @@ CFilterStatsProcessor::MakeHistHashMapDisjFilter
 			}
 			else
 			{
+
+				if (!is_eq_predicate || CStatsPred::EsptPoint != child_pred_stats->GetPredStatsType())
+				{
+					// the predicate is not point predicate or is not an equality predicate
+					is_eq_predicate = false;
+				}
+				else
+				{
+					// if the two histograms are a product of equality operations [(a = 10) OR (a = 15)],
+					// then we can merge the NDVs, else it does not make sense as we may land up double counting.
+					// For instance, we will not merge NDVs for the predicate [(a = 10) OR (a < 15)]
+					// It is important to note that duplicate predicates will be pruned in the preprocessing step.
+					is_eq_predicate = (CStatsPred::EstatscmptEq == CStatsPredPoint::ConvertPredStats(child_pred_stats)->GetCmpType());
+				}
+
 				// statistics operation already conducted on this column
 				CDouble output_rows(0.0);
-				CHistogram *new_histogram = previous_histogram->MakeUnionHistogramNormalize(mp, cumulative_rows, disjunctive_child_col_histogram, num_rows_disj_child, &output_rows);
+				CHistogram *new_histogram = previous_histogram->MakeUnionHistogramNormalize
+																	(
+																	mp,
+																	cumulative_rows,
+																	disjunctive_child_col_histogram,
+																	num_rows_disj_child,
+																	&output_rows,
+																	is_eq_predicate
+																	);
 				cumulative_rows = output_rows;
 
 				GPOS_DELETE(previous_histogram);
