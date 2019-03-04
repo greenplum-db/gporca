@@ -3597,18 +3597,34 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 		{
 			// get the original condition from the filter node
 			// create a new AND expression
+
+			// if the scalar condition is a constant TRUE, just translate the child
+			if (CTranslatorExprToDXLUtils::FScalarConstTrue(m_pmda, pdxlnCond))
+			{
+				pdxlnCond->Release();
+				break;
+			}
 			ULONG ulIndexFilter = UlIndexFilter(edxlopid);
 			GPOS_ASSERT(ulIndexFilter != gpos::ulong_max);
 			CDXLNode *pdxlnOrigFilter = (*pdxlnResult)[ulIndexFilter];
 			GPOS_ASSERT(EdxlopScalarFilter == pdxlnOrigFilter->GetOperator()->GetDXLOperator());
-			CDXLNode *pdxlnOrigCond = (*pdxlnOrigFilter)[0];
-			pdxlnOrigCond->AddRef();
+			CDXLNode *newFilterPred = pdxlnCond;
 
-			CDXLNode *pdxlnBoolExpr = PdxlnScBoolExpr(Edxland, pdxlnOrigCond, pdxlnCond);
+			if (0 < pdxlnOrigFilter->Arity())
+			{
+				// we have both a filter condition in our result node and a non-trivial
+				// condition passed in as parameter, need to AND the two
+				CDXLNode *pdxlnOrigCond = (*pdxlnOrigFilter)[0];
+
+				GPOS_ASSERT(2 > pdxlnOrigFilter->Arity());
+				pdxlnOrigCond->AddRef();
+
+				newFilterPred = PdxlnScBoolExpr(Edxland, pdxlnOrigCond, pdxlnCond);
+			}
 
 			// add the new filter to the result replacing its original
 			// empty filter
-			CDXLNode *filter_dxlnode = PdxlnFilter(pdxlnBoolExpr);
+			CDXLNode *filter_dxlnode = PdxlnFilter(newFilterPred);
 			pdxlnResult->ReplaceChild(ulIndexFilter /*ulPos*/, filter_dxlnode);
 		}
 			break;
