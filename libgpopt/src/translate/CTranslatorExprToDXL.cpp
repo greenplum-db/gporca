@@ -1362,7 +1362,7 @@ CTranslatorExprToDXL::PdxlnResult
 {
 	CDXLPhysicalProperties *dxl_properties = GetProperties(pexprFilter);
 
-	CDXLNode *pdxlnode = PdxlnResult(pexprFilter, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
+	CDXLNode *pdxlnode = PdxlnFromFilter(pexprFilter, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
 	dxl_properties->Release();
 
 	return pdxlnode;
@@ -1468,7 +1468,7 @@ CTranslatorExprToDXL::PdxlnIndexScanWithInlinedCondition
 //
 //---------------------------------------------------------------------------
 CDXLNode *
-CTranslatorExprToDXL::PdxlnResult
+CTranslatorExprToDXL::PdxlnFromFilter
 	(
 	CExpression *pexprFilter,
 	CColRefArray *colref_array,
@@ -3561,15 +3561,15 @@ UlIndexFilter(Edxlopid edxlopid)
 //
 //	@doc:
 //		Create a DXL result node from the outer child of a NLJ
-//		and a DXL scalar condition. Used for translated correlated
+//		and a DXL scalar join condition. Used for translated correlated
 //		subqueries.
 //
 //---------------------------------------------------------------------------
 CDXLNode *
 CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 	(
-	CExpression *pexprRelational,
-	CDXLNode *pdxlnCond,
+	CExpression *pexprOuterChildRelational,
+	CDXLNode *pdxlnJoinCond,
 	CColRefArray *colref_array,
 	CDistributionSpecArray *pdrgpdsBaseTables, 
 	ULONG *pulNonGatherMotions,
@@ -3577,13 +3577,11 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 	CDXLPhysicalProperties *dxl_properties
 	)
 {
-	// create a result node from the input expression
-	CDXLNode *pdxlnResult = PdxlnResult(pexprRelational, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
+	// create a result node using the filter from the outer child of the input expression
+	CDXLNode *pdxlnFromFilter = PdxlnFromFilter(pexprOuterChildRelational, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
 	dxl_properties->Release();
 
-	// In case the OuterChild is a physical sequence, it will already have the filter in the partition selector and
-	// dynamic scan, thus we should not replace the filter.
-	Edxlopid edxlopid = pdxlnResult->GetOperator()->GetDXLOperator();
+	Edxlopid edxlopid = pdxlnFromFilter->GetOperator()->GetDXLOperator();
 	switch (edxlopid)
 	{
 		case EdxlopPhysicalTableScan:
@@ -3595,48 +3593,50 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 		case EdxlopPhysicalDynamicBitmapTableScan:
 		case EdxlopPhysicalResult:
 		{
-			// get the original condition from the filter node
-			// create a new AND expression
-
-			// if the scalar condition is a constant TRUE, just translate the child
-			if (CTranslatorExprToDXLUtils::FScalarConstTrue(m_pmda, pdxlnCond))
+			// if the scalar join condition is a constant TRUE, just translate the child, no need to create an AND expression
+			if (CTranslatorExprToDXLUtils::FScalarConstTrue(m_pmda, pdxlnJoinCond))
 			{
-				pdxlnCond->Release();
+				pdxlnJoinCond->Release();
 				break;
 			}
+
+			// create new AND expression with the outer child's filter node and the join condition
+
 			ULONG ulIndexFilter = UlIndexFilter(edxlopid);
 			GPOS_ASSERT(ulIndexFilter != gpos::ulong_max);
-			CDXLNode *pdxlnOrigFilter = (*pdxlnResult)[ulIndexFilter];
-			GPOS_ASSERT(EdxlopScalarFilter == pdxlnOrigFilter->GetOperator()->GetDXLOperator());
-			CDXLNode *newFilterPred = pdxlnCond;
+			CDXLNode *pdxlnChildFilter = (*pdxlnFromFilter)[ulIndexFilter];
+			GPOS_ASSERT(EdxlopScalarFilter == pdxlnChildFilter->GetOperator()->GetDXLOperator());
+			CDXLNode *newFilterPred = pdxlnJoinCond;
 
-			if (0 < pdxlnOrigFilter->Arity())
+			if (0 < pdxlnChildFilter->Arity())
 			{
-				// we have both a filter condition in our result node and a non-trivial
-				// condition passed in as parameter, need to AND the two
-				CDXLNode *pdxlnOrigCond = (*pdxlnOrigFilter)[0];
+				// we have both a filter condition (from the outer child) in our result node
+				// and a non-trivial condition pdxlnJoinCond passed in as parameter, need to AND the two
+				CDXLNode *pdxlnCondFromChildFilter = (*pdxlnChildFilter)[0];
 
-				GPOS_ASSERT(2 > pdxlnOrigFilter->Arity());
-				pdxlnOrigCond->AddRef();
+				GPOS_ASSERT(2 > pdxlnChildFilter->Arity());
+				pdxlnCondFromChildFilter->AddRef();
 
-				newFilterPred = PdxlnScBoolExpr(Edxland, pdxlnOrigCond, pdxlnCond);
+				newFilterPred = PdxlnScBoolExpr(Edxland, pdxlnCondFromChildFilter, pdxlnJoinCond);
 			}
 
 			// add the new filter to the result replacing its original
 			// empty filter
-			CDXLNode *filter_dxlnode = PdxlnFilter(newFilterPred);
-			pdxlnResult->ReplaceChild(ulIndexFilter /*ulPos*/, filter_dxlnode);
+			CDXLNode *new_filter_dxlnode = PdxlnFilter(newFilterPred);
+			pdxlnFromFilter->ReplaceChild(ulIndexFilter /*ulPos*/, new_filter_dxlnode);
 		}
 			break;
+		// In case the OuterChild is a physical sequence, it will already have the filter in the partition selector and
+		// dynamic scan, thus we should not replace the filter.
 		case EdxlopPhysicalSequence:
 		{
 			dxl_properties->AddRef();
-			GPOS_ASSERT(NULL != pexprRelational->Prpp());
-			CColRefSet *pcrsOutput = pexprRelational->Prpp()->PcrsRequired();
-			pdxlnResult = PdxlnAddScalarFilterOnRelationalChild
+			GPOS_ASSERT(NULL != pexprOuterChildRelational->Prpp());
+			CColRefSet *pcrsOutput = pexprOuterChildRelational->Prpp()->PcrsRequired();
+			pdxlnFromFilter = PdxlnAddScalarFilterOnRelationalChild
 							(
-							pdxlnResult,
-							pdxlnCond,
+							pdxlnFromFilter,
+							pdxlnJoinCond,
 							dxl_properties,
 							pcrsOutput,
 							colref_array
@@ -3644,11 +3644,11 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 		}
 			break;
 		default:
-			pdxlnCond->Release();
+			pdxlnJoinCond->Release();
 			GPOS_RTL_ASSERT(false && "Unexpected node here");
 	}
 
-	return pdxlnResult;
+	return pdxlnFromFilter;
 }
 
 
