@@ -3578,10 +3578,10 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 	)
 {
 	// create a result node using the filter from the outer child of the input expression
-	CDXLNode *pdxlnFromFilter = PdxlnFromFilter(pexprOuterChildRelational, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
+	CDXLNode *pdxlnRelationalNew = PdxlnFromFilter(pexprOuterChildRelational, colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, dxl_properties);
 	dxl_properties->Release();
 
-	Edxlopid edxlopid = pdxlnFromFilter->GetOperator()->GetDXLOperator();
+	Edxlopid edxlopid = pdxlnRelationalNew->GetOperator()->GetDXLOperator();
 	switch (edxlopid)
 	{
 		case EdxlopPhysicalTableScan:
@@ -3601,10 +3601,9 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 			}
 
 			// create new AND expression with the outer child's filter node and the join condition
-
 			ULONG ulIndexFilter = UlIndexFilter(edxlopid);
 			GPOS_ASSERT(ulIndexFilter != gpos::ulong_max);
-			CDXLNode *pdxlnChildFilter = (*pdxlnFromFilter)[ulIndexFilter];
+			CDXLNode *pdxlnChildFilter = (*pdxlnRelationalNew)[ulIndexFilter];
 			GPOS_ASSERT(EdxlopScalarFilter == pdxlnChildFilter->GetOperator()->GetDXLOperator());
 			CDXLNode *newFilterPred = pdxlnJoinCond;
 
@@ -3623,7 +3622,7 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 			// add the new filter to the result replacing its original
 			// empty filter
 			CDXLNode *new_filter_dxlnode = PdxlnFilter(newFilterPred);
-			pdxlnFromFilter->ReplaceChild(ulIndexFilter /*ulPos*/, new_filter_dxlnode);
+			pdxlnRelationalNew->ReplaceChild(ulIndexFilter /*ulPos*/, new_filter_dxlnode);
 		}
 			break;
 		// In case the OuterChild is a physical sequence, it will already have the filter in the partition selector and
@@ -3633,9 +3632,9 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 			dxl_properties->AddRef();
 			GPOS_ASSERT(NULL != pexprOuterChildRelational->Prpp());
 			CColRefSet *pcrsOutput = pexprOuterChildRelational->Prpp()->PcrsRequired();
-			pdxlnFromFilter = PdxlnAddScalarFilterOnRelationalChild
+			pdxlnRelationalNew = PdxlnAddScalarFilterOnRelationalChild
 							(
-							pdxlnFromFilter,
+							pdxlnRelationalNew,
 							pdxlnJoinCond,
 							dxl_properties,
 							pcrsOutput,
@@ -3648,7 +3647,7 @@ CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter
 			GPOS_RTL_ASSERT(false && "Unexpected node here");
 	}
 
-	return pdxlnFromFilter;
+	return pdxlnRelationalNew;
 }
 
 
