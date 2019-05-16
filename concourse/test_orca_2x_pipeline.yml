@@ -26,7 +26,7 @@ resources:
   source:
     branch: 2X
     paths: null
-    uri: https://github.com/ashuka24/gporca
+    uri: https://github.com/greenplum-db/gporca
 - name: orca_tarball
   type: s3
   source:
