@@ -278,10 +278,9 @@ jobs:
       passed:
       - build_gpdb
       resource: bin_gpdb_centos6
-    - get: gpdb_src
+    - get: gpdb_main_src
       passed:
       - build_gpdb
-      resource: gpdb_main_src
     - get: centos-gpdb-dev-5
       passed:
       - build_gpdb
@@ -289,8 +288,11 @@ jobs:
       passed:
       - build_gpdb
       resource: sync_tools_gpdb_centos
+    - get: gpdb_tarball
+      passed:
+      - build_gpdb
   - task: icg_with_orca
-    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    file: gpdb_main_src/ci/concourse/untar_test_gpdb.yml
     params:
       BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off optimizer=on
       MAKE_TEST_COMMAND: installcheck-good
@@ -317,10 +319,9 @@ jobs:
       passed:
       - build_gpdb
       resource: bin_gpdb_centos6
-    - get: gpdb_src
+    - get: gpdb_main_src
       passed:
       - build_gpdb
-      resource: gpdb_main_src
     - get: centos-gpdb-dev-5
       passed:
       - build_gpdb
@@ -328,8 +329,11 @@ jobs:
       passed:
       - build_gpdb
       resource: sync_tools_gpdb_centos
+    - get: gpdb_tarball
+      passed:
+      - build_gpdb
   - task: icg_with_planner
-    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    file: gpdb_main_src/ci/concourse/untar_test_gpdb.yml
     params:
       BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off
       MAKE_TEST_COMMAND: installcheck-good
@@ -356,10 +360,9 @@ jobs:
       passed:
       - build_gpdb
       resource: bin_gpdb_centos6
-    - get: gpdb_src
+    - get: gpdb_main_src
       passed:
       - build_gpdb
-      resource: gpdb_main_src
     - get: centos-gpdb-dev-5
       passed:
       - build_gpdb
@@ -367,8 +370,11 @@ jobs:
       passed:
       - build_gpdb
       resource: sync_tools_gpdb_centos
+    - get: gpdb_tarball
+      passed:
+      - build_gpdb
   - task: icb_with_orca
-    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    file: gpdb_main_src/ci/concourse/untar_test_gpdb.yml
     params:
       BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off optimizer=on
       MAKE_TEST_COMMAND: installcheck-bugbuster
@@ -395,10 +401,9 @@ jobs:
       passed:
       - build_gpdb
       resource: bin_gpdb_centos6
-    - get: gpdb_src
+    - get: gpdb_main_src
       passed:
       - build_gpdb
-      resource: gpdb_main_src
     - get: centos-gpdb-dev-5
       passed:
       - build_gpdb
@@ -406,8 +411,11 @@ jobs:
       passed:
       - build_gpdb
       resource: sync_tools_gpdb_centos
+    - get: gpdb_tarball
+      passed:
+      - build_gpdb
   - task: icb_with_planner
-    file: gpdb_src/ci/concourse/ic_gpdb.yml
+    file: gpdb_main_src/ci/concourse/untar_test_gpdb.yml
     params:
       BLDWRAP_POSTGRES_CONF_ADDONS: fsync=off
       MAKE_TEST_COMMAND: installcheck-bugbuster
