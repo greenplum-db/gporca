@@ -171,7 +171,7 @@ CMemoryPool::NewImpl
 
 	GPOS_OOM_CHECK(ptr);
 	
-	return static_cast<CMemoryPool*>(this)->FinalizeAlloc(ptr, (ULONG) size, eat);
+	return this->FinalizeAlloc(ptr, (ULONG) size, eat);
 }
 
 //---------------------------------------------------------------------------

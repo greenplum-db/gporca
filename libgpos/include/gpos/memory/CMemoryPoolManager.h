@@ -77,14 +77,6 @@ namespace gpos
 			// global instance
 			static CMemoryPoolManager *m_memory_pool_mgr;
 
-			// down-cast CMemoryPool to CMemoryPool
-			CMemoryPool *Convert(CMemoryPool *mp)
-			{
-				GPOS_ASSERT(NULL != mp);
-
-				return dynamic_cast<CMemoryPool*>(mp);
-			}
-
 			// private ctor
 			CMemoryPoolManager
 				(

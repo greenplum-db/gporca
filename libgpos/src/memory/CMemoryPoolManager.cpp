@@ -171,7 +171,7 @@ CMemoryPoolManager::Create
 	// accessor scope
 	{
 		MemoryPoolKeyAccessor acc(m_hash_table, mp->GetHashKey());
-		acc.Insert(Convert(mp));
+		acc.Insert(mp);
 	}
 
 	return mp;
@@ -350,7 +350,7 @@ CMemoryPoolManager::Destroy
 	// accessor scope
 	{
 		MemoryPoolKeyAccessor acc(m_hash_table, mp->GetHashKey());
-		acc.Remove(Convert(mp));
+		acc.Remove(mp);
 	}
 
 	mp->TearDown();
