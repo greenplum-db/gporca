@@ -322,7 +322,7 @@ CMemoryPoolManager::DeleteUnregistered
 		{
 			GPOS_ASSERT(found != mp && "Attempt to delete a registered memory pool");
 
-			found = acc.Next(Convert(found));
+			found = acc.Next(found);
 		}
 	}
 #endif // GPOS_DEBUG

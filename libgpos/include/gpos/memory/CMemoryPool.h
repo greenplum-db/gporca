@@ -21,6 +21,7 @@
 
 #include "gpos/assert.h"
 #include "gpos/types.h"
+#include "gpos/error/CException.h"
 #include "gpos/common/CLink.h"
 #include "gpos/common/CStackDescriptor.h"
 #include "gpos/memory/CMemoryPoolStatistics.h"
@@ -51,6 +52,8 @@ GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(gpos::ULONG) == GPOS_MEM_ARCH);
 
 namespace gpos
 {
+	// prototypes
+	class IMemoryVisitor;
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CMemoryPool
@@ -176,21 +179,21 @@ namespace gpos
 
 			// implementation of placement new with memory pool
 			void *NewImpl
-			(
-			 SIZE_T size,
-			 const CHAR *filename,
-			 ULONG line,
-			 EAllocationType type
-			 );
+				(
+				SIZE_T size,
+				const CHAR *filename,
+				ULONG line,
+				EAllocationType type
+				);
 
 			// implementation of array-new with memory pool
 			template <typename T>
 			T* NewArrayImpl
-			(
-			 SIZE_T num_elements,
-			 const CHAR *filename,
-			 ULONG line
-			 )
+				(
+				SIZE_T num_elements,
+				const CHAR *filename,
+				ULONG line
+				)
 			{
 				T *array = static_cast<T*>(NewImpl(
 												   sizeof(T) * num_elements,
@@ -216,19 +219,19 @@ namespace gpos
 			// delete implementation
 			static
 			void DeleteImpl
-			(
-			 void *ptr,
-			 EAllocationType type
-			 );
+				(
+				void *ptr,
+				EAllocationType type
+				);
 
 			// allocate memory; return NULL if the memory could not be allocated
 			virtual
 			void *Allocate
-			(
-			 const ULONG num_bytes,
-			 const CHAR *filename,
-			 const ULONG line
-			 ) = 0;
+				(
+				const ULONG num_bytes,
+				const CHAR *filename,
+				const ULONG line
+				) = 0;
 
 			// free memory previously allocated by a call to pvAllocate; NULL may be passed
 			virtual
@@ -255,8 +258,6 @@ namespace gpos
 			// was made from a CMemoryPool
 			static
 			ULONG SizeOfAlloc(const void *ptr);
-
-
 
 #ifdef GPOS_DEBUG
 
@@ -309,6 +310,27 @@ namespace gpos
 	// arbitrary objects from an CMemoryPool. This does not affect the ordinary
 	// built-in 'new', and is used only when placement-new is invoked with the
 	// specific type signature defined below.
+
+#ifdef GPOS_DEBUG
+
+	//---------------------------------------------------------------------------
+	//	@function:
+	//		CMemoryPool::operator <<
+	//
+	//	@doc:
+	//		Print function for memory pools
+	//
+	//---------------------------------------------------------------------------
+	inline IOstream &
+	operator <<
+		(
+		IOstream &os,
+		CMemoryPool &mp
+		)
+	{
+		return mp.OsPrint(os);
+	}
+#endif // GPOS_DEBUG
 
 	namespace delete_detail
 	{
@@ -378,12 +400,12 @@ namespace gpos
 // built-in 'new', and is used only when placement-new is invoked with the
 // specific type signature defined below.
 inline void *operator new
-(
- gpos::SIZE_T size,
- gpos::CMemoryPool *mp,
- const gpos::CHAR *filename,
- gpos::ULONG line
- )
+	(
+	gpos::SIZE_T size,
+	gpos::CMemoryPool *mp,
+	const gpos::CHAR *filename,
+	gpos::ULONG line
+	)
 {
 	return mp->NewImpl(size, filename, line, gpos::CMemoryPool::EatSingleton);
 }
@@ -395,12 +417,12 @@ inline void *operator new
 // *only* when a constructor throws an exception, and the version of 'new' is
 // known to be the one declared above.
 inline void operator delete
-(
- void *ptr,
- gpos::CMemoryPool*,
- const gpos::CHAR*,
- gpos::ULONG
- )
+	(
+	void *ptr,
+	gpos::CMemoryPool*,
+	const gpos::CHAR*,
+	gpos::ULONG
+	)
 {
 	// Reclaim memory after constructor throws exception.
 	gpos::CMemoryPool::DeleteImpl(ptr, gpos::CMemoryPool::EatSingleton);
