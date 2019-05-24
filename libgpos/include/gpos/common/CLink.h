@@ -23,7 +23,7 @@ namespace gpos
 	//		allocation-less lists, e.g. in synchronized hashtables etc.
 	//
 	//---------------------------------------------------------------------------
-	class SLink
+	struct SLink
 	{
 
 		private:

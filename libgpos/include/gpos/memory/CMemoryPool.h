@@ -174,8 +174,20 @@ namespace gpos
 			void *FinalizeAlloc(void *ptr, ULONG alloc, EAllocationType eat);
 
 			// return allocation to owning memory pool
-			static
-			void FreeAlloc(void *ptr, EAllocationType eat);
+			inline static void
+			FreeAlloc
+				(
+				void *ptr,
+				EAllocationType eat
+				)
+			{
+				GPOS_ASSERT(ptr != NULL);
+
+				AllocHeader *header = static_cast<AllocHeader*>(ptr) - 1;
+				BYTE *alloc_type = static_cast<BYTE*>(ptr) + header->m_alloc;
+				GPOS_RTL_ASSERT(*alloc_type == eat);
+				header->m_mp->Free(header);
+			}
 
 			// implementation of placement new with memory pool
 			void *NewImpl

@@ -103,31 +103,6 @@ CMemoryPool::FinalizeAlloc
 }
 
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPool::FreeAlloc
-//
-//	@doc:
-//		Return allocation to owning memory pool
-//
-//---------------------------------------------------------------------------
-void
-CMemoryPool::FreeAlloc
-	(
-	void *ptr,
-	EAllocationType eat
-	)
-{
-	GPOS_ASSERT(ptr != NULL);
-
-	AllocHeader *header = static_cast<AllocHeader*>(ptr) - 1;
-	BYTE *alloc_type = static_cast<BYTE*>(ptr) + header->m_alloc;
-	GPOS_RTL_ASSERT(*alloc_type == eat);
-	header->m_mp->Free(header);
-
-}
-
-
 ULONG
 CMemoryPool::SizeOfAlloc
 	(
@@ -196,7 +171,7 @@ CMemoryPool::DeleteImpl
 	}
 
 	// release allocation
-	CMemoryPool::FreeAlloc(ptr, eat);
+	FreeAlloc(ptr, eat);
 
 }  // namespace gpos
 
