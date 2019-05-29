@@ -126,20 +126,20 @@ CMemoryPool::SizeOfAlloc
 //---------------------------------------------------------------------------
 void*
 CMemoryPool::NewImpl
-(
- SIZE_T size,
- const CHAR *filename,
- ULONG line,
- CMemoryPool::EAllocationType eat
- )
+	(
+	SIZE_T size,
+	const CHAR *filename,
+	ULONG line,
+	CMemoryPool::EAllocationType eat
+	)
 {
 	GPOS_ASSERT(gpos::ulong_max >= size);
 	GPOS_ASSERT_IMP
 	(
-	 (NULL != CMemoryPoolManager::GetMemoryPoolMgr()) && (this == CMemoryPoolManager::GetMemoryPoolMgr()->GetGlobalMemoryPool()),
+	(NULL != CMemoryPoolManager::GetMemoryPoolMgr()) && (this == CMemoryPoolManager::GetMemoryPoolMgr()->GetGlobalMemoryPool()),
 	 CMemoryPoolManager::GetMemoryPoolMgr()->IsGlobalNewAllowed() &&
 	 "Use of new operator without target memory pool is prohibited, use New(...) instead"
-	 );
+	);
 
 	ULONG alloc_size = CMemoryPool::GetAllocSize((ULONG) size);
 	void *ptr = Allocate(alloc_size, filename, line);
@@ -159,10 +159,10 @@ CMemoryPool::NewImpl
 //---------------------------------------------------------------------------
 void
 CMemoryPool::DeleteImpl
-(
- void *ptr,
- EAllocationType eat
- )
+	(
+	void *ptr,
+	EAllocationType eat
+	)
 {
 	// deletion of NULL pointers is legal
 	if (NULL == ptr)

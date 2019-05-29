@@ -3,9 +3,6 @@
 //	Greenplum Database
 //	Copyright (C) 2019 Pivotal
 //
-//	@filename:
-//		CLink.h
-//
 //---------------------------------------------------------------------------
 #ifndef GPOS_CLink_H
 #define GPOS_CLink_H
@@ -14,15 +11,9 @@
 namespace gpos
 {
 
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		SLink
-	//
-	//	@doc:
-	//		Generic link to be embedded in all classes before they can use
-	//		allocation-less lists, e.g. in synchronized hashtables etc.
-	//
-	//---------------------------------------------------------------------------
+
+	// Generic link to be embedded in all classes before they can use
+	// allocation-less lists, e.g. in synchronized hashtables etc.
 	struct SLink
 	{
 
