@@ -350,11 +350,11 @@ namespace gpopt
 
 			// returns a set containing xforms to use for exhaustive join order
 			static
-			CBitSet *PbsJoinOrderOnExhaustiveXforms(IMemoryPool *mp);
+			CBitSet *PbsJoinOrderOnExhaustiveXforms(CMemoryPool *mp);
 
 			// returns a set containing xforms to use for exhaustive2 join order
 			static
-			CBitSet *PbsJoinOrderOnExhaustive2Xforms(IMemoryPool *mp);
+			CBitSet *PbsJoinOrderOnExhaustive2Xforms(CMemoryPool *mp);
 
 			// return true if xform should be applied only once.
 			// for expression of type CPatternTree, in deep trees, the number

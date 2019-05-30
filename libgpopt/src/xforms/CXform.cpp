@@ -282,7 +282,7 @@ CBitSet *CXform::PbsJoinOrderOnGreedyXforms
 
 CBitSet *CXform::PbsJoinOrderOnExhaustiveXforms
 	(
-	 IMemoryPool *mp
+	 CMemoryPool *mp
 	)
 {
 	CBitSet *pbs = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
@@ -294,7 +294,7 @@ CBitSet *CXform::PbsJoinOrderOnExhaustiveXforms
 
 CBitSet *CXform::PbsJoinOrderOnExhaustive2Xforms
 	(
-	 IMemoryPool *mp
+	 CMemoryPool *mp
 	)
 {
 	CBitSet *pbs = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
