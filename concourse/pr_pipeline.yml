@@ -52,7 +52,7 @@ jobs:
   - get: centos5-build
   - aggregate:
     - task: build
-      file: xerces_patch/concourse/xerces-c/build_xerces_centos5.yml
+      file: xerces_patch/concourse/xerces-c/build_xerces.yml
       image: centos5-build
   - aggregate:
     - task: package_tarball
@@ -70,7 +70,8 @@ jobs:
     resource: orca_pr
     trigger: true
     version: every
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - get: centos5-build
@@ -80,14 +81,14 @@ jobs:
       status: pending
   - aggregate:
     - task: build_and_test_release
-      file: orca_src/concourse/build_and_test_centos.yml
+      file: orca_src/concourse/build_and_test.yml
       image: centos5-build
       params:
         BUILD_TYPE: --build_type=RelWithDebInfo
         OUTPUT_DIR: --output_dir=build_and_test/install_release
       timeout: 30m
     - task: build_and_test_debug
-      file: orca_src/concourse/build_and_test_centos.yml
+      file: orca_src/concourse/build_and_test.yml
       image: centos5-build
       params:
         BUILD_TYPE: --build_type=DEBUG

@@ -261,9 +261,10 @@ jobs:
   plan:
   - get: xerces_patch
     trigger: true
+  - get: centos5-build
   - aggregate:
     - task: build
-      file: xerces_patch/concourse/xerces-c/build_xerces_centos5.yml
+      file: xerces_patch/concourse/xerces-c/build_xerces.yml
       image: centos5-build
   - aggregate:
     - task: package_tarball
@@ -284,7 +285,7 @@ jobs:
   - get: ubuntu18.04-build
   - aggregate:
     - task: build
-      file: xerces_patch/concourse/xerces-c/build_xerces_centos5.yml
+      file: xerces_patch/concourse/xerces-c/build_xerces.yml
       image: ubuntu18.04-build
   - aggregate:
     - task: package_tarball
@@ -304,12 +305,13 @@ jobs:
   - get: centos5-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_release
     image: centos5-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=RelWithDebInfo
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -329,12 +331,13 @@ jobs:
   - get: centos5-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_debug
     image: centos5-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=DEBUG
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -356,12 +359,13 @@ jobs:
   - get: centos6-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_release
     image: centos6-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=RelWithDebInfo
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -381,12 +385,13 @@ jobs:
   - get: centos6-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_debug
     image: centos6-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=DEBUG
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -407,12 +412,13 @@ jobs:
   - get: centos7-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_release
     image: centos7-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=RelWithDebInfo
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -432,12 +438,13 @@ jobs:
   - get: centos7-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_centos5
     passed:
     - xerces_centos5
   - task: build_and_test_debug
     image: centos7-build
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=DEBUG
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -458,12 +465,12 @@ jobs:
   - get: ubuntu18.04-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_ubuntu18
     passed:
     - xerces_ubuntu18
-    resource: bin_xerces_ubuntu18
   - task: build_and_test_release
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=RelWithDebInfo
       OUTPUT_DIR: --output_dir=build_and_test/install
@@ -484,12 +491,12 @@ jobs:
   - get: ubuntu18.04-build
   - get: orca_src
     trigger: true
-  - get: bin_xerces_centos5
+  - get: bin_xerces
+    resource: bin_xerces_ubuntu18
     passed:
     - xerces_ubuntu18
-    resource: bin_xerces_ubuntu18
   - task: build_and_test_debug
-    file: orca_src/concourse/build_and_test_centos.yml
+    file: orca_src/concourse/build_and_test.yml
     params:
       BUILD_TYPE: --build_type=DEBUG
       OUTPUT_DIR: --output_dir=build_and_test/install
