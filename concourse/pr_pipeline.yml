@@ -56,11 +56,14 @@ jobs:
       image: centos5-build
   - aggregate:
     - task: package_tarball
-      file: xerces_patch/concourse/xerces-c/package_tarball_centos5.yml
+      file: xerces_patch/concourse/xerces-c/package_tarball.yml
+      params:
+        dst_tarball: package_tarball/bin_xerces_centos5.tar.gz
+        src_root: build_xerces/install
   - aggregate:
     - put: bin_xerces_centos5
       params:
-        from: package_tarball_centos5/bin_xerces_centos5.tar.gz
+        from: package_tarball/bin_xerces_centos5.tar.gz
 
 - name: compile_and_test_gporca
   public: true
