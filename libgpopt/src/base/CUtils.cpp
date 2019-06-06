@@ -5226,4 +5226,54 @@ CUtils::AddExprs
 	}
 	GPOS_ASSERT(results_exprs->Size() >= input_exprs->Size());
 }
+
+CDistributionSpecHashed *
+CUtils::CreateMatchingHashedDistribution
+	(
+	 CMemoryPool *mp,
+	 CExpression *pexprPred,
+	 CDistributionSpecHashed *pdshashed
+	)
+{
+	GPOS_ASSERT(NULL != pexprPred);
+	GPOS_ASSERT(NULL != pdshashed);
+
+	CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(mp, pexprPred);
+
+	CExpressionArray *pdrgpexprMatching = GPOS_NEW(mp) CExpressionArray(mp);
+	CExpressionArray *pdrgpexprHashed = pdshashed->Pdrgpexpr();
+	const ULONG size = pdrgpexprHashed->Size();
+
+	BOOL fSuccess = true;
+	for (ULONG ul = 0; fSuccess && ul < size; ul++)
+	{
+		CExpression *pexpr = (*pdrgpexprHashed)[ul];
+		CExpression *pexprMatching = CUtils::PexprMatchEqualityOrINDF(pexpr, pdrgpexpr);
+		fSuccess = (NULL != pexprMatching);
+		if (fSuccess)
+		{
+			pexprMatching->AddRef();
+			pdrgpexprMatching->Append(pexprMatching);
+		}
+	}
+	pdrgpexpr->Release();
+
+	if (fSuccess)
+	{
+		GPOS_ASSERT(pdrgpexprMatching->Size() == pdrgpexprHashed->Size());
+
+		// create a matching hashed distribution request
+		BOOL fNullsColocated = pdshashed->FNullsColocated();
+		CDistributionSpecHashed *pdshashedEquiv = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprMatching, fNullsColocated);
+
+		pdrgpexprHashed->AddRef();
+		CDistributionSpecHashed *pdshashedResult = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprHashed, fNullsColocated, pdshashedEquiv);
+
+		return pdshashedResult;
+	}
+
+	pdrgpexprMatching->Release();
+
+	return NULL;
+}
 // EOF

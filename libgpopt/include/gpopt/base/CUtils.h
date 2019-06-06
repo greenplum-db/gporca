@@ -1099,6 +1099,14 @@ namespace gpopt
 
 			static
 			BOOL FScalarConstBoolNull(CExpression *pexpr);
+
+			static
+			CDistributionSpecHashed * CreateMatchingHashedDistribution
+				(
+				CMemoryPool *mp,
+				CExpression *pexprPred,
+				CDistributionSpecHashed *pdshashed
+				);
 	}; // class CUtils
 
 	// hash set from expressions
