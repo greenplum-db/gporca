@@ -60,7 +60,8 @@ namespace gpopt
 				const IMDRelation *pmdrel,
 				const IMDIndex *pmdindex,
 				CPartConstraint *ppartcnstrIndex,
-				CXformResult *pxfres
+				CXformResult *pxfres,
+				CExpression *pexprScalar
 				) const;
 
 			// helper to add IndexApply expression to given xform results container
@@ -138,7 +139,8 @@ namespace gpopt
 				CColRefArray *pdrgpcrOuter,
 				CColRefArray *pdrgpcrOuterNew,
 				CColRefArray *pdrgpcrOuterRefsInScan,
-				ULongPtrArray *pdrgpulIndexesOfRefsInScan
+				ULongPtrArray *pdrgpulIndexesOfRefsInScan,
+				CExpression *pexprScalar
 				) const;
 
 			// create a union-all with the given children

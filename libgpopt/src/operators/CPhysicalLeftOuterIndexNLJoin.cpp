@@ -57,7 +57,7 @@ CDistributionSpec *
 CPhysicalLeftOuterIndexNLJoin::PdsRequired
 	(
 	CMemoryPool *mp,
-	CExpressionHandle &,//exprhdl,
+	CExpressionHandle &exprhdl,
 	CDistributionSpec *,//pdsRequired,
 	ULONG child_index,
 	CDrvdProp2dArray *pdrgpdpCtxt,
@@ -90,12 +90,19 @@ CPhysicalLeftOuterIndexNLJoin::PdsRequired
 	{
 		// check if we could create an equivalent hashed distribution request to the inner child
 		CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pdsInner);
-		CDistributionSpecHashed *pdshashedEquiv = pdshashed->PdshashedEquiv();
-		if (NULL != pdshashedEquiv)
+		CExpression *pexprScalar = CPhysicalNLJoin::PopConvert(exprhdl.Pop())->ScalarExpr();
+		CDistributionSpecHashed *pdshashedMatching = CUtils::CreateMatchingHashedDistribution(mp, pexprScalar, pdshashed);
+		if (NULL != pdshashedMatching)
 		{
 			// request hashed distribution from outer
-			pdshashedEquiv->Pdrgpexpr()->AddRef();
-			return GPOS_NEW(mp) CDistributionSpecHashed(pdshashedEquiv->Pdrgpexpr(), pdshashedEquiv->FNullsColocated());
+			CDistributionSpecHashed *pdshashedEquiv = pdshashedMatching->PdshashedEquiv();
+			if (NULL != pdshashedEquiv)
+			{
+				// request hashed distribution from outer
+				pdshashedEquiv->AddRef();
+				pdshashedMatching->Release();
+				return pdshashedEquiv;
+			}
 		}
 	}
 

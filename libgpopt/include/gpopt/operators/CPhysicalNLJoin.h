@@ -34,6 +34,8 @@ namespace gpopt
 			// private copy ctor
 			CPhysicalNLJoin(const CPhysicalNLJoin &);
 
+			CExpression *m_pexprScalar;
+
 		protected:
 			
 			// helper function for computing the required partition propagation 
@@ -57,6 +59,16 @@ namespace gpopt
 			// dtor
 			virtual
 			~CPhysicalNLJoin();
+
+			CExpression *ScalarExpr()
+			{
+				return m_pexprScalar;
+			}
+
+			void SetScalarExpr(CExpression *pexprScalar)
+			{
+				m_pexprScalar = pexprScalar;
+			}
 
 			//-------------------------------------------------------------------------------------
 			// Required Plan Properties

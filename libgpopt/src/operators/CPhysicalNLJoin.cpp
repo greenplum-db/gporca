@@ -48,6 +48,7 @@ CPhysicalNLJoin::CPhysicalNLJoin
 	//		DPE by outer child since a Motion operator gets in between PartitionSelector and DynamicScan
 
 	SetPartPropagateRequests(2);
+	m_pexprScalar = NULL;
 }
 
 
@@ -60,7 +61,9 @@ CPhysicalNLJoin::CPhysicalNLJoin
 //
 //---------------------------------------------------------------------------
 CPhysicalNLJoin::~CPhysicalNLJoin()
-{}
+{
+	CRefCount::SafeRelease(m_pexprScalar);
+}
 
 
 //---------------------------------------------------------------------------

@@ -130,14 +130,18 @@ CPhysicalInnerIndexNLJoin::PdsRequired
 	{
 		// check if we could create an equivalent hashed distribution request to the inner child
 		CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pdsInner);
-		CDistributionSpecHashed *pdshashedEquiv = pdshashed->PdshashedEquiv();
-		if (NULL != pdshashedEquiv)
+		CExpression *pexprScalar = CPhysicalNLJoin::PopConvert(exprhdl.Pop())->ScalarExpr();
+		CDistributionSpecHashed *pdshashedMatching = CUtils::CreateMatchingHashedDistribution(mp, pexprScalar, pdshashed);
+		if (NULL != pdshashedMatching)
 		{
-			// request hashed distribution from outer
-			pdshashedEquiv->Pdrgpexpr()->AddRef();
-			CDistributionSpecHashed *pdsHashedRequired = GPOS_NEW(mp) CDistributionSpecHashed(pdshashedEquiv->Pdrgpexpr(), pdshashedEquiv->FNullsColocated());
-			pdsHashedRequired->ComputeEquivHashExprs(mp, exprhdl);
-			return pdsHashedRequired;
+			CDistributionSpecHashed *pdshashedEquiv = pdshashedMatching->PdshashedEquiv();
+			if (NULL != pdshashedEquiv)
+			{
+				pdshashedEquiv->ComputeEquivHashExprs(mp, exprhdl);
+				pdshashedEquiv->AddRef();
+				pdshashedMatching->Release();
+				return pdshashedEquiv;
+			}
 		}
 	}
 

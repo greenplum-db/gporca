@@ -85,6 +85,8 @@ namespace gpopt
 				CExpression *pexprOuter = (*pexpr)[0];
 				CExpression *pexprInner = (*pexpr)[1];
 				CExpression *pexprScalar = (*pexpr)[2];
+				COperator *popLogicalApply = pexpr->Pop();
+				CExpression *pexprOriginalScalar = CLogicalApply::PopConvert(popLogicalApply)->ScalarExpr();
 				CColRefArray *colref_array = CLogicalIndexApply::PopConvert(pexpr->Pop())->PdrgPcrOuterRefs();
 				colref_array->AddRef();
 
@@ -96,10 +98,16 @@ namespace gpopt
 				// assemble physical operator
 				CPhysicalNLJoin *pop = NULL;
 
-				if (CLogicalIndexApply::PopConvert(pexpr->Pop())->FouterJoin())
+				if (CLogicalIndexApply::PopConvert(popLogicalApply)->FouterJoin())
 					pop = GPOS_NEW(mp) CPhysicalLeftOuterIndexNLJoin(mp, colref_array);
 				else
 					pop = GPOS_NEW(mp) CPhysicalInnerIndexNLJoin(mp, colref_array);
+
+				if (NULL != pexprOriginalScalar)
+				{
+					pexprOriginalScalar->AddRef();
+					pop->SetScalarExpr(pexprOriginalScalar);
+				}
 
 				CExpression *pexprResult =
 						GPOS_NEW(mp) CExpression

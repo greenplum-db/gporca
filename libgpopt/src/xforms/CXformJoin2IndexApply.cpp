@@ -214,25 +214,6 @@ CXformJoin2IndexApply::CreateHomogeneousBtreeIndexApplyAlternatives
 		IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
 		const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
 
-		// distribution keys and btree index keys must match each other for left outer join
-		// Given:
-		//
-		// R (a, b, c) distributed by (a)
-		// S (a, b, c) distributed by (a), btree index1 on S(a), btree index2 on S(b)
-		//
-		// R LOJ S on R.a=S.a and R.c=S.c, we are good to do outer index NL join.
-		// R LOJ S on R.a=S.a and R.b=S.b, we need to take care that in non-distributed
-		// scenario, it is fine to choose either condition as the index scan condition,
-		// and the other one as the index scan filter. But in distributed scenario,
-		// we have to choose R.a=S.a as the index scan condition, R.b=S.b as the index
-		// scan filter, because of Orca issue #309.
-		// TODO: remove the constraint when issue #309 is fixed:
-		// https://github.com/greenplum-db/gporca/issues/309
-		if (m_fOuterJoin && !FMatchDistKeyAndIndexKey(pmdrel, pmdindex))
-		{
-			continue;
-		}
-
 		CPartConstraint *ppartcnstrIndex = NULL;
 		if (NULL != popDynamicGet)
 		{
@@ -259,7 +240,8 @@ CXformJoin2IndexApply::CreateHomogeneousBtreeIndexApplyAlternatives
 			pmdrel,
 			pmdindex,
 			ppartcnstrIndex,
-			pxfres
+			pxfres,
+			pexprScalar
 			);
 	}
 
@@ -291,7 +273,8 @@ CXformJoin2IndexApply::CreateAlternativesForBtreeIndex
 	const IMDRelation *pmdrel,
 	const IMDIndex *pmdindex,
 	CPartConstraint *ppartcnstrIndex,
-	CXformResult *pxfres
+	CXformResult *pxfres,
+	CExpression *pexprScalar
 	) const
 {
 	CExpression *pexprLogicalIndexGet = CXformUtils::PexprLogicalIndexGet
@@ -315,11 +298,14 @@ CXformJoin2IndexApply::CreateAlternativesForBtreeIndex
 		// and add it to xform results
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
+		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array);
+		pexprScalar->AddRef();
+		popLogicalApply->SetScalarExpr(pexprScalar);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
 				mp,
-				PopLogicalApply(mp, colref_array),
+				popLogicalApply,
 				pexprOuter,
 				pexprLogicalIndexGet,
 				CPredicateUtils::PexprConjunction(mp, NULL /*pdrgpexpr*/)
@@ -350,36 +336,6 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 	CXformResult *pxfres
 	) const
 {
-	if (m_fOuterJoin)
-	{
-		// find the indexes whose included columns meet the required columns
-		CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-		const IMDRelation *pmdrel = md_accessor->RetrieveRel(ptabdescInner->MDId());
-		const ULONG ulIndices = ptabdescInner->IndexCount();
-		BOOL fIndexApplicable = false;
-
-		for (ULONG ul = 0; ul < ulIndices; ul++)
-		{
-			IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
-			const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
-
-			// there must be at least 1 index matches the distribution keys
-			// for left out join index apply.
-			// TODO: remove this constraint when issue #309 is fixed:
-			// https://github.com/greenplum-db/gporca/issues/309
-			if (FMatchDistKeyAndIndexKey(pmdrel, pmdindex))
-			{
-				fIndexApplicable = true;
-				break;
-			}
-		}
-
-		if (!fIndexApplicable)
-		{
-			return;
-		}
-	}
-
 	CLogical *popGet = CLogical::PopConvert(pexprInner->Pop());
 	CExpression *pexprLogicalIndexGet = CXformUtils::PexprBitmapTableGet
 										(
@@ -397,11 +353,14 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 		// and add it to xform results
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
+		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array);
+		pexprScalar->AddRef();
+		popLogicalApply->SetScalarExpr(pexprScalar);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
 				mp,
-				PopLogicalApply(mp, colref_array),
+				popLogicalApply,
 				pexprOuter,
 				pexprLogicalIndexGet,
 				CPredicateUtils::PexprConjunction(mp, NULL /*pdrgpexpr*/)
@@ -671,7 +630,8 @@ CXformJoin2IndexApply::CreatePartialIndexApplyPlan
 					pdrgpcrOuter,
 					pdrgpcrOuterNew,
 					pdrgpcrOuterRefsInScan,
-					pdrgpulIndexesOfRefsInScan
+					pdrgpulIndexesOfRefsInScan,
+					pexprScalar
 					);
 		}
 		else
@@ -856,7 +816,8 @@ CXformJoin2IndexApply::PexprIndexApplyOverCTEConsumer
 	CColRefArray *pdrgpcrOuter,
 	CColRefArray *pdrgpcrOuterNew,
 	CColRefArray *pdrgpcrOuterRefsInScan,
-	ULongPtrArray *pdrgpulIndexesOfRefsInScan
+	ULongPtrArray *pdrgpulIndexesOfRefsInScan,
+	CExpression *pexprScalar
 	) const
 {
 	CExpression *pexprDynamicScan = CXformUtils::PexprPartialDynamicIndexGet
@@ -892,10 +853,13 @@ CXformJoin2IndexApply::PexprIndexApplyOverCTEConsumer
 				CXformUtils::PdrgpcrReorderedSubsequence(mp, pdrgpcrOuterNew, pdrgpulIndexesOfRefsInScan);
 	}
 
+	CLogicalApply *popLogicalApply = PopLogicalApply(mp, pdrgpcrOuterRefsInScanNew);
+	pexprScalar->AddRef();
+	popLogicalApply->SetScalarExpr(pexprScalar);
 	return GPOS_NEW(mp) CExpression
 			(
 			mp,
-			PopLogicalApply(mp, pdrgpcrOuterRefsInScanNew),
+			popLogicalApply,
 			CXformUtils::PexprCTEConsumer(mp, ulCTEId, pdrgpcrOuterNew),
 			pexprDynamicScan,
 			CPredicateUtils::PexprConjunction(mp, NULL /*pdrgpexpr*/)

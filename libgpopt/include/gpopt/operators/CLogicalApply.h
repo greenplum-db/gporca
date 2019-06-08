@@ -35,6 +35,9 @@ namespace gpopt
 			// private copy ctor
 			CLogicalApply(const CLogicalApply &);
 
+			// original scalar expression
+			CExpression *m_pexprScalar;
+
 		protected:
 
 			// columns used from Apply's inner child
@@ -71,6 +74,19 @@ namespace gpopt
 			CColRefArray *PdrgPcrInner() const
 			{
 				return m_pdrgpcrInner;
+			}
+
+			// scalar expression accessor
+			CExpression *ScalarExpr()
+			{
+				return m_pexprScalar;
+			}
+
+			// set the scalar expression
+			void
+			SetScalarExpr(CExpression *pexprScalar)
+			{
+				m_pexprScalar = pexprScalar;
 			}
 
 			// return a copy of the operator with remapped columns
