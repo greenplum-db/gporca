@@ -166,14 +166,6 @@ namespace gpopt
 				CXformResult *pxfres
 				) const;
 
-			// check whether distribution key and the index key are matched.
-			// always returns true for master only table.
-			BOOL FMatchDistKeyAndIndexKey
-				(
-				const IMDRelation *pmdrel,
-				const IMDIndex *pmdindex
-				) const;
-
 		protected:
 
 			// is the logical join that is being transformed an outer join?
@@ -216,18 +208,6 @@ namespace gpopt
 			// the instance.
 			virtual
 			CLogicalJoin *PopLogicalJoin(CMemoryPool *mp) const = 0;
-
-			// return the new instance of logical apply operator
-			// that it is trying to transform to in the current
-			// xform rule, caller takes the ownership and
-			// responsibility to release the instance.
-			virtual
-			CLogicalApply *PopLogicalApply
-				(
-				CMemoryPool *mp,
-				CColRefArray *pdrgpcrOuterRefs,
-				CExpression *pexprScalar
-				) const = 0;
 
 		public:
 

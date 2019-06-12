@@ -100,21 +100,6 @@ namespace gpopt
 				return GPOS_NEW(mp) TJoin(mp);
 			}
 
-			// return the new instance of logical apply operator
-			// that it is trying to transform to in the current
-			// xform rule, caller takes the ownership and
-			// responsibility to release the instance.
-			virtual
-			CLogicalApply *PopLogicalApply
-				(
-				CMemoryPool *mp,
-				CColRefArray *colref_array,
-				CExpression *pexprScalar
-				) const
-			{
-				return GPOS_NEW(mp) TApply(mp, colref_array, pexprScalar, m_fOuterJoin);
-			}
-
 		public:
 
 			// ctor

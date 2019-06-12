@@ -299,7 +299,7 @@ CXformJoin2IndexApply::CreateAlternativesForBtreeIndex
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
 		pexprScalar->AddRef();
-		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array, pexprScalar);
+		CLogicalIndexApply *popLogicalApply = GPOS_NEW(mp) CLogicalIndexApply(mp, colref_array, pexprScalar, m_fOuterJoin);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
@@ -353,7 +353,7 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
 		pexprScalar->AddRef();
-		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array, pexprScalar);
+		CLogicalIndexApply *popLogicalApply = GPOS_NEW(mp) CLogicalIndexApply(mp, colref_array, pexprScalar, m_fOuterJoin);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
@@ -852,7 +852,7 @@ CXformJoin2IndexApply::PexprIndexApplyOverCTEConsumer
 	}
 
 	pexprScalar->AddRef();
-	CLogicalApply *popLogicalApply = PopLogicalApply(mp, pdrgpcrOuterRefsInScanNew, pexprScalar);
+	CLogicalIndexApply *popLogicalApply = GPOS_NEW(mp) CLogicalIndexApply(mp, pdrgpcrOuterRefsInScanNew, pexprScalar, m_fOuterJoin);
 	return GPOS_NEW(mp) CExpression
 			(
 			mp,
@@ -947,39 +947,5 @@ CXformJoin2IndexApply::AddUnionPlanForPartialIndexes
 									);
 	pxfres->Add(pexprAnchor);
 }
-
-// check whether distribution key and the index key are matched.
-// always returns true for master only table.
-BOOL
-CXformJoin2IndexApply::FMatchDistKeyAndIndexKey
-	(
-	const IMDRelation *pmdrel,
-	const IMDIndex *pmdindex
-	) const
-{
-	if (pmdrel->GetRelDistribution() == IMDRelation::EreldistrMasterOnly)
-	{
-		return true;
-	}
-
-	ULONG length = pmdrel->DistrColumnCount();
-	if (length != pmdindex->Keys())
-	{
-		return false;
-	}
-
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		const IMDColumn *pmdCol = pmdrel->GetDistrColAt(ul);
-		ULONG ulPos = pmdrel->GetPosFromAttno(pmdCol->AttrNum());
-		if (pmdindex->GetKeyPos(ulPos) == gpos::ulong_max)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 // EOF
 
