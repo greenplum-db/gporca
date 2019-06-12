@@ -140,7 +140,14 @@ namespace gpos
 					EvictEntries();
 				}
 
-				CCacheHashtableAccessor acc(m_hash_table, entry->Key());
+				// It would have been nice if we can drop the reference here,
+				// and in fact it works. But this *may* incur an overhead of
+				// constructing or copying an object of type T. In pre- C++11
+				// we cannot even say "move". Therefore, reach into my pocket of
+				// wizardry:
+				// Extend the lifetime of temporary with a const ref
+				const K &key = entry->Key();
+				CCacheHashtableAccessor acc(m_hash_table, key);
 
 				// if we allow duplicates, insertion can be directly made;
 				// if we do not allow duplicates, we need to check first
@@ -199,7 +206,10 @@ namespace gpos
 
 				// scope for hashtable accessor
 				{
-					CCacheHashtableAccessor acc(m_hash_table, entry->Key());
+					// Extend the lifetime of temporary with a const ref
+					// See comments in InsertEntry
+					const K &key = entry->Key();
+					CCacheHashtableAccessor acc(m_hash_table, key);
 					entry->DecRefCount();
 
 					if (EXPECTED_REF_COUNT_FOR_DELETE == entry->RefCount() && entry->IsMarkedForDeletion())

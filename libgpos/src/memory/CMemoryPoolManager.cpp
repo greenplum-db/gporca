@@ -168,7 +168,8 @@ CMemoryPoolManager::Create
 
 	// accessor scope
 	{
-		MemoryPoolKeyAccessor acc(m_hash_table, mp->GetHashKey());
+		const ULONG_PTR hashKey = mp->GetHashKey();
+		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 		acc.Insert(mp);
 	}
 
@@ -312,7 +313,8 @@ CMemoryPoolManager::DeleteUnregistered
 #ifdef GPOS_DEBUG
 	// accessor's scope
 	{
-		MemoryPoolKeyAccessor acc(m_hash_table, mp->GetHashKey());
+		ULONG_PTR hashKey = mp->GetHashKey();
+		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 
 		// make sure that this pool is not in the hash table
 		CMemoryPool *found = acc.Find();
@@ -347,7 +349,8 @@ CMemoryPoolManager::Destroy
 
 	// accessor scope
 	{
-		MemoryPoolKeyAccessor acc(m_hash_table, mp->GetHashKey());
+		const ULONG_PTR hashKey = mp->GetHashKey();
+		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 		acc.Remove(mp);
 	}
 

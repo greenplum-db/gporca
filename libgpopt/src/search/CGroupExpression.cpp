@@ -748,7 +748,8 @@ CGroupExpression::PccInsert
 	CCostContext *pcc
 	)
 {
-	ShtAcc shta(Sht(), pcc->Poc());
+	COptimizationContext *const poc = pcc->Poc();
+	ShtAcc shta(Sht(), poc);
 
 	CCostContext *pccFound = shta.Find();
 	while (NULL != pccFound)
