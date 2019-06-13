@@ -32,9 +32,9 @@ CLogicalApply::CLogicalApply
 	)
 	:
 	CLogical(mp),
-	m_pexprScalar(NULL),
 	m_pdrgpcrInner(NULL),
-	m_eopidOriginSubq(COperator::EopSentinel)
+	m_eopidOriginSubq(COperator::EopSentinel),
+	m_pexprScalar(NULL)
 {}
 
 
@@ -55,11 +55,24 @@ CLogicalApply::CLogicalApply
 	:
 	CLogical(mp),
 	m_pdrgpcrInner(pdrgpcrInner),
-	m_eopidOriginSubq(eopidOriginSubq)
+	m_eopidOriginSubq(eopidOriginSubq),
+	m_pexprScalar(NULL)
 {
-	m_pexprScalar = NULL;
 	GPOS_ASSERT(NULL != pdrgpcrInner);
 }
+
+// Ctor
+CLogicalApply::CLogicalApply
+	(
+	CMemoryPool *mp,
+	CExpression *pexprScalar
+	)
+	:
+	CLogical(mp),
+	m_pdrgpcrInner(NULL),
+	m_eopidOriginSubq(COperator::EopSentinel),
+	m_pexprScalar(pexprScalar)
+{}
 
 //---------------------------------------------------------------------------
 //	@function:

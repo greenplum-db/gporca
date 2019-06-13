@@ -65,11 +65,6 @@ namespace gpopt
 				return m_pexprScalar;
 			}
 
-			void SetScalarExpr(CExpression *pexprScalar)
-			{
-				m_pexprScalar = pexprScalar;
-			}
-
 			//-------------------------------------------------------------------------------------
 			// Required Plan Properties
 			//-------------------------------------------------------------------------------------

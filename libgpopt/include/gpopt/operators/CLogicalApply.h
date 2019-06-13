@@ -35,9 +35,6 @@ namespace gpopt
 			// private copy ctor
 			CLogicalApply(const CLogicalApply &);
 
-			// original scalar expression
-			CExpression *m_pexprScalar;
-
 		protected:
 
 			// columns used from Apply's inner child
@@ -46,9 +43,15 @@ namespace gpopt
 			// origin subquery id
 			EOperatorId m_eopidOriginSubq;
 
+			// original scalar expression
+			CExpression *m_pexprScalar;
+
 			// ctor
 			explicit
 			CLogicalApply(CMemoryPool *mp);
+
+			// ctor
+			CLogicalApply(CMemoryPool *mp, CExpression *pexprScalar);
 
 			// ctor
 			CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq);
@@ -80,13 +83,6 @@ namespace gpopt
 			CExpression *ScalarExpr()
 			{
 				return m_pexprScalar;
-			}
-
-			// set the scalar expression
-			void
-			SetScalarExpr(CExpression *pexprScalar)
-			{
-				m_pexprScalar = pexprScalar;
 			}
 
 			// return a copy of the operator with remapped columns

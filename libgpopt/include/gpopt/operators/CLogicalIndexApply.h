@@ -35,7 +35,7 @@ namespace gpopt
 		public:
 
 			// ctor
-			CLogicalIndexApply(CMemoryPool *mp,  CColRefArray *pdrgpcrOuterRefs, BOOL fOuterJoin);
+			CLogicalIndexApply(CMemoryPool *mp,  CColRefArray *pdrgpcrOuterRefs, CExpression *pexprScalar, BOOL fOuterJoin);
 
 			// ctor for patterns
 			explicit

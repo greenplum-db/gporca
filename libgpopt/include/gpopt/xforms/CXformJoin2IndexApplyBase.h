@@ -108,10 +108,11 @@ namespace gpopt
 			CLogicalApply *PopLogicalApply
 				(
 				CMemoryPool *mp,
-				CColRefArray *colref_array
+				CColRefArray *colref_array,
+				CExpression *pexprScalar
 				) const
 			{
-				return GPOS_NEW(mp) TApply(mp, colref_array, m_fOuterJoin);
+				return GPOS_NEW(mp) TApply(mp, colref_array, pexprScalar, m_fOuterJoin);
 			}
 
 		public:

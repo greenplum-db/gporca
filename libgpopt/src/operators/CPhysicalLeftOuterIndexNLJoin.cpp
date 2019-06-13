@@ -21,19 +21,22 @@ using namespace gpopt;
 CPhysicalLeftOuterIndexNLJoin::CPhysicalLeftOuterIndexNLJoin
 	(
 	CMemoryPool *mp,
-	CColRefArray *colref_array
+	CColRefArray *colref_array,
+	CExpression *pexprScalar
 	)
 	:
 	CPhysicalLeftOuterNLJoin(mp),
-	m_pdrgpcrOuterRefs(colref_array)
+	m_pdrgpcrOuterRefs(colref_array),
+	m_pexprScalar(pexprScalar)
 {
 	GPOS_ASSERT(NULL != colref_array);
+	GPOS_ASSERT(NULL != pexprScalar);
 }
-
 
 CPhysicalLeftOuterIndexNLJoin::~CPhysicalLeftOuterIndexNLJoin()
 {
 	m_pdrgpcrOuterRefs->Release();
+	m_pexprScalar->Release();
 }
 
 
@@ -90,7 +93,7 @@ CPhysicalLeftOuterIndexNLJoin::PdsRequired
 	{
 		// check if we could create an equivalent hashed distribution request to the inner child
 		CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pdsInner);
-		CExpression *pexprScalar = CPhysicalNLJoin::PopConvert(exprhdl.Pop())->ScalarExpr();
+		CExpression *pexprScalar = CPhysicalLeftOuterIndexNLJoin::PopConvert(exprhdl.Pop())->ScalarExpr();
 		CDistributionSpecHashed *pdshashedMatching = CUtils::CreateMatchingHashedDistribution(mp, pexprScalar, pdshashed);
 		if (NULL != pdshashedMatching)
 		{

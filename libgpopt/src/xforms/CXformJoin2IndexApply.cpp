@@ -298,9 +298,8 @@ CXformJoin2IndexApply::CreateAlternativesForBtreeIndex
 		// and add it to xform results
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
-		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array);
 		pexprScalar->AddRef();
-		popLogicalApply->SetScalarExpr(pexprScalar);
+		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array, pexprScalar);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
@@ -353,9 +352,8 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives
 		// and add it to xform results
 		CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
 		pexprOuter->AddRef();
-		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array);
 		pexprScalar->AddRef();
-		popLogicalApply->SetScalarExpr(pexprScalar);
+		CLogicalApply *popLogicalApply = PopLogicalApply(mp, colref_array, pexprScalar);
 		CExpression *pexprIndexApply =
 			GPOS_NEW(mp) CExpression
 				(
@@ -853,9 +851,8 @@ CXformJoin2IndexApply::PexprIndexApplyOverCTEConsumer
 				CXformUtils::PdrgpcrReorderedSubsequence(mp, pdrgpcrOuterNew, pdrgpulIndexesOfRefsInScan);
 	}
 
-	CLogicalApply *popLogicalApply = PopLogicalApply(mp, pdrgpcrOuterRefsInScanNew);
 	pexprScalar->AddRef();
-	popLogicalApply->SetScalarExpr(pexprScalar);
+	CLogicalApply *popLogicalApply = PopLogicalApply(mp, pdrgpcrOuterRefsInScanNew, pexprScalar);
 	return GPOS_NEW(mp) CExpression
 			(
 			mp,

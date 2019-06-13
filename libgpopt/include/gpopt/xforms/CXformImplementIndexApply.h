@@ -98,16 +98,12 @@ namespace gpopt
 				// assemble physical operator
 				CPhysicalNLJoin *pop = NULL;
 
-				if (CLogicalIndexApply::PopConvert(popLogicalApply)->FouterJoin())
-					pop = GPOS_NEW(mp) CPhysicalLeftOuterIndexNLJoin(mp, colref_array);
-				else
-					pop = GPOS_NEW(mp) CPhysicalInnerIndexNLJoin(mp, colref_array);
+				pexprOriginalScalar->AddRef();
 
-				if (NULL != pexprOriginalScalar)
-				{
-					pexprOriginalScalar->AddRef();
-					pop->SetScalarExpr(pexprOriginalScalar);
-				}
+				if (CLogicalIndexApply::PopConvert(popLogicalApply)->FouterJoin())
+					pop = GPOS_NEW(mp) CPhysicalLeftOuterIndexNLJoin(mp, colref_array, pexprOriginalScalar);
+				else
+					pop = GPOS_NEW(mp) CPhysicalInnerIndexNLJoin(mp, colref_array, pexprOriginalScalar);
 
 				CExpression *pexprResult =
 						GPOS_NEW(mp) CExpression

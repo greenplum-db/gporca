@@ -33,17 +33,24 @@ namespace gpopt
 			// columns from outer child used for index lookup in inner child
 			CColRefArray *m_pdrgpcrOuterRefs;
 
+			CExpression *m_pexprScalar;
+
 			// private copy ctor
 			CPhysicalInnerIndexNLJoin(const CPhysicalInnerIndexNLJoin &);
 
 		public:
 
 			// ctor
-			CPhysicalInnerIndexNLJoin(CMemoryPool *mp, CColRefArray *colref_array);
+			CPhysicalInnerIndexNLJoin(CMemoryPool *mp, CColRefArray *colref_array, CExpression *pexprScalar);
 
 			// dtor
 			virtual
 			~CPhysicalInnerIndexNLJoin();
+
+			CExpression *ScalarExpr()
+			{
+				return m_pexprScalar;
+			}
 
 			// ident accessors
 			virtual

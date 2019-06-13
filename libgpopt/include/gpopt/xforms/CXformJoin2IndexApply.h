@@ -225,7 +225,8 @@ namespace gpopt
 			CLogicalApply *PopLogicalApply
 				(
 				CMemoryPool *mp,
-				CColRefArray *pdrgpcrOuterRefs
+				CColRefArray *pdrgpcrOuterRefs,
+				CExpression *pexprScalar
 				) const = 0;
 
 		public:
