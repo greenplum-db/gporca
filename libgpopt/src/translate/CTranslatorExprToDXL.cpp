@@ -2790,7 +2790,7 @@ CTranslatorExprToDXL::BuildSubplansForCorrelatedLOJ
 	else
 	{
 		GPOS_ASSERT(EdxlSubPlanTypeExists == dxl_subplan_type || EdxlSubPlanTypeNotExists == dxl_subplan_type);
-		(void) PdxlnExistentialSubplan(pdrgpcrInner, pexprCorrelatedLOJ, dxl_colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML);
+		(void) PdxlnExistentialSubplan(pdrgpcrInner, pexprCorrelatedLOJ, dxl_colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, false);
 	}
 
 	CExpression *pexprTrue = CUtils::PexprScalarConstBool(m_mp, true /*value*/, false /*is_null*/);
@@ -2852,8 +2852,7 @@ CTranslatorExprToDXL::BuildSubplans
 
 		case COperator::EopPhysicalCorrelatedLeftSemiNLJoin:
 		case COperator::EopPhysicalCorrelatedLeftAntiSemiNLJoin:
-			pdxlnSubPlan = PdxlnExistentialSubplan(pdrgpcrInner, pexprCorrelatedNLJoin, dxl_colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML);
-			pdxlnSubPlan->AddRef();
+			pdxlnSubPlan = PdxlnExistentialSubplan(pdrgpcrInner, pexprCorrelatedNLJoin, dxl_colref_array, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, true);
 			*ppdxlnScalar = pdxlnSubPlan;
 			return;
 
@@ -3157,7 +3156,8 @@ CTranslatorExprToDXL::PdxlnExistentialSubplan
 	CDXLColRefArray *dxl_colref_array,
 	CDistributionSpecArray *pdrgpdsBaseTables, 
 	ULONG *pulNonGatherMotions,
-	BOOL *pfDML
+	BOOL *pfDML,
+	BOOL returnSubplan
 	)
 {
 #ifdef GPOS_DEBUG
@@ -3177,7 +3177,8 @@ CTranslatorExprToDXL::PdxlnExistentialSubplan
 	CDXLNode *pdxlnInnerChild = CreateDXLNode(pexprInner, NULL /*colref_array*/, pdrgpdsBaseTables, pulNonGatherMotions, pfDML, false /*fRemap*/, false /*fRoot*/);
 	CDXLNode *pdxlnInnerProjList = (*pdxlnInnerChild)[0];
 	CDXLNode *inner_dxlnode = NULL;
-	if (0 == pdxlnInnerProjList->Arity())
+	ULONG numRefsRequired = 0;
+	if (0 == pdxlnInnerProjList->Arity() || 0 == pdrgpcrInner->Size())
 	{
 		// no requested columns from subplan, add a dummy boolean constant to project list
 		inner_dxlnode = PdxlnProjectBoolConst(pdxlnInnerChild, true /*value*/);
@@ -3197,19 +3198,41 @@ CTranslatorExprToDXL::PdxlnExistentialSubplan
 	IMDId *mdid = pmdtypebool->MDId();
 	mdid->AddRef();
 
+	if (returnSubplan)
+	{
+		numRefsRequired += 1;
+	}
 	// construct a subplan node, with the inner child under it
 	CDXLNode *pdxlnSubPlan =
 		GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarSubPlan(m_mp, mdid, dxl_colref_array, dxl_subplan_type, NULL /*dxlnode_test_expr*/));
 	pdxlnSubPlan->AddChild(inner_dxlnode);
 
-	// add to hashmap
+	if (0 != pdrgpcrInner->Size())
+	{
+		// add to hashmap
 #ifdef GPOS_DEBUG
-	BOOL fRes =
+		BOOL fRes =
 #endif // GPOS_DEBUG
-		m_phmcrdxln->Insert(const_cast<CColRef *>((*pdrgpcrInner)[0]), pdxlnSubPlan);
-	GPOS_ASSERT(fRes);
+			m_phmcrdxln->Insert(const_cast<CColRef *>((*pdrgpcrInner)[0]), pdxlnSubPlan);
+		GPOS_ASSERT(fRes);
+		numRefsRequired += 1;
+	}
 
-	return pdxlnSubPlan;
+	if (2 == numRefsRequired)
+	{
+		pdxlnSubPlan->AddRef();
+	}
+	else if (0 == numRefsRequired)
+	{
+		pdxlnSubPlan->Release();
+		pdxlnSubPlan = NULL;
+	}
+
+	if (returnSubplan)
+	{
+		return pdxlnSubPlan;
+	}
+	return NULL;
 }
 
 //---------------------------------------------------------------------------

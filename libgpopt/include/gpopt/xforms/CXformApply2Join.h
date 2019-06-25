@@ -76,7 +76,6 @@ namespace gpopt
                 TApply *popApply = TApply::PopConvert(pexprApply->Pop());
                 CColRefArray *colref_array = popApply->PdrgPcrInner();
                 GPOS_ASSERT(NULL != colref_array);
-                GPOS_ASSERT(1 == colref_array->Size());
 
                 colref_array->AddRef();
                 COperator::EOperatorId eopidSubq = popApply->EopidOriginSubq();

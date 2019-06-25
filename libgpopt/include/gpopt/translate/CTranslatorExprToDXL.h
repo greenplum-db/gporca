@@ -798,7 +798,8 @@ namespace gpopt
 				CDXLColRefArray *dxl_colref_array,
 				CDistributionSpecArray *pdrgpdsBaseTables, 
 				ULONG *pulNonGatherMotions, 
-				BOOL *pfDML
+				BOOL *pfDML,
+				BOOL return_subplan
 				);
 
 			// compute the direct dispatch info for the given DML expression
