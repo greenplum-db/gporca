@@ -168,6 +168,8 @@ CMemoryPoolManager::Create
 
 	// accessor scope
 	{
+		// HERE BE DRAGONS
+		// See comment in CCache::InsertEntry
 		const ULONG_PTR hashKey = mp->GetHashKey();
 		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 		acc.Insert(mp);
@@ -313,6 +315,8 @@ CMemoryPoolManager::DeleteUnregistered
 #ifdef GPOS_DEBUG
 	// accessor's scope
 	{
+		// HERE BE DRAGONS
+		// See comment in CCache::InsertEntry
 		ULONG_PTR hashKey = mp->GetHashKey();
 		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 
@@ -349,6 +353,8 @@ CMemoryPoolManager::Destroy
 
 	// accessor scope
 	{
+		// HERE BE DRAGONS
+		// See comment in CCache::InsertEntry
 		const ULONG_PTR hashKey = mp->GetHashKey();
 		MemoryPoolKeyAccessor acc(m_hash_table, hashKey);
 		acc.Remove(mp);

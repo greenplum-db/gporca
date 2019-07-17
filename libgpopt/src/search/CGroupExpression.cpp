@@ -748,6 +748,8 @@ CGroupExpression::PccInsert
 	CCostContext *pcc
 	)
 {
+	// HERE BE DRAGONS
+	// See comment in CCache::InsertEntry
 	COptimizationContext *const poc = pcc->Poc();
 	ShtAcc shta(Sht(), poc);
 

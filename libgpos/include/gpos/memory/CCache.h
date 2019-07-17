@@ -140,12 +140,50 @@ namespace gpos
 					EvictEntries();
 				}
 
-				// It would have been nice if we can drop the reference here,
-				// and in fact it works. But this *may* incur an overhead of
-				// constructing or copying an object of type T. In pre- C++11
-				// we cannot even say "move". Therefore, reach into my pocket of
+				// HERE BE DRAGONS
+				//
+				// One might think we can just inline the function call to
+				// Key() into the constructor call. Unfortunately no.
+				//
+				// The accessor constructor takes a const reference to K. The
+				// function returns a value of type K. The lifetime of that
+				// return value (a temporary) ends at the end of the
+				// constructor call. This leaves the reference (saved inside
+				// the accessor object as m_key) dangling. For example, when we
+				// call acc.Insert a few lines later, we load through the
+				// dangling reference. If you are lucky -- and we often are --
+				// specifically:
+				//
+				// 1. the stack space for the temporary may not be re-allocated
+				// to other variables
+				// 2. the old value remains after the end of life for the
+				// temporary
+				//
+				// then we won't notice anything, the execution will get the
+				// correct result.
+				//
+				// But if either of the above didn't happen, you end up getting
+				// wrong results when dereferencing the dangling reference.
+				//
+				// There are generally two ways to solve this problem:
+				// 1. Change m_key to be of the value type, instead of a const
+				// ref. Eliminating the reference member means it will never
+				// dangle. But it leaves an opportunity of error for our future
+				// selves to instantiate this template with an
+				// expensive-to-copy type as key.
+				// 2. Keep m_key as a const reference; Be very cautious on
+				// constructor calls; preferably have a continuous build
+				// running ASAN
+				//
+				// We are picking option 2 here. We have two options to avoid
+				// dangling the reference: copying the temporary (hopefully
+				// cheaply), or extend its lifetime. In pre- C++11 we cannot
+				// even say "move". Therefore, reach into my pocket of
 				// wizardry:
+				//
 				// Extend the lifetime of temporary with a const ref
+				//
+				// TODO: Once we mandate C++11, force type K to be moveable
 				const K &key = entry->Key();
 				CCacheHashtableAccessor acc(m_hash_table, key);
 
