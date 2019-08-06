@@ -2596,9 +2596,21 @@ CUtils::PdrgpcrGroupingKey
 	GPOS_ASSERT(NULL != pkc);
 
 	CColRefSet *pcrsOutput = CDrvdPropRelational::GetRelationalProperties(pexpr->PdpDerive())->PcrsOutput();
+	CColRefSet *pcrsUsedOuter = GPOS_NEW(mp) CColRefSet(mp);
+	// remove any columns that are not referenced in the query from pcrsOuterOutput
+	CColRefSetIter it(*pcrsOutput);
 
+	while (it.Advance())
+	{
+		CColRef *pcr = it.Pcr();
+
+		if (CColRef::EUsed == pcr->GetUsage())
+		{
+			pcrsUsedOuter->Include(pcr);
+		}
+	}
 	// filter out system columns since they may introduce columns with undefined sort/hash operators
-	CColRefArray *colref_array = PdrgpcrNonSystemCols(mp, pcrsOutput);
+	CColRefArray *colref_array = PdrgpcrNonSystemCols(mp, pcrsUsedOuter);
 	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, colref_array);
 
 	// prefer extracting a hashable key since Agg operator may redistribute child on grouping columns
@@ -2617,6 +2629,7 @@ CUtils::PdrgpcrGroupingKey
 	pcrsKey->Release();
 	colref_array = pcrs->Pdrgpcr(mp);
 	pcrs->Release();
+	pcrsUsedOuter->Release();
 
 	// set output key array
 	*ppdrgpcrKey = pdrgpcrKey;
