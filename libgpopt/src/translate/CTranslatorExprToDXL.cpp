@@ -7378,7 +7378,10 @@ CTranslatorExprToDXL::MakeDXLTableDescr
 	(
 	const CTableDescriptor *ptabdesc,
 	const CColRefArray *pdrgpcrOutput,
-	const CReqdPropPlan *requiredProperties
+	const CReqdPropPlan *
+#ifdef GPOS_DEBUG
+	 reqd_prop_plan
+#endif
 	)
 {
 	GPOS_ASSERT(NULL != ptabdesc);
@@ -7407,10 +7410,13 @@ CTranslatorExprToDXL::MakeDXLTableDescr
 			colref = (*pdrgpcrOutput)[ul];
 			if (colref->GetUsage() != CColRef::EUsed)
 			{
-				if (NULL != requiredProperties && NULL != requiredProperties->PcrsRequired())
+#ifdef GPOS_DEBUG
+				if (NULL != reqd_prop_plan && NULL != reqd_prop_plan->PcrsRequired())
 				{
-					GPOS_ASSERT(!requiredProperties->PcrsRequired()->FMember(colref));
+					// ensure that any col removed is not a part of the plan's required cols
+					GPOS_ASSERT(!reqd_prop_plan->PcrsRequired()->FMember(colref));
 				}
+#endif
 				continue;
 			}
 		}

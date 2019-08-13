@@ -2555,31 +2555,6 @@ CUtils::FScalarConstFalse
 	return FScalarConstBool(pexpr, false /*value*/);
 }
 
-// return an array of non-system columns in the given set
-CColRefArray *
-CUtils::PdrgpcrNonSystemCols
-	(
-	CMemoryPool *mp,
-	CColRefSet *pcrs
-	)
-{
-	GPOS_ASSERT(NULL != pcrs);
-
-	CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-	CColRefSetIter crsi(*pcrs);
-	while (crsi.Advance())
-	{
-		CColRef *colref = crsi.Pcr();
-		if (colref->FSystemCol())
-		{
-			continue;
-		}
-		colref_array->Append(colref);
-	}
-
-	return colref_array;
-}
-
 //	create an array of expression's output columns including a key for grouping
 CColRefArray *
 CUtils::PdrgpcrGroupingKey
@@ -2597,21 +2572,19 @@ CUtils::PdrgpcrGroupingKey
 
 	CColRefSet *pcrsOutput = CDrvdPropRelational::GetRelationalProperties(pexpr->PdpDerive())->PcrsOutput();
 	CColRefSet *pcrsUsedOuter = GPOS_NEW(mp) CColRefSet(mp);
-	// remove any columns that are not referenced in the query from pcrsOuterOutput
-	CColRefSetIter it(*pcrsOutput);
 
+	// remove any columns that are not referenced in the query from pcrsOuterOutput
+	// filter out system columns since they may introduce columns with undefined sort/hash operators
+	CColRefSetIter it(*pcrsOutput);
 	while (it.Advance())
 	{
 		CColRef *pcr = it.Pcr();
 
-		if (CColRef::EUsed == pcr->GetUsage())
+		if (CColRef::EUsed == pcr->GetUsage() && !pcr->FSystemCol())
 		{
 			pcrsUsedOuter->Include(pcr);
 		}
 	}
-	// filter out system columns since they may introduce columns with undefined sort/hash operators
-	CColRefArray *colref_array = PdrgpcrNonSystemCols(mp, pcrsUsedOuter);
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, colref_array);
 
 	// prefer extracting a hashable key since Agg operator may redistribute child on grouping columns
 	CColRefArray *pdrgpcrKey = pkc->PdrgpcrHashableKey(mp);
@@ -2623,12 +2596,10 @@ CUtils::PdrgpcrGroupingKey
 	GPOS_ASSERT(NULL != pdrgpcrKey);
 
 	CColRefSet *pcrsKey = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrKey);
-	pcrs->Union(pcrsKey);
+	pcrsUsedOuter->Union(pcrsKey);
 
-	colref_array->Release();
 	pcrsKey->Release();
-	colref_array = pcrs->Pdrgpcr(mp);
-	pcrs->Release();
+	CColRefArray *colref_array = pcrsUsedOuter->Pdrgpcr(mp);
 	pcrsUsedOuter->Release();
 
 	// set output key array
