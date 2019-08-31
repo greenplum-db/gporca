@@ -377,6 +377,17 @@ CLogicalGbAgg::PpcDeriveConstraint
 	)
 	const
 {
+	// if there is no grouping column, pass the constraint of the child
+	if (m_pdrgpcr->Size() == 0)
+	{
+		CPropConstraint *ppc = exprhdl.GetRelationalProperties(0 /*first child*/)->Ppc();
+		if (NULL != ppc)
+		{
+			ppc->AddRef();
+		}
+		return ppc;
+	}
+
 	CColRefSet *pcrsGrouping = GPOS_NEW(mp) CColRefSet(mp);
 	pcrsGrouping->Include(m_pdrgpcr);
 
