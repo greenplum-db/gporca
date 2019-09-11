@@ -425,9 +425,10 @@ CStatisticsUtils::SplitHistBucketGivenMcvBuckets
 
 	// re-balance distinct and frequency in pdrgpbucketNew
 	CDouble total_distinct_values = std::max(CDouble(1.0), histogram_bucket->GetNumDistinct() - mcv);
-	DistributeBucketProperties(histogram_bucket->GetFrequency(), total_distinct_values, buckets_after_split);
+	CBucketArray *complete_buckets = DistributeBucketProperties(mp, histogram_bucket->GetFrequency(), total_distinct_values, buckets_after_split);
+	buckets_after_split->Release();
 
-	return buckets_after_split;
+	return complete_buckets;
 }
 
 //---------------------------------------------------------------------------
@@ -531,15 +532,18 @@ CStatisticsUtils::IsValidBucket
 //	@doc:
 //		Set distinct and frequency of the new buckets according to
 //		their ranges, based on the assumption that values are uniformly
-//		distributed within a bucket.
+//		distributed within a bucket. This function assumes that the buckets
+//		are valid but incomplete. Since it modifies existing buckets, it still
+//		copies and returns a new array of complete buckets.
 //
 //---------------------------------------------------------------------------
-void
+CBucketArray*
 CStatisticsUtils::DistributeBucketProperties
 	(
+	CMemoryPool *mp,
 	CDouble total_frequency,
 	CDouble total_distinct_values,
-	CBucketArray *buckets
+	const CBucketArray *buckets
 	)
 {
 	GPOS_ASSERT(NULL != buckets);
@@ -555,17 +559,29 @@ CStatisticsUtils::DistributeBucketProperties
 			bucket_width = bucket_width + bucket->Width();
 		}
 	}
+	CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, buckets->Size());
+
 	for (ULONG i = 0; i < bucket_size; i++)
 	{
 		CBucket *bucket = (*buckets)[i];
+		CBucket *newBucket = (*buckets)[i]->MakeBucketCopy(mp);
+
 		if (!bucket->IsSingleton())
 		{
+			// assert that the bucket is incomplete, and we are populating freq and NDV
+			GPOS_ASSERT(GPOPT_BUCKET_DEFAULT_FREQ == bucket->GetFrequency());
+			GPOS_ASSERT(GPOPT_BUCKET_DEFAULT_DISTINCT == bucket->GetNumDistinct());
+
 			CDouble factor = bucket->Width() / bucket_width;
-			bucket->SetFrequency(total_frequency * factor);
+			newBucket->SetFrequency(total_frequency * factor);
 			// TODO: , Aug 1 2013 - another heuristic may be max(1, dDisinct * factor)
-			bucket->SetDistinct(total_distinct_values * factor);
+			newBucket->SetDistinct(total_distinct_values * factor);
+
 		}
+		histogram_buckets->Append(newBucket);
+
 	}
+	return histogram_buckets;
 }
 
 

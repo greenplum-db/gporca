@@ -55,8 +55,10 @@ namespace gpnaucrates
 						CleanupDelete<ULONG>, CleanupDelete<CDouble> > UlongToDoubleMapIter;
 
 		private:
-			// all the buckets in the histogram
-		CBucketArray *m_histogram_buckets;
+			// all the buckets in the histogram. This is shared among histograms,
+			// so must not be modified unless we first make a new copy. We do not copy
+			// histograms unless required, as it is an expensive operation in memory and time.
+			CBucketArray *m_histogram_buckets;
 
 			// well-defined histogram. if false, then bounds are unknown
 			BOOL m_is_well_defined;
@@ -89,10 +91,10 @@ namespace gpnaucrates
 			CHistogram& operator=(const CHistogram &);
 
 			// return an array buckets after applying equality filter on the histogram buckets
-		CBucketArray *MakeBucketsWithEqualityFilter(CMemoryPool *mp, CPoint *point) const;
+			CBucketArray *MakeBucketsWithEqualityFilter(CMemoryPool *mp, CPoint *point) const;
 
 			// return an array buckets after applying non equality filter on the histogram buckets
-		CBucketArray *MakeBucketsWithInequalityFilter(CMemoryPool *mp, CPoint *point) const;
+			CBucketArray *MakeBucketsWithInequalityFilter(CMemoryPool *mp, CPoint *point) const;
 
 			// less than or less than equal filter
 			CHistogram *MakeHistogramLessThanOrLessThanEqualFilter(CMemoryPool *mp, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point) const;
@@ -132,7 +134,7 @@ namespace gpnaucrates
 			void AddBuckets
 					(
 					CMemoryPool *mp,
-					CBucketArray *src_buckets,
+					const CBucketArray *src_buckets,
 					CBucketArray *dest_buckets,
 					CDouble rows_old,
 					CDouble rows_new,
@@ -144,10 +146,10 @@ namespace gpnaucrates
 			void AddBuckets
 					(
 					CMemoryPool *mp,
-					CBucketArray *src_buckets,
+					const CBucketArray *src_buckets,
 					CBucketArray *dest_buckets,
 					CDouble rows,
-							   CDoubleArray *dest_bucket_freqs,
+					CDoubleArray *dest_bucket_freqs,
 					ULONG begin,
 					ULONG end
 					);
@@ -163,7 +165,7 @@ namespace gpnaucrates
 					(
 					const CHistogram *histogram1,
 					const CHistogram *histogram2,
-					CBucketArray *join_buckets, // join buckets
+					const CBucketArray *join_buckets, // join buckets
 					CDouble hist1_buckets_freq, // frequency of the buckets in input1 that contributed to the join
 					CDouble hist2_buckets_freq, // frequency of the buckets in input2 that contributed to the join
 					CDouble *result_distinct_remain,
@@ -328,8 +330,8 @@ namespace gpnaucrates
 			CHistogram *MakeHistogramUpdateFreq
 						(
 						CMemoryPool *mp,
-						CBucketArray *histogram_buckets,
-            CDoubleArray *dest_bucket_freqs,
+						const CBucketArray *histogram_buckets,
+						CDoubleArray *dest_bucket_freqs,
 						CDouble *num_output_rows,
 						CDouble num_null_rows,
 						CDouble num_NDV_remain,
@@ -411,7 +413,7 @@ namespace gpnaucrates
 			}
 
 			// normalize histogram and return scaling factor
-			CDouble NormalizeHistogram();
+			CDouble NormalizeHistogram(CMemoryPool *mp);
 
 			// is histogram normalized
 			BOOL IsNormalized() const;
@@ -462,7 +464,7 @@ namespace gpnaucrates
 			BOOL IsEmpty() const;
 
 			// cap the total number of distinct values (NDVs) in buckets to the number of rows
-			void CapNDVs(CDouble rows);
+			void CapNDVs(CMemoryPool *mp, CDouble rows);
 
 			// is comparison type supported for filters for text columns
 			static

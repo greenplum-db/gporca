@@ -110,6 +110,7 @@ CStatistics::GetWidth
 void
 CStatistics::CapNDVs
 	(
+	CMemoryPool *mp,
 	CDouble rows,
 	UlongToHistogramMap *col_histogram_mapping
 	)
@@ -119,7 +120,7 @@ CStatistics::CapNDVs
 	while (col_hist_mapping.Advance())
 	{
 		CHistogram *histogram = const_cast<CHistogram *>(col_hist_mapping.Value());
-		histogram->CapNDVs(rows);
+		histogram->CapNDVs(mp, rows);
 	}
 }
 

@@ -538,9 +538,11 @@ CHistogram::GetNumDistinct
 }
 
 // cap the total number of distinct values (NDVs) in buckets to the number of rows
+// creates new histogram of buckets, as this modifies individual buckets in the array
 void
 CHistogram::CapNDVs
 	(
+	CMemoryPool *mp,
 	CDouble rows
 	)
 {
@@ -553,15 +555,19 @@ CHistogram::CapNDVs
 	}
 
 	m_NDVs_were_scaled = true;
-
 	CDouble scale_ratio = (rows / distinct).Get();
+	// since we are modifying individual buckets, we must make a deep copy and overwrite m_histogram_buckets. We
+	// cannot modify m_histogram_buckets, as this is shared among histograms
+	CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, m_histogram_buckets->Size());
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
 	{
-		CBucket *bucket = (*m_histogram_buckets)[ul];
-		CDouble distinct_bucket = bucket->GetNumDistinct();
-		bucket->SetDistinct(std::max(CHistogram::MinDistinct.Get(), (distinct_bucket * scale_ratio).Get()));
+		CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(mp);
+		CDouble distinct_bucket = newBucket->GetNumDistinct();
+		newBucket->SetDistinct(std::max(CHistogram::MinDistinct.Get(), (distinct_bucket * scale_ratio).Get()));
+		histogram_buckets->Append(newBucket);
 	}
-
+	m_histogram_buckets->Release();
+	m_histogram_buckets = histogram_buckets;
 	m_distinct_remaining = m_distinct_remaining * scale_ratio;
 }
 
@@ -631,7 +637,7 @@ CHistogram::MakeHistogramFilterNormalize
 	}
 
 	CHistogram *result_histogram = MakeHistogramFilter(mp, stats_cmp_type, point);
-	*scale_factor = result_histogram->NormalizeHistogram();
+	*scale_factor = result_histogram->NormalizeHistogram(mp);
 	GPOS_ASSERT(result_histogram->IsValid());
 
 	return result_histogram;
@@ -687,7 +693,7 @@ CHistogram::MakeJoinHistogramNormalize
 	}
 	
 	CHistogram *result_histogram = MakeJoinHistogram(mp, stats_cmp_type, other_histogram);
-	*scale_factor = result_histogram->NormalizeHistogram();
+	*scale_factor = result_histogram->NormalizeHistogram(mp);
 
 	// based on Ramakrishnan and Gehrke, "Database Management Systems, Third Ed", page 484
 	// the scaling factor of equality join is the MAX of the number of distinct
@@ -803,7 +809,7 @@ CHistogram::MakeLASJHistogramNormalize
 	}
 
 	CHistogram *result_histogram = MakeLASJHistogram(mp, stats_cmp_type, other_histogram);
-	*scale_factor = result_histogram->NormalizeHistogram();
+	*scale_factor = result_histogram->NormalizeHistogram(mp);
 
 	if (CStatsPred::EstatscmptEq != stats_cmp_type && CStatsPred::EstatscmptINDF != stats_cmp_type)
 	{
@@ -994,7 +1000,10 @@ CHistogram::MakeLASJHistogram
 // scales frequencies on histogram so that they add up to 1.0.
 // Returns the scaling factor that was employed. Should not be called on empty histogram.
 CDouble
-CHistogram::NormalizeHistogram()
+CHistogram::NormalizeHistogram
+	(
+	CMemoryPool *mp
+	)
 {
 	// trivially normalized
 	if (Buckets() == 0 && CStatistics::Epsilon > m_null_freq && CStatistics::Epsilon > m_distinct_remaining)
@@ -1004,10 +1013,20 @@ CHistogram::NormalizeHistogram()
 
 	CDouble scale_factor = std::max(DOUBLE(1.0), (CDouble(1.0) / GetFrequency()).Get());
 
-	for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
+	// if the scale factor is 1.0, we don't need to copy the buckets
+	if (scale_factor != DOUBLE(1.0))
 	{
-		CBucket *bucket = (*m_histogram_buckets)[ul];
-		bucket->SetFrequency(bucket->GetFrequency() * scale_factor);
+		// since we are modifying individual buckets, we must make a deep copy and overwrite m_histogram_buckets. We
+		// cannot modify m_histogram_buckets, as this may be used in another histogram that we don't want to change
+		CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, m_histogram_buckets->Size());
+		for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
+		{
+			CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(mp);
+			newBucket->SetFrequency(newBucket->GetFrequency() * scale_factor);
+			histogram_buckets->Append(newBucket);
+		}
+		m_histogram_buckets->Release();
+		m_histogram_buckets = histogram_buckets;
 	}
 
 	m_null_freq = m_null_freq * scale_factor;
@@ -1022,7 +1041,7 @@ CHistogram::NormalizeHistogram()
 	return scale_factor;
 }
 
-// deep copy of histogram
+// returns shallow copy of histogram
 CHistogram *
 CHistogram::CopyHistogram
 	(
@@ -1030,14 +1049,8 @@ CHistogram::CopyHistogram
 	)
 	const
 {
-	CBucketArray *buckets = GPOS_NEW(mp) CBucketArray(mp);
-	for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
-	{
-		CBucket *bucket = (*m_histogram_buckets)[ul];
-		buckets->Append(bucket->MakeBucketCopy(mp));
-	}
-
-	CHistogram *histogram_copy = GPOS_NEW(mp) CHistogram(buckets, m_is_well_defined, m_null_freq, m_distinct_remaining, m_freq_remaining);
+	m_histogram_buckets->AddRef();
+	CHistogram *histogram_copy = GPOS_NEW(mp) CHistogram(m_histogram_buckets, m_is_well_defined, m_null_freq, m_distinct_remaining, m_freq_remaining);
 	if (WereNDVsScaled())
 	{
 		histogram_copy->SetNDVScaled();
@@ -1308,7 +1321,7 @@ CHistogram::ComputeJoinNDVRemainInfo
 	(
 	const CHistogram *histogram1,
 	const CHistogram *histogram2,
-									 CBucketArray *join_buckets,
+	const CBucketArray *join_buckets,
 	CDouble hist1_buckets_freq,
 	CDouble hist2_buckets_freq,
 	CDouble *result_distinct_remain,
@@ -1536,7 +1549,7 @@ CHistogram::MakeUnionAllHistogramNormalize
 	CDouble freq_remaining = (m_freq_remaining * rows + histogram->m_freq_remaining * rows_other) / rows_new;
 
 	CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(new_buckets, true /*is_well_defined*/, new_null_freq, distinct_remaining, freq_remaining);
-	(void) result_histogram->NormalizeHistogram();
+	(void) result_histogram->NormalizeHistogram(mp);
 
 	return result_histogram;
 }
@@ -1571,7 +1584,7 @@ void
 CHistogram::AddBuckets
 	(
 	CMemoryPool *mp,
-	CBucketArray *src_buckets,
+	const CBucketArray *src_buckets,
 	CBucketArray *dest_buckets,
 	CDouble rows_old,
 	CDouble rows_new,
@@ -1760,7 +1773,7 @@ CHistogram *
 CHistogram::MakeHistogramUpdateFreq
 	(
 	CMemoryPool *mp,
-	CBucketArray *histogram_buckets,
+	const CBucketArray *histogram_buckets,
 	CDoubleArray *dest_bucket_freqs,
 	CDouble *result_num_rows_output,
 	CDouble num_null_rows,
@@ -1857,7 +1870,7 @@ void
 CHistogram::AddBuckets
 	(
 	CMemoryPool *mp,
-	CBucketArray *src_buckets,
+	const CBucketArray *src_buckets,
 	CBucketArray *dest_buckets,
 	CDouble rows,
 	CDoubleArray *dest_bucket_freqs,

@@ -149,7 +149,7 @@ CJoinCardinalityTest::EresUnittest_JoinNDVRemain()
 			at.Os() << "Join Histogram" <<  std::endl;
 			join_histogram->OsPrint(at.Os());
 
-			join_histogram->NormalizeHistogram();
+			join_histogram->NormalizeHistogram(mp);
 
 			at.Os() <<  std::endl << "Normalized Join Histogram" <<  std::endl;
 			join_histogram->OsPrint(at.Os());

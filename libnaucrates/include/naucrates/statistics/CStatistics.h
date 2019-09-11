@@ -387,7 +387,7 @@ namespace gpnaucrates
 
 			// cap the total number of distinct values (NDV) in buckets to the number of rows
       static
-      void CapNDVs(CDouble rows, UlongToHistogramMap *col_histogram_mapping);
+      void CapNDVs(CMemoryPool *mp, CDouble rows, UlongToHistogramMap *col_histogram_mapping);
 	}; // class CStatistics
 
 }
