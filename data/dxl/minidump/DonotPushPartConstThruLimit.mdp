@@ -261,7 +261,7 @@ select * from (select * from h order by j limit 2) x where j = 2;
     <dxl:Plan Id="0" SpaceSize="7">
       <dxl:Result>
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.000191" Rows="1.333334" Width="8"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.000185" Rows="1.333334" Width="8"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="j">
@@ -280,7 +280,7 @@ select * from (select * from h order by j limit 2) x where j = 2;
         <dxl:OneTimeFilter/>
         <dxl:Limit>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.000125" Rows="2.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000119" Rows="2.000000" Width="8"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="j">
@@ -292,7 +292,7 @@ select * from (select * from h order by j limit 2) x where j = 2;
           </dxl:ProjList>
           <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.000109" Rows="2.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000103" Rows="2.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="j">
@@ -308,7 +308,7 @@ select * from (select * from h order by j limit 2) x where j = 2;
             </dxl:SortingColumnList>
             <dxl:Limit>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="431.000049" Rows="2.000000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="431.000044" Rows="2.000000" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="j">

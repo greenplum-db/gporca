@@ -547,12 +547,12 @@ explain select * from t1 where a = 1 and b in (select b from t2);
               <dxl:SortingColumnList/>
               <dxl:Limit>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="431.000065" Rows="1.000000" Width="1"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.000064" Rows="1.000000" Width="1"/>
                 </dxl:Properties>
                 <dxl:ProjList/>
                 <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="431.000064" Rows="1.000000" Width="1"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000063" Rows="1.000000" Width="1"/>
                   </dxl:Properties>
                   <dxl:ProjList/>
                   <dxl:Filter/>

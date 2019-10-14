@@ -804,7 +804,7 @@ explain select * from foo where foo.a = 10 and exists (select * from bar);
                   <dxl:SortingColumnList/>
                   <dxl:Limit>
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="431.755405" Rows="1.000000" Width="1"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.755404" Rows="1.000000" Width="1"/>
                     </dxl:Properties>
                     <dxl:ProjList/>
                     <dxl:TableScan>

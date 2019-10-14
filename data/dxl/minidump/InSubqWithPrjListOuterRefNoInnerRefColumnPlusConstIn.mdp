@@ -721,7 +721,7 @@ EXPLAIN SELECT * FROM foo WHERE 1+a IN (SELECT b+1 FROM bar);
                   <dxl:SortingColumnList/>
                   <dxl:Limit>
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="431.000686" Rows="1.000000" Width="1"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.000685" Rows="1.000000" Width="1"/>
                     </dxl:Properties>
                     <dxl:ProjList/>
                     <dxl:TableScan>
