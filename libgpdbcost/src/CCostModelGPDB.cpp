@@ -19,6 +19,7 @@
 #include "gpopt/operators/CPhysicalIndexScan.h"
 #include "gpopt/operators/CPhysicalDynamicIndexScan.h"
 #include "gpopt/operators/CPhysicalHashAgg.h"
+#include "gpopt/operators/CPhysicalLimit.h"
 #include "gpopt/operators/CPhysicalUnionAll.h"
 #include "gpopt/operators/CPhysicalMotion.h"
 #include "gpopt/operators/CPhysicalPartitionSelector.h"
@@ -242,9 +243,20 @@ CCostModelGPDB::CostUnary
 	DOUBLE rows = pci->Rows();
 	DOUBLE width = pci->Width();
 	DOUBLE num_rebinds = pci->NumRebinds();
-
+	CPhysicalLimit *plimit = dynamic_cast<CPhysicalLimit*>(exprhdl.Pop());
 	CCost costLocal = CCost(num_rebinds * CostTupleProcessing(rows, width, pcp).Get());
 	CCost costChild = CostChildren(mp, exprhdl, pci, pcp);
+
+	// if it is a local limit, then we cost it to 0. We always want to have a local
+	// limit if it is available.
+	// e.g.
+	// Limit (global)
+	//   Gather
+	//		Limit (local) <-- this is costed 0
+	if(plimit && !plimit->FGlobal())
+	{
+		return costChild;
+	}
 
 	return costLocal + costChild;
 }
@@ -1308,6 +1320,7 @@ CCostModelGPDB::CostMotion
 	CDouble dSendCostUnit(0);
 	CDouble dRecvCostUnit(0);
 	CDouble recvCost(0);
+	CDouble localLimitReward = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpLocalLimitReward)->Get();
 
 	CCost costLocal(0);
 	if (COperator::EopPhysicalMotionBroadcast == op_id)
@@ -1367,6 +1380,27 @@ CCostModelGPDB::CostMotion
 		}
 	}
 
+	if (COperator::EopPhysicalMotionGather == op_id)
+	{
+		// We always want to have a local limit under Gather motion if it is available.
+		// e.g.
+		// Limit (global)
+		//   Gather
+		//		Limit (local)
+		//
+		// We cost it less than the case when there is no local limit
+		// e.g.
+		// Limit
+		//	 Gather
+		//		<Expression tree>
+
+		COperator *popChild = exprhdl.Pop(0);
+		if (NULL != popChild && COperator::EopPhysicalLimit == popChild->Eopid())
+		{
+			costLocal = CCost(costLocal.Get() * localLimitReward);
+		}
+		
+	}
 
 	CCost costChild = CostChildren(mp, exprhdl, pci, pcmgpdb->GetCostModelParams());
 

@@ -171,6 +171,9 @@ const CDouble CCostModelParamsGPDB::DBitmapScanRebindCost(0.06);
 // see CCostModelGPDB::CostHashJoin() for why this is needed
 const CDouble CCostModelParamsGPDB::DPenalizeHJSkewUpperLimit(10.0);
 
+// see CCostModelGPDB::CostMotion() for why is it needed
+const CDouble CCostModelParamsGPDB::DLocalLimitReward(0.99);
+
 #define GPOPT_COSTPARAM_NAME_MAX_LENGTH		80
 
 // parameter names in the same order of param enumeration
@@ -303,6 +306,7 @@ CCostModelParamsGPDB::CCostModelParamsGPDB
 	m_rgpcp[EcpBitmapNDVThreshold] = GPOS_NEW(mp) SCostParam(EcpBitmapNDVThreshold, DBitmapNDVThreshold, DBitmapNDVThreshold - 1.0, DBitmapNDVThreshold + 1.0);
 	m_rgpcp[EcpBitmapScanRebindCost] = GPOS_NEW(mp) SCostParam(EcpBitmapScanRebindCost, DBitmapScanRebindCost, DBitmapScanRebindCost - 1.0, DBitmapScanRebindCost + 1.0);
 	m_rgpcp[EcpPenalizeHJSkewUpperLimit] = GPOS_NEW(mp) SCostParam(EcpPenalizeHJSkewUpperLimit, DPenalizeHJSkewUpperLimit, DPenalizeHJSkewUpperLimit - 1.0, DPenalizeHJSkewUpperLimit + 1.0);
+	m_rgpcp[EcpLocalLimitReward] = GPOS_NEW(mp) SCostParam(EcpLocalLimitReward, DLocalLimitReward, DLocalLimitReward - 0.0001, DLocalLimitReward + 0.0001);
 }
 
 

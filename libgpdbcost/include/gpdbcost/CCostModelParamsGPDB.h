@@ -103,7 +103,7 @@ namespace gpopt
 				EcpBitmapNDVThreshold, // bitmap NDV threshold
 				EcpBitmapScanRebindCost, // cost of rebind operation in a bitmap scan
 				EcpPenalizeHJSkewUpperLimit, // upper limit for penalizing a skewed hashjoin operator
-
+				EcpLocalLimitReward, // cost we save from having a limit under a gather
 				EcpSentinel
 			};
 
@@ -323,6 +323,10 @@ namespace gpopt
 			// upper limit for penalizing a skewed hash operator
 			static
 			const CDouble DPenalizeHJSkewUpperLimit;
+
+			// default value of rewarding a local limit under a gather motion
+			static
+			const CDouble DLocalLimitReward;
 
 			// private copy ctor
 			CCostModelParamsGPDB(CCostModelParamsGPDB &);
