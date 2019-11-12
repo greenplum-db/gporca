@@ -576,11 +576,11 @@ CStatisticsUtils::DistributeBucketProperties
 			newBucket->SetFrequency(total_frequency * factor);
 			// TODO: , Aug 1 2013 - another heuristic may be max(1, dDisinct * factor)
 			newBucket->SetDistinct(total_distinct_values * factor);
-
 		}
 		histogram_buckets->Append(newBucket);
 
 	}
+	// buckets is released in the caller function and thus is not released here
 	return histogram_buckets;
 }
 

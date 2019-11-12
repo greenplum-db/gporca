@@ -556,8 +556,10 @@ CHistogram::CapNDVs
 
 	m_NDVs_were_scaled = true;
 	CDouble scale_ratio = (rows / distinct).Get();
-	// since we are modifying individual buckets, we must make a deep copy and overwrite m_histogram_buckets. We
-	// cannot modify m_histogram_buckets, as this is shared among histograms
+	// since we want to modify individual buckets for this and only this histogram,
+	// we must first make a deep copy of the existing m_histogram_buckets as these buckets
+	// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
+	// and modify individual buckets.
 	CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, m_histogram_buckets->Size());
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
 	{
@@ -1016,8 +1018,10 @@ CHistogram::NormalizeHistogram
 	// if the scale factor is 1.0, we don't need to copy the buckets
 	if (scale_factor != DOUBLE(1.0))
 	{
-		// since we are modifying individual buckets, we must make a deep copy and overwrite m_histogram_buckets. We
-		// cannot modify m_histogram_buckets, as this may be used in another histogram that we don't want to change
+		// since we want to modify individual buckets for this and only this histogram,
+		// we must first make a deep copy of the existing m_histogram_buckets as these buckets
+		// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
+		// and modify individual buckets.
 		CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, m_histogram_buckets->Size());
 		for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
 		{
