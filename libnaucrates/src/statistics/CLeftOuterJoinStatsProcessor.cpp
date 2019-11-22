@@ -201,6 +201,7 @@ CLeftOuterJoinStatsProcessor::AddHistogramsLOJInner
 		// the number of nulls added to the inner side should be the number of rows of the LASJ on the outer side.
 		CHistogram *null_histogram = GPOS_NEW(mp) CHistogram
 				(
+				mp,
 				GPOS_NEW(mp) CBucketArray(mp),
 				true /*is_well_defined*/,
 				1.0 /*null_freq*/,

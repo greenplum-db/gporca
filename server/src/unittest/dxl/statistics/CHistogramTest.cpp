@@ -166,7 +166,7 @@ CHistogramTest::EresUnittest_CHistogramBool()
 	CBucket *pbucketTrue = CCardinalityTestUtils::PbucketSingletonBoolVal(mp, false, 0.9);
 	histogram_buckets->Append(pbucketFalse);
 	histogram_buckets->Append(pbucketTrue);
-	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(histogram_buckets);
+	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(mp, histogram_buckets);
 
 	// equality check
 	CPoint *point1 = CTestUtils::PpointBool(mp, false);
@@ -201,7 +201,7 @@ CHistogramTest::EresUnittest_CHistogramValid()
 	histogram_buckets->Append(bucket2);
 
 	// original histogram
-	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(histogram_buckets);
+	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(mp, histogram_buckets);
 
 	// create an auto object
 	CAutoP<CHistogram> ahist;
@@ -241,7 +241,7 @@ CHistogramTest::PhistExampleInt4Remain
 		histogram_buckets->Append(bucket);
 	}
 
-	return GPOS_NEW(mp) CHistogram(histogram_buckets, true, 0.1 /*null_freq*/, 2.0 /*distinct_remaining*/, 0.4 /*freq_remaining*/);
+	return GPOS_NEW(mp) CHistogram(mp, histogram_buckets, true, 0.1 /*null_freq*/, 2.0 /*distinct_remaining*/, 0.4 /*freq_remaining*/);
 }
 
 // basis skew test
@@ -265,7 +265,7 @@ CHistogramTest::EresUnittest_Skew()
 	pdrgppbucket1->Append(bucket1);
 	pdrgppbucket1->Append(bucket2);
 	pdrgppbucket1->Append(pbucket3);
-	CHistogram *histogram1 =  GPOS_NEW(mp) CHistogram(pdrgppbucket1);
+	CHistogram *histogram1 =  GPOS_NEW(mp) CHistogram(mp, pdrgppbucket1);
 
 	CBucketArray *pdrgppbucket2 = GPOS_NEW(mp) CBucketArray(mp);
 	pdrgppbucket2->Append(pbucket4);
@@ -273,7 +273,7 @@ CHistogramTest::EresUnittest_Skew()
 	pdrgppbucket2->Append(pbucket6);
 	pdrgppbucket2->Append(pbucket7);
 	pdrgppbucket2->Append(pbucket8);
-	CHistogram *histogram2 =  GPOS_NEW(mp) CHistogram(pdrgppbucket2);
+	CHistogram *histogram2 =  GPOS_NEW(mp) CHistogram(mp, pdrgppbucket2);
 	GPOS_ASSERT(histogram1->GetSkew() > histogram2->GetSkew());
 
 	{

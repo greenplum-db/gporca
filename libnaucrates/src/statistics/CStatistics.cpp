@@ -110,7 +110,6 @@ CStatistics::GetWidth
 void
 CStatistics::CapNDVs
 	(
-	CMemoryPool *mp,
 	CDouble rows,
 	UlongToHistogramMap *col_histogram_mapping
 	)
@@ -120,7 +119,7 @@ CStatistics::CapNDVs
 	while (col_hist_mapping.Advance())
 	{
 		CHistogram *histogram = const_cast<CHistogram *>(col_hist_mapping.Value());
-		histogram->CapNDVs(mp, rows);
+		histogram->CapNDVs(rows);
 	}
 }
 
@@ -526,7 +525,7 @@ CStatistics::CopyHistograms
 		CHistogram *histogram_copy = NULL;
 		if (is_empty)
 		{
-			histogram_copy = GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+			histogram_copy = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		}
 		else
 		{
@@ -856,7 +855,7 @@ CStatistics::GetDxlStatsDrvdRelation
 		CDouble *width = m_colid_width_mapping->Find(&colid);
 		GPOS_ASSERT(width);
 
-		CDXLStatsDerivedColumn *dxl_derived_col_stats = histogram->TranslateToDXLDerivedColumnStats(mp, md_accessor, colid, *width);
+		CDXLStatsDerivedColumn *dxl_derived_col_stats = histogram->TranslateToDXLDerivedColumnStats(md_accessor, colid, *width);
 		dxl_stats_derived_col_array->Append(dxl_derived_col_stats);
 	}
 

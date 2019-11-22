@@ -272,7 +272,7 @@ CFilterStatsProcessor::MakeStatsFilter
 
 	if (do_cap_NDVs)
 	{
-		CStatistics::CapNDVs(mp, rows_filter, histograms_new);
+		CStatistics::CapNDVs(rows_filter, histograms_new);
 	}
 
 	CStatistics *filter_stats = GPOS_NEW(mp) CStatistics

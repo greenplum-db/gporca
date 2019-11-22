@@ -55,6 +55,9 @@ namespace gpnaucrates
 						CleanupDelete<ULONG>, CleanupDelete<CDouble> > UlongToDoubleMapIter;
 
 		private:
+			// shared memory pool
+			CMemoryPool *m_mp;
+
 			// all the buckets in the histogram. This is shared among histograms,
 			// so must not be modified unless we first make a new copy. We do not copy
 			// histograms unless required, as it is an expensive operation in memory and time.
@@ -91,10 +94,10 @@ namespace gpnaucrates
 			CHistogram& operator=(const CHistogram &);
 
 			// return an array buckets after applying equality filter on the histogram buckets
-			CBucketArray *MakeBucketsWithEqualityFilter(CMemoryPool *mp, CPoint *point) const;
+			CBucketArray *MakeBucketsWithEqualityFilter(CPoint *point) const;
 
 			// return an array buckets after applying non equality filter on the histogram buckets
-			CBucketArray *MakeBucketsWithInequalityFilter(CMemoryPool *mp, CPoint *point) const;
+			CBucketArray *MakeBucketsWithInequalityFilter(CPoint *point) const;
 
 			// less than or less than equal filter
 			CHistogram *MakeHistogramLessThanOrLessThanEqualFilter(CMemoryPool *mp, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point) const;
@@ -183,10 +186,11 @@ namespace gpnaucrates
 
 			// ctors
 			explicit
-			CHistogram(CBucketArray *histogram_buckets, BOOL is_well_defined = true);
+			CHistogram(CMemoryPool *mp, CBucketArray *histogram_buckets, BOOL is_well_defined = true);
 
 			CHistogram
 					(
+					CMemoryPool *mp,
 					CBucketArray *histogram_buckets,
 					BOOL is_well_defined,
 					CDouble null_freq,
@@ -263,7 +267,6 @@ namespace gpnaucrates
 			// scale factor of inequality (!=) join
 			CDouble GetInequalityJoinScaleFactor
 						(
-						CMemoryPool *mp,
 						CDouble rows,
 						const CHistogram *other_histogram,
 						CDouble rows_other
@@ -342,7 +345,6 @@ namespace gpnaucrates
 			// add residual union all buckets after the merge
 			ULONG AddResidualUnionAllBucket
 				(
-				CMemoryPool *mp,
 				CBucketArray *histogram_buckets,
 				CBucket *bucket,
 				CDouble rows_old,
@@ -355,7 +357,6 @@ namespace gpnaucrates
 			// add residual union buckets after the merge
 			ULONG AddResidualUnionBucket
 				(
-				CMemoryPool *mp,
 				CBucketArray *histogram_buckets,
 				CBucket *bucket,
 				CDouble rows,
@@ -413,7 +414,7 @@ namespace gpnaucrates
 			}
 
 			// normalize histogram and return scaling factor
-			CDouble NormalizeHistogram(CMemoryPool *mp);
+			CDouble NormalizeHistogram();
 
 			// is histogram normalized
 			BOOL IsNormalized() const;
@@ -421,7 +422,6 @@ namespace gpnaucrates
 			// translate the histogram into a derived column stats
 			CDXLStatsDerivedColumn *TranslateToDXLDerivedColumnStats
 				(
-				CMemoryPool *mp,
 				CMDAccessor *md_accessor,
 				ULONG colid,
 				CDouble width
@@ -464,7 +464,7 @@ namespace gpnaucrates
 			BOOL IsEmpty() const;
 
 			// cap the total number of distinct values (NDVs) in buckets to the number of rows
-			void CapNDVs(CMemoryPool *mp, CDouble rows);
+			void CapNDVs(CDouble rows);
 
 			// is comparison type supported for filters for text columns
 			static

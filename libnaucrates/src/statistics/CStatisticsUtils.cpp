@@ -160,7 +160,7 @@ CStatisticsUtils::TransformMCVToHist
 										);
 		mcv_buckets->Append(bucket);
 	}
-	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(mcv_buckets);
+	CHistogram *histogram =  GPOS_NEW(mp) CHistogram(mp, mcv_buckets);
 	GPOS_ASSERT(histogram->IsValid());
 	mcv_pairs->Release();
 
@@ -216,7 +216,7 @@ CStatisticsUtils::MergeMCVHist
 
 	CBucketArray *merged_buckets = MergeMcvHistBucket(mp, mcv_buckets, histogram_buckets);
 
-	CHistogram *merged_histogram =  GPOS_NEW(mp) CHistogram(merged_buckets);
+	CHistogram *merged_histogram =  GPOS_NEW(mp) CHistogram(mp, merged_buckets);
 	GPOS_ASSERT(merged_histogram->IsValid());
 
 	return merged_histogram;
@@ -961,7 +961,7 @@ CStatisticsUtils::CreateHistHashMapAfterMergingDisjPreds
 				merged_histogram->Insert
 									(
 									GPOS_NEW(mp) ULONG(disj_child_colid),
-									 GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */)
+									 GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */)
 									);
 			}
 		}

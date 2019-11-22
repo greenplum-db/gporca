@@ -79,6 +79,7 @@ CProjectStatsProcessor::CalcProjStats
 			{
 				proj_col_histogram = GPOS_NEW(mp) CHistogram
 										(
+										mp,
 										proj_col_bucket,
 										is_well_defined,
 										null_freq,
