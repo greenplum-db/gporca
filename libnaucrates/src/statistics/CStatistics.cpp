@@ -525,7 +525,7 @@ CStatistics::CopyHistograms
 		CHistogram *histogram_copy = NULL;
 		if (is_empty)
 		{
-			histogram_copy = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+			histogram_copy = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		}
 		else
 		{

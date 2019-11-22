@@ -70,8 +70,8 @@ CJoinStatsProcessor::JoinHistograms
 	{
 		// use Cartesian product as scale factor
 		*scale_factor = num_rows1 * num_rows2;
-		*result_hist1 = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp));
-		*result_hist2 = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp));
+		*result_hist1 = GPOS_NEW(mp) CHistogram(mp);
+		*result_hist2 = GPOS_NEW(mp) CHistogram(mp);
 
 		return;
 	}

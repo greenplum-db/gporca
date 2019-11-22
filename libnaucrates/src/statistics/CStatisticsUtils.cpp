@@ -961,7 +961,7 @@ CStatisticsUtils::CreateHistHashMapAfterMergingDisjPreds
 				merged_histogram->Insert
 									(
 									GPOS_NEW(mp) ULONG(disj_child_colid),
-									 GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */)
+									 GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */)
 									);
 			}
 		}

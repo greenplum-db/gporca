@@ -76,6 +76,27 @@ CHistogram::CHistogram
 CHistogram::CHistogram
 	(
 	CMemoryPool *mp,
+	BOOL is_well_defined
+	)
+	:
+	m_mp(mp),
+	m_histogram_buckets(NULL),
+	m_is_well_defined(is_well_defined),
+	m_null_freq(CHistogram::DefaultNullFreq),
+	m_distinct_remaining(DefaultNDVRemain),
+	m_freq_remaining(DefaultNDVFreqRemain),
+	m_skew_was_measured(false),
+	m_skew(1.0),
+	m_NDVs_were_scaled(false),
+	m_is_col_stats_missing(false)
+{
+	m_histogram_buckets = GPOS_NEW(m_mp) CBucketArray(m_mp);
+}
+
+// ctor
+CHistogram::CHistogram
+	(
+	CMemoryPool *mp,
 	CBucketArray *histogram_buckets,
 	BOOL is_well_defined,
 	CDouble null_freq,
@@ -640,7 +661,7 @@ CHistogram::MakeHistogramFilterNormalize
 	// if histogram is not well-defined, then result is not well defined
 	if (!IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		*scale_factor = CDouble(1.0) / CHistogram::DefaultSelectivity;
 		return result_histogram;
 	}
@@ -695,7 +716,7 @@ CHistogram::MakeJoinHistogramNormalize
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined() || !other_histogram->IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		(*scale_factor) = CDouble(std::min(rows.Get(), rows_other.Get()));
 
 		return result_histogram;
@@ -799,7 +820,7 @@ CHistogram::MakeLASJHistogramNormalize
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined() || !other_histogram->IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		(*scale_factor) = CDouble(1.0);
 
 		return result_histogram;
@@ -911,7 +932,7 @@ CHistogram::MakeJoinHistogram
 	}
 
 	// TODO:  Feb 24 2014, We currently only support creation of histogram for equi join
-	return GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+	return GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 }
 
 // construct new histogram by LASJ with another histogram, no normalization
@@ -1419,7 +1440,7 @@ CHistogram::MakeGroupByHistogramNormalize
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		*result_distinct_values = MinDistinct / CHistogram::DefaultSelectivity;
 		return result_histogram;
 	}
@@ -2054,7 +2075,7 @@ CHistogram::MakeDefaultHistogram
 		return CHistogram::MakeDefaultBoolHistogram(mp);
 	}
 
-	return GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+	return GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 }
 
 
@@ -2192,7 +2213,7 @@ CHistogram::AddEmptyHistogram
 		ULONG colid = *(col_hist_mapping.Key());
 
 		// empty histogram
-		CHistogram *histogram = GPOS_NEW(mp) CHistogram(mp, GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *histogram = GPOS_NEW(mp) CHistogram(mp, false /* is_well_defined */);
 		output_histograms->Insert(GPOS_NEW(mp) ULONG(colid), histogram);
 	}
 }

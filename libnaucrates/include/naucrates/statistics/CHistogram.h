@@ -182,11 +182,50 @@ namespace gpnaucrates
 
 			BOOL IsHistogramForTextRelatedTypes() const;
 
+			// add residual union all buckets after the merge
+			ULONG AddResidualUnionAllBucket
+				(
+				CBucketArray *histogram_buckets,
+				CBucket *bucket,
+				CDouble rows_old,
+				CDouble rows_new,
+				BOOL bucket_is_residual,
+				ULONG index
+				)
+				const;
+
+			// add residual union buckets after the merge
+			ULONG AddResidualUnionBucket
+				(
+				CBucketArray *histogram_buckets,
+				CBucket *bucket,
+				CDouble rows,
+				BOOL bucket_is_residual,
+				ULONG index,
+				CDoubleArray *dest_bucket_freqs
+				)
+				const;
+
+			// create a new histogram with updated bucket frequency
+			CHistogram *MakeHistogramUpdateFreq
+						(
+						CMemoryPool *mp,
+						const CBucketArray *histogram_buckets,
+						CDoubleArray *dest_bucket_freqs,
+						CDouble *num_output_rows,
+						CDouble num_null_rows,
+						CDouble num_NDV_remain,
+						CDouble num_NDV_remain_rows
+						)
+						const;
 		public:
 
 			// ctors
 			explicit
 			CHistogram(CMemoryPool *mp, CBucketArray *histogram_buckets, BOOL is_well_defined = true);
+
+			explicit
+			CHistogram(CMemoryPool *mp, BOOL is_well_defined = true);
 
 			CHistogram
 					(
@@ -329,43 +368,6 @@ namespace gpnaucrates
 					)
 					const;
 
-			// create a new histogram with updated bucket frequency
-			CHistogram *MakeHistogramUpdateFreq
-						(
-						CMemoryPool *mp,
-						const CBucketArray *histogram_buckets,
-						CDoubleArray *dest_bucket_freqs,
-						CDouble *num_output_rows,
-						CDouble num_null_rows,
-						CDouble num_NDV_remain,
-						CDouble num_NDV_remain_rows
-						)
-						const;
-				
-			// add residual union all buckets after the merge
-			ULONG AddResidualUnionAllBucket
-				(
-				CBucketArray *histogram_buckets,
-				CBucket *bucket,
-				CDouble rows_old,
-				CDouble rows_new,
-				BOOL bucket_is_residual,
-				ULONG index
-				)
-				const;
-
-			// add residual union buckets after the merge
-			ULONG AddResidualUnionBucket
-				(
-				CBucketArray *histogram_buckets,
-				CBucket *bucket,
-				CDouble rows,
-				BOOL bucket_is_residual,
-				ULONG index,
-				CDoubleArray *dest_bucket_freqs
-				)
-				const;
-
 			// number of buckets
 			ULONG Buckets() const
 			{
@@ -503,8 +505,8 @@ namespace gpnaucrates
 				);
 
 			// add dummy histogram buckets for the columns in the input histogram
-      static
-      void AddEmptyHistogram(CMemoryPool *mp, UlongToHistogramMap *output_histograms, UlongToHistogramMap *input_histograms);
+			static
+			void AddEmptyHistogram(CMemoryPool *mp, UlongToHistogramMap *output_histograms, UlongToHistogramMap *input_histograms);
 
 			// default histogram selectivity
 			static const CDouble DefaultSelectivity;
