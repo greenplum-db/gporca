@@ -218,6 +218,9 @@ namespace gpnaucrates
 						CDouble num_NDV_remain_rows
 						)
 						const;
+
+			// create a deep copy of m_histogram_buckets
+			CBucketArray* DeepCopyHistogramBuckets();
 		public:
 
 			// ctors

@@ -588,19 +588,31 @@ CHistogram::CapNDVs
 	// we must first make a deep copy of the existing m_histogram_buckets as these buckets
 	// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
 	// and modify individual buckets.
-	CBucketArray *histogram_buckets = GPOS_NEW(m_mp) CBucketArray(m_mp, m_histogram_buckets->Size());
+	CBucketArray *histogram_buckets = DeepCopyHistogramBuckets();
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
 	{
-		CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(m_mp);
-		CDouble distinct_bucket = newBucket->GetNumDistinct();
-		newBucket->SetDistinct(std::max(CHistogram::MinDistinct.Get(), (distinct_bucket * scale_ratio).Get()));
-		histogram_buckets->Append(newBucket);
+		CBucket *bucket = (*histogram_buckets)[ul];
+		CDouble distinct_bucket = bucket->GetNumDistinct();
+		bucket->SetDistinct(std::max(CHistogram::MinDistinct.Get(), (distinct_bucket * scale_ratio).Get()));
 	}
 	m_histogram_buckets->Release();
 	m_histogram_buckets = histogram_buckets;
 	m_distinct_remaining = m_distinct_remaining * scale_ratio;
 }
 
+// create a deep copy of the bucket array.
+// this should be used if a bucket needs to be modified
+CBucketArray*
+CHistogram::DeepCopyHistogramBuckets()
+{
+	CBucketArray *histogram_buckets = GPOS_NEW(m_mp) CBucketArray(m_mp, m_histogram_buckets->Size());
+	for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
+	{
+		CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(m_mp);
+		histogram_buckets->Append(newBucket);
+	}
+	return histogram_buckets;
+}
 // sum of frequencies is approx 1.0
 BOOL
 CHistogram::IsNormalized
@@ -1046,12 +1058,11 @@ CHistogram::NormalizeHistogram()
 		// we must first make a deep copy of the existing m_histogram_buckets as these buckets
 		// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
 		// and modify individual buckets.
-		CBucketArray *histogram_buckets = GPOS_NEW(m_mp) CBucketArray(m_mp, m_histogram_buckets->Size());
-		for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
+		CBucketArray *histogram_buckets = DeepCopyHistogramBuckets();
+		for (ULONG ul = 0; ul < histogram_buckets->Size(); ul++)
 		{
-			CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(m_mp);
-			newBucket->SetFrequency(newBucket->GetFrequency() * scale_factor);
-			histogram_buckets->Append(newBucket);
+			CBucket *bucket = (*histogram_buckets)[ul];
+			bucket->SetFrequency(bucket->GetFrequency() * scale_factor);
 		}
 		m_histogram_buckets->Release();
 		m_histogram_buckets = histogram_buckets;
