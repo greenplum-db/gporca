@@ -218,8 +218,6 @@ namespace gpnaucrates
 						)
 						const;
 
-			// create a deep copy of m_histogram_buckets
-			CBucketArray* DeepCopyHistogramBuckets();
 		public:
 
 			// ctors
@@ -500,6 +498,14 @@ namespace gpnaucrates
 			// add dummy histogram buckets for the columns in the input histogram
 			static
 			void AddEmptyHistogram(CMemoryPool *mp, UlongToHistogramMap *output_histograms, UlongToHistogramMap *input_histograms);
+
+			// create a deep copy of m_histogram_buckets
+			static
+			CBucketArray* DeepCopyHistogramBuckets
+				(
+				CMemoryPool *mp,
+				const CBucketArray *buckets
+				);
 
 			// default histogram selectivity
 			static const CDouble DefaultSelectivity;

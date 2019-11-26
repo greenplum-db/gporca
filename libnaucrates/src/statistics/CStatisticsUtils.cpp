@@ -559,12 +559,11 @@ CStatisticsUtils::DistributeBucketProperties
 			bucket_width = bucket_width + bucket->Width();
 		}
 	}
-	CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, buckets->Size());
+	CBucketArray *histogram_buckets = CHistogram::DeepCopyHistogramBuckets(mp, buckets);
 
-	for (ULONG i = 0; i < bucket_size; i++)
+	for (ULONG i = 0; i < histogram_buckets->Size(); i++)
 	{
-		CBucket *bucket = (*buckets)[i];
-		CBucket *newBucket = (*buckets)[i]->MakeBucketCopy(mp);
+		CBucket *bucket = (*histogram_buckets)[i];
 
 		if (!bucket->IsSingleton())
 		{
@@ -573,12 +572,10 @@ CStatisticsUtils::DistributeBucketProperties
 			GPOS_ASSERT(GPOPT_BUCKET_DEFAULT_DISTINCT == bucket->GetNumDistinct());
 
 			CDouble factor = bucket->Width() / bucket_width;
-			newBucket->SetFrequency(total_frequency * factor);
+			bucket->SetFrequency(total_frequency * factor);
 			// TODO: , Aug 1 2013 - another heuristic may be max(1, dDisinct * factor)
-			newBucket->SetDistinct(total_distinct_values * factor);
+			bucket->SetDistinct(total_distinct_values * factor);
 		}
-		histogram_buckets->Append(newBucket);
-
 	}
 	// buckets is released in the caller function and thus is not released here
 	return histogram_buckets;

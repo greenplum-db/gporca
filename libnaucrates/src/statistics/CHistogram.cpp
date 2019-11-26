@@ -582,7 +582,7 @@ CHistogram::CapNDVs
 	// we must first make a deep copy of the existing m_histogram_buckets as these buckets
 	// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
 	// and modify individual buckets.
-	CBucketArray *histogram_buckets = DeepCopyHistogramBuckets();
+	CBucketArray *histogram_buckets = DeepCopyHistogramBuckets(m_mp, m_histogram_buckets);
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
 	{
 		CBucket *bucket = (*histogram_buckets)[ul];
@@ -597,12 +597,16 @@ CHistogram::CapNDVs
 // create a deep copy of the bucket array.
 // this should be used if a bucket needs to be modified
 CBucketArray*
-CHistogram::DeepCopyHistogramBuckets()
+CHistogram::DeepCopyHistogramBuckets
+	(
+	CMemoryPool *mp,
+	const CBucketArray *buckets
+	)
 {
-	CBucketArray *histogram_buckets = GPOS_NEW(m_mp) CBucketArray(m_mp, m_histogram_buckets->Size());
-	for (ULONG ul = 0; ul < m_histogram_buckets->Size(); ul++)
+	CBucketArray *histogram_buckets = GPOS_NEW(mp) CBucketArray(mp, buckets->Size());
+	for (ULONG ul = 0; ul < buckets->Size(); ul++)
 	{
-		CBucket *newBucket = (*m_histogram_buckets)[ul]->MakeBucketCopy(m_mp);
+		CBucket *newBucket = (*buckets)[ul]->MakeBucketCopy(mp);
 		histogram_buckets->Append(newBucket);
 	}
 	return histogram_buckets;
@@ -1045,7 +1049,7 @@ CHistogram::NormalizeHistogram()
 		// we must first make a deep copy of the existing m_histogram_buckets as these buckets
 		// may be shared among histograms. We can then overwrite m_histogram_buckets with the copy
 		// and modify individual buckets.
-		CBucketArray *histogram_buckets = DeepCopyHistogramBuckets();
+		CBucketArray *histogram_buckets = DeepCopyHistogramBuckets(m_mp, m_histogram_buckets);
 		for (ULONG ul = 0; ul < histogram_buckets->Size(); ul++)
 		{
 			CBucket *bucket = (*histogram_buckets)[ul];
