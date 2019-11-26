@@ -49,7 +49,6 @@ CJoinStatsProcessor::JoinHistograms
 	{
 		CLeftAntiSemiJoinStatsProcessor::JoinHistogramsLASJ
 				(
-				mp,
 				histogram1,
 				histogram2,
 				join_pred_stats,
@@ -94,7 +93,6 @@ CJoinStatsProcessor::JoinHistograms
 	{
 		CHistogram *join_histogram = histogram1->MakeJoinHistogramNormalize
 				(
-				mp,
 				stats_cmp_type,
 				num_rows1,
 				histogram2,
@@ -109,7 +107,7 @@ CJoinStatsProcessor::JoinHistograms
 				join_histogram->SetNDVScaled();
 			}
 			*result_hist1 = join_histogram;
-			*result_hist2 = (*result_hist1)->CopyHistogram(mp);
+			*result_hist2 = (*result_hist1)->CopyHistogram();
 			if (histogram2->WereNDVsScaled())
 			{
 				(*result_hist2)->SetNDVScaled();
@@ -129,8 +127,8 @@ CJoinStatsProcessor::JoinHistograms
 
 	// for an unsupported join predicate operator or in the case of
 	// missing histograms, copy input histograms and use default scale factor
-	*result_hist1 = histogram1->CopyHistogram(mp);
-	*result_hist2 = histogram2->CopyHistogram(mp);
+	*result_hist1 = histogram1->CopyHistogram();
+	*result_hist2 = histogram2->CopyHistogram();
 }
 
 //	derive statistics for the given join's predicate(s)

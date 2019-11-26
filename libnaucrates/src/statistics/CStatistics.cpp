@@ -529,7 +529,7 @@ CStatistics::CopyHistograms
 		}
 		else
 		{
-			histogram_copy = histogram->CopyHistogram(mp);
+			histogram_copy = histogram->CopyHistogram();
 		}
 
 		histograms_copy->Insert(GPOS_NEW(mp) ULONG(colid), histogram_copy);

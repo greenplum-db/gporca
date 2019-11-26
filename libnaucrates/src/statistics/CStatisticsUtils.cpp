@@ -204,10 +204,10 @@ CStatisticsUtils::MergeMCVHist
 		{
 			// have to do deep copy, otherwise mcv_histogram and phistMerge
 			// will point to the same object
-			return mcv_histogram->CopyHistogram(mp);
+			return mcv_histogram->CopyHistogram();
 		}
 
-		return histogram->CopyHistogram(mp);
+		return histogram->CopyHistogram();
 	}
 
 	// both MCV and histogram buckets must be sorted
@@ -736,7 +736,6 @@ CStatisticsUtils::UpdateDisjStatistics
 			CDouble output_rows(0.0);
 			CHistogram *new_histogram = previous_histogram->MakeUnionHistogramNormalize
 												(
-												mp,
 												input_disjunct_rows,
 												result_histogram,
 												local_rows,
@@ -868,7 +867,7 @@ CStatisticsUtils::AddHistogram
 #ifdef GPOS_DEBUG
 		BOOL result =
 #endif
-		col_histogram_mapping->Insert(GPOS_NEW(mp) ULONG(colid), histogram->CopyHistogram(mp));
+		col_histogram_mapping->Insert(GPOS_NEW(mp) ULONG(colid), histogram->CopyHistogram());
 		GPOS_ASSERT(result);
 	}
 	else if (replace_old)
@@ -876,7 +875,7 @@ CStatisticsUtils::AddHistogram
 #ifdef GPOS_DEBUG
 		BOOL result =
 #endif
-		col_histogram_mapping->Replace(&colid, histogram->CopyHistogram(mp));
+		col_histogram_mapping->Replace(&colid, histogram->CopyHistogram());
 		GPOS_ASSERT(result);
 	}
 }
@@ -995,7 +994,6 @@ CStatisticsUtils::CreateHistHashMapAfterMergingDisjPreds
 				const CHistogram *disj_child_histogram = disj_preds_histogram_map->Find(&colid);
 				CHistogram *normalized_union_histogram = histogram->MakeUnionHistogramNormalize
 													(
-													mp,
 													cumulative_rows,
 													disj_child_histogram,
 													num_rows_disj_child,
@@ -1733,7 +1731,7 @@ CStatisticsUtils::AddGrpColStats
 		const CHistogram *histogram = input_stats->GetHistogram(grp_colid);
 		if (NULL != histogram)
 		{
-			CHistogram *result_histogram = histogram->MakeGroupByHistogramNormalize(mp, input_stats->Rows(), &num_distinct_vals);
+			CHistogram *result_histogram = histogram->MakeGroupByHistogramNormalize(input_stats->Rows(), &num_distinct_vals);
 			if (histogram->WereNDVsScaled())
 			{
 				result_histogram->SetNDVScaled();

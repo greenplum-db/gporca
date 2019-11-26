@@ -92,7 +92,7 @@ CProjectStatsProcessor::CalcProjStats
 		}
 		else
 		{
-			histograms_new->Insert(GPOS_NEW(mp) ULONG(colid), histogram->CopyHistogram(mp));
+			histograms_new->Insert(GPOS_NEW(mp) ULONG(colid), histogram->CopyHistogram());
 		}
 
 		// look up width
