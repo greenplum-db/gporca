@@ -135,10 +135,11 @@ CPhysicalAssert::PdsRequired
 {
 	CDistributionSpec::EDistributionType edt = pdsRequired->Edt();
 
-	// pass through singleton and broadcast requests
+	// pass through singleton, broadcast and Strict Random requests
 	if (CDistributionSpec::EdtSingleton == edt ||
 		CDistributionSpec::EdtStrictSingleton == edt ||
-		CDistributionSpec::EdtReplicated == edt
+		CDistributionSpec::EdtReplicated == edt ||
+		CDistributionSpec::EdtStrictRandom == edt
 		)
 	{
 		pdsRequired->AddRef();

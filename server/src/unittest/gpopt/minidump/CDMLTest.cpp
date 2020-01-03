@@ -74,6 +74,7 @@ const CHAR *rgszDMLFileNames[] =
 	"../data/dxl/minidump/UpdateZeroRows.mdp",
 	"../data/dxl/minidump/InsertNoEnforceConstraints.mdp",
 	"../data/dxl/minidump/UpdateNoEnforceConstraints.mdp",
+	"../data/dxl/minidump/InsertNonNullColRandomDist.mdp",
 	};
 
 //---------------------------------------------------------------------------
