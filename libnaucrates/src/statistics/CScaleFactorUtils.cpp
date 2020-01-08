@@ -60,20 +60,40 @@ CScaleFactorUtils::CumulativeJoinScaleFactor
 		join_conds_scale_factors->Sort(CScaleFactorUtils::DescendingOrderCmpFunc);
 	}
 
-	CDouble scale_factor(1.0);
-	// iterate over joins
+	// We have two methods to calculate the cumulative scale factor:
+	// 1. When optimizer_damping_factor_join is greater than 0, use the legacy damping method
+	//    Note: The default value (.01) severly overestimates cardinalities for non-correlated columns
+	//
+	// 2. Otherwise, use a damping method to moderately decrease the impact of subsequent predicates to account for correlated columns
+	//    For example, given ANDed predicates with selectivities [.5, .3, .1], the cumulative selectivity would be
+	//      S = S1 * sqrt(S2) * 4root(S3)
+	//    .15 = .5 * sqrt(.3) * 4root(.1)
+	//    For scale factors, this is equivalent to SF1 * sqrt(SF2) * 4root(SF3)
+	//    Note: This will underestimate the cardinality of highly correlated columns and overestimate the
+	//    cardinality of highly independent columns, but seems to be a good middle ground in the absence
+	//    of correlated column statistics
+	CDouble cumulative_scale_factor(1.0);
+
 	for (ULONG ul = 0; ul < num_join_conds; ul++)
 	{
 		CDouble local_scale_factor = *(*join_conds_scale_factors)[ul];
 
-		scale_factor = scale_factor * std::max
-										(
-										CStatistics::MinRows.Get(),
-										(local_scale_factor * DampedJoinScaleFactor(stats_config, ul + 1)).Get()
-										);
+		if (stats_config->DDampingFactorJoin() > 0)
+		{
+			cumulative_scale_factor = cumulative_scale_factor * std::max(CStatistics::MinRows.Get(),
+			(local_scale_factor * DampedJoinScaleFactor(stats_config, ul + 1)).Get());
+		}
+		else
+		{
+			CDouble nth_root = 1;
+			if (ul > 0)
+			{
+				nth_root = 2<<(ul-1);
+			}
+			cumulative_scale_factor = cumulative_scale_factor * local_scale_factor.Pow(CDouble(1)/nth_root);
+		}
 	}
-
-	return scale_factor;
+	return cumulative_scale_factor;
 }
 
 
