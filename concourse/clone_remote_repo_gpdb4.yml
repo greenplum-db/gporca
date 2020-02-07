@@ -9,7 +9,5 @@ inputs:
   - name: gporca-commits-to-test
 outputs:
   - name: package_tarball
-params: 
-  - gitkey: 
 run:
   path: orca_main_src/concourse/clone_remote_repo_gpdb4.py

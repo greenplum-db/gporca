@@ -117,7 +117,7 @@ resources:
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
-    bucket: {{bucket-name}}
+    bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
     secret_access_key: {{s3_secret_access_key}}
     versioned_file: sync_tools_gpdb_centos/sync_tools_gpdb.tar.gz
@@ -128,20 +128,20 @@ jobs:
   plan:
   - get: xerces_patch
     trigger: true
-  - aggregate:
+  - in_parallel:
     - task: build
       file: xerces_patch/concourse/xerces-c/build_xerces_centos5.yml
-  - aggregate:
+  - in_parallel:
     - task: package_tarball
       file: xerces_patch/concourse/xerces-c/package_tarball_centos5.yml
-  - aggregate:
+  - in_parallel:
     - put: bin_xerces_centos5
       params:
         file: package_tarball_centos5/bin_xerces_centos5.tar.gz
 - name: orca_centos5_release
   max_in_flight: 2
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - clone_repos_to_test
@@ -170,7 +170,7 @@ jobs:
 - name: orca_centos5_debug
   max_in_flight: 2
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - clone_repos_to_test
@@ -190,13 +190,13 @@ jobs:
     params:
       build_type: DEBUG
       outputDirectory: build_and_test
-  - aggregate:
+  - in_parallel:
     - put: bin_orca_centos5_debug
       params:
         file: package_tarball_debug/bin_orca_centos5_debug.tar.gz
 - name: clone_repos_to_test
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       trigger: true
       version: every
@@ -205,7 +205,7 @@ jobs:
     file: orca_main_src/concourse/clone_remote_repo_gpdb4.yml
     params:
       gitkey: {{gpdb-git-key}}
-  - aggregate:
+  - in_parallel:
     - put: orca_tarball
       params:
         file: package_tarball/orca_src.tar.gz
@@ -215,7 +215,7 @@ jobs:
 - name: build_gpdb
   max_in_flight: 1
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - orca_centos5_release
@@ -269,7 +269,7 @@ jobs:
 - name: gpdb_icg_with_orca
   max_in_flight: 1
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - build_gpdb
@@ -299,7 +299,7 @@ jobs:
       TEST_OS: centos
     image: centos-gpdb-dev-5
     on_failure:
-      aggregate:
+      in_parallel:
       - put: regression_diffs
         params:
           file: icg_output/regression.diffs
@@ -310,7 +310,7 @@ jobs:
 - name: gpdb_icg_with_planner
   max_in_flight: 1
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - build_gpdb
@@ -340,7 +340,7 @@ jobs:
       TEST_OS: centos
     image: centos-gpdb-dev-5
     on_failure:
-      aggregate:
+      in_parallel:
       - put: regression_diffs
         params:
           file: icg_output/regression.diffs
@@ -351,7 +351,7 @@ jobs:
 - name: gpdb_icb_with_orca
   max_in_flight: 1
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - build_gpdb
@@ -381,7 +381,7 @@ jobs:
       TEST_OS: centos
     image: centos-gpdb-dev-5
     on_failure:
-      aggregate:
+      in_parallel:
       - put: regression_diffs
         params:
           file: icg_output/regression.diffs
@@ -392,7 +392,7 @@ jobs:
 - name: gpdb_icb_with_planner
   max_in_flight: 1
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - build_gpdb
@@ -422,7 +422,7 @@ jobs:
       TEST_OS: centos
     image: centos-gpdb-dev-5
     on_failure:
-      aggregate:
+      in_parallel:
       - put: regression_diffs
         params:
           file: icg_output/regression.diffs
