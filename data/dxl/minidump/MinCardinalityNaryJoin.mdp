@@ -13358,10 +13358,10 @@
         </dxl:LogicalSelect>
       </dxl:LogicalGroupBy>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="63022371376">
+    <dxl:Plan Id="0" SpaceSize="43679576016">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="14736.095443" Rows="122051.162098" Width="191"/>
+          <dxl:Cost StartupCost="0" TotalCost="7237700.024902" Rows="247153.603248" Width="191"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="3" Alias="ccd">
@@ -13417,7 +13417,7 @@
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="14649.220239" Rows="122051.162098" Width="191"/>
+            <dxl:Cost StartupCost="0" TotalCost="7237524.102615" Rows="247153.603248" Width="191"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="3"/>
@@ -13492,7 +13492,7 @@
           <dxl:Filter/>
           <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="14564.328001" Rows="122051.162098" Width="191"/>
+              <dxl:Cost StartupCost="0" TotalCost="7237352.195833" Rows="247153.603248" Width="191"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13592,7 +13592,7 @@
             </dxl:HashExprList>
             <dxl:Result>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="14540.006052" Rows="122051.162098" Width="191"/>
+                <dxl:Cost StartupCost="0" TotalCost="7237302.943887" Rows="247153.603248" Width="191"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13648,7 +13648,7 @@
               <dxl:OneTimeFilter/>
               <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="true">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="14540.006052" Rows="122051.162098" Width="191"/>
+                  <dxl:Cost StartupCost="0" TotalCost="7237302.943887" Rows="247153.603248" Width="191"/>
                 </dxl:Properties>
                 <dxl:GroupingColumns>
                   <dxl:GroupingColumn ColId="3"/>
@@ -13723,7 +13723,7 @@
                 <dxl:Filter/>
                 <dxl:HashJoin JoinType="Inner">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="10661.864993" Rows="5719390.578080" Width="189"/>
+                    <dxl:Cost StartupCost="0" TotalCost="1788910.034085" Rows="8039672881.849239" Width="189"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13785,7 +13785,7 @@
                   </dxl:HashCondList>
                   <dxl:HashJoin JoinType="Inner">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="8581.548192" Rows="965277.538797" Width="167"/>
+                      <dxl:Cost StartupCost="0" TotalCost="15082.576081" Rows="3800778.909016" Width="167"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13847,7 +13847,7 @@
                     </dxl:HashCondList>
                     <dxl:HashJoin JoinType="Inner">
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="7874.617109" Rows="965277.538797" Width="163"/>
+                        <dxl:Cost StartupCost="0" TotalCost="13565.100863" Rows="3800778.909016" Width="163"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13909,7 +13909,7 @@
                       </dxl:HashCondList>
                       <dxl:HashJoin JoinType="Inner">
                         <dxl:Properties>
-                          <dxl:Cost StartupCost="0" TotalCost="7172.184085" Rows="965277.504323" Width="163"/>
+                          <dxl:Cost StartupCost="0" TotalCost="12065.356054" Rows="3800778.773273" Width="163"/>
                         </dxl:Properties>
                         <dxl:ProjList>
                           <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -13971,7 +13971,7 @@
                         </dxl:HashCondList>
                         <dxl:HashJoin JoinType="Inner">
                           <dxl:Properties>
-                            <dxl:Cost StartupCost="0" TotalCost="6471.833307" Rows="965277.504323" Width="151"/>
+                            <dxl:Cost StartupCost="0" TotalCost="10574.600791" Rows="3800778.773273" Width="151"/>
                           </dxl:Properties>
                           <dxl:ProjList>
                             <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14033,7 +14033,7 @@
                           </dxl:HashCondList>
                           <dxl:HashJoin JoinType="Inner">
                             <dxl:Properties>
-                              <dxl:Cost StartupCost="0" TotalCost="5742.142520" Rows="965277.504323" Width="148"/>
+                              <dxl:Cost StartupCost="0" TotalCost="9095.929356" Rows="3800778.773273" Width="148"/>
                             </dxl:Properties>
                             <dxl:ProjList>
                               <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14095,7 +14095,7 @@
                             </dxl:HashCondList>
                             <dxl:HashJoin JoinType="Inner">
                               <dxl:Properties>
-                                <dxl:Cost StartupCost="0" TotalCost="4777.034544" Rows="965277.504323" Width="148"/>
+                                <dxl:Cost StartupCost="0" TotalCost="7391.764988" Rows="3800778.773273" Width="148"/>
                               </dxl:Properties>
                               <dxl:ProjList>
                                 <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14159,7 +14159,7 @@
                               </dxl:HashCondList>
                               <dxl:HashJoin JoinType="Inner">
                                 <dxl:Properties>
-                                  <dxl:Cost StartupCost="0" TotalCost="4095.709786" Rows="965277.504323" Width="131"/>
+                                  <dxl:Cost StartupCost="0" TotalCost="5981.169152" Rows="3800778.773273" Width="131"/>
                                 </dxl:Properties>
                                 <dxl:ProjList>
                                   <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14221,7 +14221,7 @@
                                 </dxl:HashCondList>
                                 <dxl:HashJoin JoinType="Inner">
                                   <dxl:Properties>
-                                    <dxl:Cost StartupCost="0" TotalCost="3429.799751" Rows="965277.504323" Width="100"/>
+                                    <dxl:Cost StartupCost="0" TotalCost="4660.069290" Rows="3800778.773273" Width="100"/>
                                   </dxl:Properties>
                                   <dxl:ProjList>
                                     <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14280,7 +14280,7 @@
                                   </dxl:HashCondList>
                                   <dxl:HashJoin JoinType="Inner">
                                     <dxl:Properties>
-                                      <dxl:Cost StartupCost="0" TotalCost="2812.795046" Rows="965277.713032" Width="89"/>
+                                      <dxl:Cost StartupCost="0" TotalCost="3496.757016" Rows="3800779.595063" Width="89"/>
                                     </dxl:Properties>
                                     <dxl:ProjList>
                                       <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14339,7 +14339,7 @@
                                     </dxl:HashCondList>
                                     <dxl:Sequence>
                                       <dxl:Properties>
-                                        <dxl:Cost StartupCost="0" TotalCost="2208.201871" Rows="965278.119465" Width="99"/>
+                                        <dxl:Cost StartupCost="0" TotalCost="2382.245050" Rows="3800781.195392" Width="99"/>
                                       </dxl:Properties>
                                       <dxl:ProjList>
                                         <dxl:ProjElem ColId="1" Alias="fl_yr">
@@ -14504,7 +14504,7 @@
                                       </dxl:PartitionSelector>
                                       <dxl:DynamicTableScan PartIndexId="1">
                                         <dxl:Properties>
-                                          <dxl:Cost StartupCost="0" TotalCost="2208.201871" Rows="965278.119465" Width="99"/>
+                                          <dxl:Cost StartupCost="0" TotalCost="2382.245050" Rows="3800781.195392" Width="99"/>
                                         </dxl:Properties>
                                         <dxl:ProjList>
                                           <dxl:ProjElem ColId="1" Alias="fl_yr">
