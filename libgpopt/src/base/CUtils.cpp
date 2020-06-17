@@ -2727,31 +2727,32 @@ CUtils::PdrgpcrGroupingKey
 // columns from separate equiv classes, then these are merged. Returns a new
 // array of equivalence classes
 CColRefSetArray *
-CUtils::PdrgpcrsAddEquivClass
+CUtils::AddEquivClassToArray
 	(
 	CMemoryPool *mp,
-	CColRefSet *pcrsNew,
-	CColRefSetArray *pdrgpcrs
+	const CColRefSet *pcrsNew,
+	const CColRefSetArray *pdrgpcrs
 	)
 {
 	CColRefSetArray *pdrgpcrsNew = GPOS_NEW(mp) CColRefSetArray(mp);
+	CColRefSet *pcrsCopy = GPOS_NEW(mp) CColRefSet(mp, *pcrsNew);
 
 	const ULONG length = pdrgpcrs->Size();
 	for (ULONG ul = 0; ul < length; ul++)
 	{
 		CColRefSet *pcrs = (*pdrgpcrs)[ul];
-		if (pcrsNew->IsDisjoint(pcrs))
+		if (pcrsCopy->IsDisjoint(pcrs))
 		{
 			pcrs->AddRef();
 			pdrgpcrsNew->Append(pcrs);
 		}
 		else
 		{
-			pcrsNew->Include(pcrs);
+			pcrsCopy->Include(pcrs);
 		}
 	}
 
-	pdrgpcrsNew->Append(pcrsNew);
+	pdrgpcrsNew->Append(pcrsCopy);
 
 	return pdrgpcrsNew;
 }
@@ -2772,10 +2773,8 @@ CUtils::PdrgpcrsMergeEquivClasses
 	for (ULONG ul = 0; ul < length; ul++)
 	{
 		CColRefSet *pcrs = (*pdrgpcrsSnd)[ul];
-		// create new ColRefSet when include new columns. do not change original CColRefSet.
-		CColRefSet *pcrsCopyed = GPOS_NEW(mp) CColRefSet(mp, *pcrs);
 
-		CColRefSetArray *pdrgpcrs = PdrgpcrsAddEquivClass(mp, pcrsCopyed, pdrgpcrsMerged);
+		CColRefSetArray *pdrgpcrs = AddEquivClassToArray(mp, pcrs, pdrgpcrsMerged);
 		pdrgpcrsMerged->Release();
 		pdrgpcrsMerged = pdrgpcrs;
 	}
