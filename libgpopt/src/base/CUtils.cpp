@@ -2772,9 +2772,10 @@ CUtils::PdrgpcrsMergeEquivClasses
 	for (ULONG ul = 0; ul < length; ul++)
 	{
 		CColRefSet *pcrs = (*pdrgpcrsSnd)[ul];
-		pcrs->AddRef();
+		// create new ColRefSet when include new columns. do not change original CColRefSet.
+		CColRefSet *pcrsCopyed = GPOS_NEW(mp) CColRefSet(mp, *pcrs);
 
-		CColRefSetArray *pdrgpcrs = PdrgpcrsAddEquivClass(mp, pcrs, pdrgpcrsMerged);
+		CColRefSetArray *pdrgpcrs = PdrgpcrsAddEquivClass(mp, pcrsCopyed, pdrgpcrsMerged);
 		pdrgpcrsMerged->Release();
 		pdrgpcrsMerged = pdrgpcrs;
 	}
