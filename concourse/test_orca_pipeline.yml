@@ -4,7 +4,8 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/greenplum-db/gporca-pipeline-misc
+    private_key: {{slack-trigger-git-key}}
+    uri: {{slack-trigger-git-remote}}
 - name: regression_diffs
   type: s3
   source:

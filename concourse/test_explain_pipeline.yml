@@ -9,7 +9,8 @@ resources:
   type: git
   source:
     branch: {{branch_name}}
-    uri: https://github.com/greenplum-db/gporca-pipeline-misc
+    private_key: {{slack-trigger-git-key}}
+    uri: {{slack-trigger-git-remote}}
 - name: orca_main_src  # used for yml task files
   type: git
   source:
