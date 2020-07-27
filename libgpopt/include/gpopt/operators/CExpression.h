@@ -26,6 +26,8 @@
 #include "gpopt/base/CPrintPrefix.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/base/CKeyCollection.h"
+#include "gpopt/metadata/CTableDescriptor.h"
+
 
 namespace gpopt
 {

@@ -86,10 +86,19 @@ CJoinOrderDPv2::CJoinOrderDPv2
 
 	m_bitset_to_group_info_map = GPOS_NEW(mp) BitSetToGroupInfoMap(mp);
 
+	// Contains top k expressions for a general DP algorithm, without considering cost of motions/PS
 	m_top_k_expressions = GPOS_NEW(mp) KHeap<SExpressionInfoArray, SExpressionInfo>
 										(
 										 mp,
 										 GPOPT_DPV2_JOIN_ORDERING_TOPK
+										);
+
+	// We use a separate heap to ensure we produce an alternative expression that contains a dynamic PS
+	// If no dynamic PS is valid, this will be empty.
+	m_top_k_part_expressions = GPOS_NEW(mp) KHeap<SExpressionInfoArray, SExpressionInfo>
+										(
+										 mp,
+										 1 /* keep top 1 expression */
 										);
 
 	m_mp = mp;

@@ -555,6 +555,10 @@ namespace gpopt
 			// top K expressions at the top level
 			KHeap<SExpressionInfoArray, SExpressionInfo> *m_top_k_expressions;
 
+			// top K expressions at top level that contain promising dynamic partiion selectors
+			// if there are no promising dynamic partition selectors, this will be empty
+			KHeap<SExpressionInfoArray, SExpressionInfo> *m_top_k_part_expressions;
+
 			// current penalty for cross products (depends on enumeration algorithm)
 			CDouble m_cross_prod_penalty;
 
