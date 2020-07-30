@@ -302,7 +302,9 @@ namespace gpopt
 				EJoinOrderQuery            = 1,  // this expression uses the "query" join order
 				EJoinOrderMincard          = 2,  // this expression has the "mincard" property
 				EJoinOrderGreedyAvoidXProd = 4,  // best "greedy" expression with minimal cross products
-				EJoinOrderStats            = 8   // this expression is used to calculate the statistics
+				EJoinOrderHasPS            = 8,  // best expression with special consideration for DPE
+				EJoinOrderDP               = 16, // best solution using DP
+				EJoinOrderStats            = 32   // this expression is used to calculate the statistics
 												 // (row count) for the group
 			};
 
@@ -357,10 +359,23 @@ namespace gpopt
 				// in the future, we may add more properties relevant to the cost here,
 				// like distribution spec, partition selectors
 
+				// Stores part keys for atoms that are partitioned tables. NULL otherwise.
+				CPartKeysArray *m_atom_part_keys_array;
+
 				// cost of the expression
 				CDouble m_cost;
 
+				//cost adjustment for the effect of partition selectors, this is always <= 0.0
+				CDouble m_cost_adj_PS;
+
+				// base table rows, -1 if not atom or get/select
+				CDouble m_atom_base_table_rows;
+
+				// stores atom ids that are fufilled by a PS in this expression
+				CBitSet *m_contain_PS;
+
 				SExpressionInfo(
+								CMemoryPool *mp,
 								CExpression *expr,
 								const SGroupAndExpression &left_child_expr_info,
 								const SGroupAndExpression &right_child_expr_info,
@@ -369,29 +384,45 @@ namespace gpopt
 								   m_left_child_expr(left_child_expr_info),
 								   m_right_child_expr(right_child_expr_info),
 								   m_properties(properties),
-								   m_cost(0.0)
+								   m_atom_part_keys_array(NULL),
+								   m_cost(0.0),
+								   m_cost_adj_PS(0.0),
+								   m_atom_base_table_rows(-1.0),
+								   m_contain_PS(NULL)
+
 				{
+					m_contain_PS = GPOS_NEW(mp) CBitSet(mp);
+					this->UnionPSProperties(left_child_expr_info.GetExprInfo());
+					this->UnionPSProperties(right_child_expr_info.GetExprInfo());
 				}
 
 				SExpressionInfo(
+								CMemoryPool *mp,
 								CExpression *expr,
 								SExpressionProperties &properties
 								) : m_expr(expr),
 									m_properties(properties),
-									m_cost(0.0)
+									m_atom_part_keys_array(NULL),
+									m_cost(0.0),
+									m_cost_adj_PS(0.0),
+									m_atom_base_table_rows(-1.0),
+									m_contain_PS(NULL)
 				{
+					m_contain_PS = GPOS_NEW(mp) CBitSet(mp);
 				}
 
 				~SExpressionInfo()
 				{
 					m_expr->Release();
+					CRefCount::SafeRelease(m_contain_PS);
 				}
 
 				// cost (use -1 for greedy solutions to ensure we keep all of them)
 				CDouble GetCostForHeap() { return m_properties.IsGreedy() ? -1.0 : GetCost(); }
 
-				CDouble GetCost() { return m_cost; }
+				CDouble GetCost() { return m_cost + m_cost_adj_PS; }
 
+				void UnionPSProperties(SExpressionInfo *other) {m_contain_PS->Union(other->m_contain_PS); }
 				BOOL ChildrenAreEqual(const SExpressionInfo &other) const
 				{ return m_left_child_expr == other.m_left_child_expr && m_right_child_expr == other.m_right_child_expr; }
 			};
@@ -423,6 +454,7 @@ namespace gpopt
 								  m_lowest_expr_cost(-1.0)
 					{
 						m_best_expr_info_array = GPOS_NEW(mp) SExpressionInfoArray(mp);
+
 					}
 
 					~SGroupInfo()
@@ -591,6 +623,8 @@ namespace gpopt
 			SGroupInfo *LookupOrCreateGroupInfo(SLevelInfo *levelInfo, CBitSet *atoms, SExpressionInfo *stats_expr_info);
 			// add a new expression to a group, unless there already is an existing expression that dominates it
 			void AddExprToGroupIfNecessary(SGroupInfo *group_info, SExpressionInfo *new_expr_info);
+
+			void PopulateDPEInfo(SExpressionInfo *join_expr_info, SGroupInfo *left_group_info, SGroupInfo *right_group_info);
 
 			void FinalizeDPLevel(ULONG level);
 

@@ -241,9 +241,6 @@ namespace gpopt
 				ULONG ulScalarIndex
 				);
 
-			// compute distribution spec from the table descriptor
-			static
-			CDistributionSpec *PdsCompute(CMemoryPool *mp, const CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrOutput);
 
 			// helper for a simple case of computing child's required sort order
 			static
@@ -455,6 +452,10 @@ namespace gpopt
 				ULONG ulOptReq
 				)
 				const = 0;
+
+			// compute distribution spec from the table descriptor
+			static
+			CDistributionSpec *PdsCompute(CMemoryPool *mp, const CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrOutput);
 
 			// compute required sort order of the n-th child
 			virtual
