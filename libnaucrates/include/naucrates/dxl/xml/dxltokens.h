@@ -643,6 +643,7 @@ namespace gpdxl
 		EdxltokenPhysicalDMLDelete,
 		EdxltokenPhysicalDMLUpdate,
 		EdxltokenDirectDispatchInfo,
+		EdxltokenDirectDispatchIsRaw,
 		EdxltokenDirectDispatchKeyValue,
 		EdxltokenPhysicalSplit,
 		EdxltokenPhysicalRowTrigger,
