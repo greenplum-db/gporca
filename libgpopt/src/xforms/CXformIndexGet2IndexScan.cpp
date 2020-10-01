@@ -77,6 +77,13 @@ CXformIndexGet2IndexScan::Transform(CXformContext *pxfctxt,
 	CIndexDescriptor *pindexdesc = pop->Pindexdesc();
 	CTableDescriptor *ptabdesc = pop->Ptabdesc();
 
+	// extract components
+	CExpression *pexprIndexCond = (*pexpr)[0];
+	if (pexprIndexCond->DeriveHasSubquery())
+	{
+		return;
+	}
+
 	pindexdesc->AddRef();
 	ptabdesc->AddRef();
 
@@ -87,9 +94,6 @@ CXformIndexGet2IndexScan::Transform(CXformContext *pxfctxt,
 	COrderSpec *pos = pop->Pos();
 	GPOS_ASSERT(NULL != pos);
 	pos->AddRef();
-
-	// extract components
-	CExpression *pexprIndexCond = (*pexpr)[0];
 
 	// addref all children
 	pexprIndexCond->AddRef();

@@ -300,6 +300,7 @@ BpCharMCVCardinalityEquals BpCharMCVCardinalityGreaterThan TextMCVCardinalityEqu
 
 CSubquery2Test:
 Subq2PartialDecorrelate Subq2CorrSQInLOJOn Subq2NotInWhereLOJ Subq2OuterRef2InJoin Subq2OuterRefMultiLevelInOn
+Index-Join-With-Subquery-In-Pred
 ")
 
 set(mdp_dir "../data/dxl/minidump/")
