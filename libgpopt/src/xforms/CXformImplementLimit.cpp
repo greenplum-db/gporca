@@ -42,6 +42,17 @@ CXformImplementLimit::CXformImplementLimit(CMemoryPool *mp)
 {
 }
 
+CXform::EXformPromise
+CXformImplementLimit::Exfp(CExpressionHandle &exprhdl) const
+{
+	// Although it is valid SQL for the limit/offset to be a subquery, Orca does
+	// not support it
+	if (exprhdl.DeriveHasSubquery(1) || exprhdl.DeriveHasSubquery(2))
+	{
+		return CXform::ExfpNone;
+	}
+	return CXform::ExfpHigh;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
