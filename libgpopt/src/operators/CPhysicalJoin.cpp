@@ -1070,8 +1070,8 @@ CPhysicalJoin::PppsRequiredCompute(CMemoryPool *mp, CExpressionHandle &exprhdl,
 			else
 			{
 				// check if there is an interesting condition involving the partition key
-				CExpression *pexprScalar =
-					exprhdl.PexprScalarExactChild(2 /*child_index*/);
+				CExpression *pexprScalar = exprhdl.PexprScalarExactChild(
+					2 /*child_index*/, true /*error_on_null_return*/);
 				AddFilterOnPartKey(mp, true /*fNLJoin*/, pexprScalar, ppim,
 								   ppfm, child_index, part_idx_id,
 								   fOuterPartConsumer, ppimResult, ppfmResult,
@@ -1097,8 +1097,8 @@ CPhysicalJoin::PppsRequiredCompute(CMemoryPool *mp, CExpressionHandle &exprhdl,
 			else
 			{
 				// look for a filter on the part key
-				CExpression *pexprScalar =
-					exprhdl.PexprScalarExactChild(2 /*child_index*/);
+				CExpression *pexprScalar = exprhdl.PexprScalarExactChild(
+					2 /*child_index*/, true /*error_on_null_return*/);
 				AddFilterOnPartKey(mp, false /*fNLJoin*/, pexprScalar, ppim,
 								   ppfm, child_index, part_idx_id,
 								   fOuterPartConsumer, ppimResult, ppfmResult,

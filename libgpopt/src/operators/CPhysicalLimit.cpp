@@ -173,8 +173,8 @@ CPhysicalLimit::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 			return PdsPassThru(mp, exprhdl, pdsInput, child_index);
 		}
 
-		CExpression *pexprOffset =
-			exprhdl.PexprScalarExactChild(1 /*child_index*/);
+		CExpression *pexprOffset = exprhdl.PexprScalarExactChild(
+			1 /*child_index*/, true /*error_on_null_return*/);
 		if (!m_fHasCount && CUtils::FScalarConstIntZero(pexprOffset))
 		{
 			// pass through input distribution if it has no count nor offset and is not

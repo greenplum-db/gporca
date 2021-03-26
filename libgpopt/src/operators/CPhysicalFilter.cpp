@@ -201,8 +201,8 @@ CPhysicalFilter::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 			ppimReqd, part_idx_id, CPartIndexMap::EppraPreservePropagators);
 
 		// look for a filter on the part key
-		CExpression *pexprScalar =
-			exprhdl.PexprScalarExactChild(1 /*child_index*/);
+		CExpression *pexprScalar = exprhdl.PexprScalarExactChild(
+			1 /*child_index*/, true /*error_on_null_return*/);
 
 		CExpression *pexprCmp = NULL;
 		CPartKeysArray *pdrgppartkeys = ppimReqd->Pdrgppartkeys(part_idx_id);
@@ -303,7 +303,8 @@ CPhysicalFilter::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 	if (CDistributionSpec::EdtHashed == pdsChild->Edt() &&
 		exprhdl.HasOuterRefs())
 	{
-		CExpression *pexprFilterPred = exprhdl.PexprScalarExactChild(1);
+		CExpression *pexprFilterPred =
+			exprhdl.PexprScalarExactChild(1, true /*error_on_null_return*/);
 
 		CDistributionSpecHashed *pdshashedOriginal =
 			CDistributionSpecHashed::PdsConvert(pdsChild);
