@@ -899,4 +899,13 @@ CDistributionSpecHashed::CompleteEquivSpec(CMemoryPool *mp,
 
 	return pdshashedEquiv;
 }
+
+CDistributionSpec *
+CDistributionSpecHashed::StripEquivColumns(CMemoryPool *mp)
+{
+	m_pdrgpexpr->AddRef();
+	return GPOS_NEW(mp) CDistributionSpecHashed(m_pdrgpexpr, m_fNullsColocated);
+}
+
+
 // EOF
