@@ -672,39 +672,63 @@ CReqdPropPlan::FEqualForCostBounding(const CReqdPropPlan *prppFst,
 //
 //	@doc:
 //		Map input required and derived plan properties into new required
-//		plan properties
+//		plan properties for the CTE producer
 //
 //---------------------------------------------------------------------------
 CReqdPropPlan *
-CReqdPropPlan::PrppRemap(CMemoryPool *mp, CReqdPropPlan *prppInput,
-						 CDrvdPropPlan *pdpplanInput,
-						 UlongToColRefMap *colref_mapping)
+CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
+							   CDrvdPropPlan *pdpplanInput,
+							   UlongToColRefMap *colref_mapping)
 {
 	GPOS_ASSERT(NULL != colref_mapping);
 	GPOS_ASSERT(NULL != prppInput);
 	GPOS_ASSERT(NULL != pdpplanInput);
 
-	// remap derived sort order to a required sort order
+	// Remap derived sort order to a required sort order. Be careful not to mix
+	// multiple ColRefs, since those could come from different CTE consumers.
 
-	COrderSpec *pos = pdpplanInput->Pos()->PosCopyWithRemappedColumns(
-		mp, colref_mapping, false /*must_exist*/);
-	CEnfdOrder *peo = GPOS_NEW(mp) CEnfdOrder(pos, prppInput->Peo()->Eom());
+	CEnfdOrder *peo = NULL;
 
-	// remap derived distribution only if it can be used as required distribution
+	if (pdpplanInput->Pos()->UlSortColumns() <= 1)
+	{
+		// a single order column, remap it to the equivalent CTE producer column
+		COrderSpec *pos = pdpplanInput->Pos()->PosCopyWithRemappedColumns(
+			mp, colref_mapping, false /*must_exist*/);
+		peo = GPOS_NEW(mp) CEnfdOrder(pos, prppInput->Peo()->Eom());
+	}
+	else
+	{
+		// stick with the original required order
+		prppInput->Peo()->AddRef();
+		peo = prppInput->Peo();
+	}
+
+	// Remap derived distribution only if it can be used as required distribution.
+	// Again, avoid distribution specs with more than one column, especially equivalent
+	// columns, since those may again come from different consumers and NOT be equivalent
+	// in the producer. For example:
+	//     with cte as (select a,b from foo where b<10)
+	//     select * from cte x1 join cte x2 on x1.a=x2.b
+	// On the query side, columns x1.a and x2.b are equivalent. We do NOT want to
+	// get into a situation where we treat columns a and b of the producer as equivalent.
 
 	CDistributionSpec *pdsDerived = pdpplanInput->Pds();
+	CColRefSet *distCols = pdsDerived->PcrsUsed(mp);
 	CEnfdDistribution *ped = NULL;
-	if (pdsDerived->FRequirable())
+	if (distCols->Size() <= 1 && pdsDerived->FRequirable())
 	{
-		CDistributionSpec *pds = pdsDerived->PdsCopyWithRemappedColumns(
+		CDistributionSpec *pdsNoEquiv = pdsDerived->StripEquivColumns(mp);
+		CDistributionSpec *pds = pdsNoEquiv->PdsCopyWithRemappedColumns(
 			mp, colref_mapping, false /*must_exist*/);
 		ped = GPOS_NEW(mp) CEnfdDistribution(pds, prppInput->Ped()->Edm());
+		pdsNoEquiv->Release();
 	}
 	else
 	{
 		prppInput->Ped()->AddRef();
 		ped = prppInput->Ped();
 	}
+	distCols->Release();
 
 	// other properties are copied from input
 
