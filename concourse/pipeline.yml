@@ -56,21 +56,21 @@ resources:
     tag: centos5
 
 - name: centos6-build
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/gpdb6-centos6-build
+    repository: gcr.io/data-gpdb-public-images/gpdb6-centos6-build
     tag: latest
 
 - name: centos7-build
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/gpdb6-centos7-build
+    repository: gcr.io/data-gpdb-public-images/gpdb6-centos7-build
     tag: latest
 
 - name: ubuntu18.04-build
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/gpdb6-ubuntu18.04-build
+    repository: gcr.io/data-gpdb-public-images/gpdb6-ubuntu18.04-build
     tag: latest
 
 - name: orca_github_release
