@@ -50,7 +50,7 @@ resources:
       - config/orca.m4
 
 - name: centos5-build
-  type: docker-image
+  type: registry-image
   source:
     repository: yolo/orcadev
     tag: centos5

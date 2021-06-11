@@ -96,7 +96,7 @@ resources:
     secret_access_key: {{s3_secret_access_key}}
     versioned_file: orca_src.tar.gz
 - name: centos5-build
-  type: docker-image
+  type: registry-image
   source:
     repository: yolo/orcadev
     tag: centos5

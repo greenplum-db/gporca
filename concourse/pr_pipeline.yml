@@ -1,6 +1,6 @@
 resource_types:
   - name: pull_request
-    type: docker-image
+    type: registry-image
     source:
       repository: jtarchie/pr
 
@@ -36,7 +36,7 @@ resources:
       versioned_file: bin_xerces_centos5.tar.gz
 
   - name: centos5-build
-    type: docker-image
+    type: registry-image
     source:
       repository: yolo/orcadev
       tag: centos5

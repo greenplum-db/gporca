@@ -1,7 +1,7 @@
 groups: []
 resources:
 - name: centos5-build
-  type: docker-image
+  type: registry-image
   source:
     repository: yolo/orcadev
     tag: centos5
@@ -314,7 +314,7 @@ jobs:
     config:
       platform: linux
       image_resource:
-          type: docker-image
+          type: registry-image
           source:
             repository: yolo/orcadev
             tag: centos6
