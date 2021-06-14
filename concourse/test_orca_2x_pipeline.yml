@@ -97,14 +97,14 @@ resources:
     - concourse/package_tarball.bash
     uri: https://github.com/greenplum-db/gporca
 - name: centos-gpdb-dev-5
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/centos-gpdb-dev
-    tag: "5"
+    repository: gcr.io/data-gpdb-public-images/gpdb4-centos5-build-test
+    tag: latest
 - name: centos-gpdb-dev-6
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/centos-gpdb-dev
+    repository: gcr.io/data-orca/centos-gpdb-dev
     tag: "6"
 - name: ccache_gpdb_centos5
   type: s3

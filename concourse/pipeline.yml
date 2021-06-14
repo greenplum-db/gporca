@@ -66,15 +66,15 @@ resources:
     versioned_file: bin_orca_centos5_release.tar.gz
 
 - name: centos-gpdb-dev-5
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/centos-gpdb-dev
-    tag: "5"
+    repository: gcr.io/data-gpdb-public-images/gpdb4-centos5-build-test
+    tag: latest
 
 - name: centos-gpdb-dev-6
-  type: docker-image
+  type: registry-image
   source:
-    repository: pivotaldata/centos-gpdb-dev
+    repository: gcr.io/data-orca/centos-gpdb-dev
     tag: "6"
 
 - name: ccache_gpdb_centos5

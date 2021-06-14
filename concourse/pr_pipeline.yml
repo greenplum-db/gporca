@@ -1,6 +1,6 @@
 resource_types:
   - name: pull_request
-    type: docker-image
+    type: registry-image
     source:
       repository: jtarchie/pr
 
