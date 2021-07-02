@@ -688,8 +688,9 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 	// multiple ColRefs, since those could come from different CTE consumers.
 
 	CEnfdOrder *peo = NULL;
+	CColRefSet *orderCols = pdpplanInput->Pos()->PcrsUsed(mp);
 
-	if (pdpplanInput->Pos()->UlSortColumns() <= 1)
+	if (orderCols->ContainsOnlyTableColsOfCommonSource())
 	{
 		// a single order column, remap it to the equivalent CTE producer column
 		COrderSpec *pos = pdpplanInput->Pos()->PosCopyWithRemappedColumns(
@@ -702,11 +703,12 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 		prppInput->Peo()->AddRef();
 		peo = prppInput->Peo();
 	}
+	orderCols->Release();
 
 	// Remap derived distribution only if it can be used as required distribution.
-	// Again, avoid distribution specs with more than one column, especially equivalent
-	// columns, since those may again come from different consumers and NOT be equivalent
-	// in the producer. For example:
+	// Again, be careful with distribution specs with more than one column, especially
+	// equivalent columns, since those may again come from different consumers and NOT
+	// be equivalent in the producer. For example:
 	//     with cte as (select a,b from foo where b<10)
 	//     select * from cte x1 join cte x2 on x1.a=x2.b
 	// On the query side, columns x1.a and x2.b are equivalent. We do NOT want to
@@ -715,7 +717,7 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 	CDistributionSpec *pdsDerived = pdpplanInput->Pds();
 	CColRefSet *distCols = pdsDerived->PcrsUsed(mp);
 	CEnfdDistribution *ped = NULL;
-	if (distCols->Size() <= 1 && pdsDerived->FRequirable())
+	if (distCols->ContainsOnlyTableColsOfCommonSource() && pdsDerived->FRequirable())
 	{
 		CDistributionSpec *pdsNoEquiv = pdsDerived->StripEquivColumns(mp);
 		CDistributionSpec *pds = pdsNoEquiv->PdsCopyWithRemappedColumns(

@@ -131,6 +131,10 @@ public:
 	// extract all column ids
 	void ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const;
 
+	// do all the columns in the colrefset belong to a single table
+	// returns false in case of computed columns
+	BOOL ContainsOnlyTableColsOfCommonSource() const;
+
 	// are the columns in the column reference set covered by the array of column ref sets
 	static BOOL FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs);
 

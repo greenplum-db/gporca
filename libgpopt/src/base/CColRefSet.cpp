@@ -15,6 +15,7 @@
 
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/base/CColRefSetIter.h"
+#include "gpopt/base/CColRefTable.h"
 #include "gpopt/base/CColumnFactory.h"
 
 using namespace gpopt;
@@ -382,6 +383,37 @@ CColRefSet::ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const
 		ULONG colid = colref->Id();
 		colids->Append(GPOS_NEW(mp) ULONG(colid));
 	}
+}
+
+// do all the columns in the colrefset belong to a single table
+// returns false in case of computed columns
+BOOL
+CColRefSet::ContainsOnlyTableColsOfCommonSource() const
+{
+	ULONG common_source_id = gpos::ulong_max;
+	CColRefSetIter iter(*this);
+	while (iter.Advance())
+	{
+		CColRef *colref = iter.Pcr();
+		if (colref->Ecrt() != CColRef::EcrtTable)
+		{
+			// cannot make any claim for non-table columns
+			return false;
+		}
+		ULONG source_id = CColRefTable::PcrConvert(colref)->UlSourceOpId();
+		if (common_source_id == gpos::ulong_max)
+		{
+			// first match
+			common_source_id = source_id;
+			continue;
+		}
+		if (common_source_id != source_id)
+		{
+			// found at least one mismatch
+			return false;
+		}
+	}
+	return true;
 }
 
 //---------------------------------------------------------------------------
