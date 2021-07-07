@@ -81,6 +81,9 @@ private:
 	// table info
 	IMDId *m_mdid_table;
 
+	// id of the operator that creates (i.e defines) this colref
+	ULONG m_op_source_id;
+
 public:
 	enum Ecolreftype
 	{
@@ -92,7 +95,7 @@ public:
 
 	// ctor
 	CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id,
-			const CName *pname);
+			const CName *pname, ULONG op_source_id);
 
 	// dtor
 	virtual ~CColRef();
@@ -116,6 +119,12 @@ public:
 	Name() const
 	{
 		return *m_pname;
+	}
+
+	// id of the operator that creates (i.e defines) this colref
+	ULONG OpSourceId() const
+	{
+		return m_op_source_id;
 	}
 
 	// id

@@ -44,10 +44,6 @@ private:
 	// does column allow null values
 	BOOL m_is_nullable;
 
-	// id of the operator which is the source of this column reference
-	// not owned
-	ULONG m_ulSourceOpId;
-
 	// width of the column, for instance  char(10) column has width 10
 	ULONG m_width;
 
@@ -98,13 +94,6 @@ public:
 	Width() const
 	{
 		return m_width;
-	}
-
-	// id of source operator
-	ULONG
-	UlSourceOpId() const
-	{
-		return m_ulSourceOpId;
 	}
 
 	// conversion

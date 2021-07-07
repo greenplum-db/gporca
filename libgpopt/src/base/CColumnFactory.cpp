@@ -272,7 +272,7 @@ CColumnFactory::PcrCopy(const CColRef *colref)
 
 	return PcrCreate(colref->RetrieveType(), colref->TypeModifier(),
 					 colref->GetMdidTable(), pcrTable->AttrNum(),
-					 pcrTable->IsNullable(), id, name, pcrTable->UlSourceOpId(),
+					 pcrTable->IsNullable(), id, name, pcrTable->OpSourceId(),
 					 pcrTable->Width());
 }
 

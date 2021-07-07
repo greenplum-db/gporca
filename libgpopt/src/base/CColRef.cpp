@@ -34,12 +34,13 @@ const ULONG CColRef::m_ulInvalid = gpos::ulong_max;
 //
 //---------------------------------------------------------------------------
 CColRef::CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id,
-				 const CName *pname)
+				 const CName *pname, ULONG op_source_id)
 	: m_pmdtype(pmdtype),
 	  m_type_modifier(type_modifier),
 	  m_pname(pname),
 	  m_used(EUnknown),
 	  m_mdid_table(NULL),
+	  m_op_source_id(op_source_id),
 	  m_id(id)
 {
 	GPOS_ASSERT(NULL != pmdtype);

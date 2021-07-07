@@ -400,7 +400,7 @@ CColRefSet::ContainsOnlyTableColsOfCommonSource() const
 			// cannot make any claim for non-table columns
 			return false;
 		}
-		ULONG source_id = CColRefTable::PcrConvert(colref)->UlSourceOpId();
+		ULONG source_id = colref->OpSourceId();
 		if (common_source_id == gpos::ulong_max)
 		{
 			// first match

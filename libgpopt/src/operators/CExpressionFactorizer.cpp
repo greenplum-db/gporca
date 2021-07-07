@@ -416,9 +416,9 @@ CExpressionFactorizer::FOpSourceIdOrComputedColumn(CExpression *pexpr,
 		const CColRefTable *pcrTable = CColRefTable::PcrConvert(colref);
 		if (gpos::ulong_max == ulComputedOpSourceId)
 		{
-			ulComputedOpSourceId = pcrTable->UlSourceOpId();
+			ulComputedOpSourceId = pcrTable->OpSourceId();
 		}
-		else if (ulComputedOpSourceId != pcrTable->UlSourceOpId())
+		else if (ulComputedOpSourceId != pcrTable->OpSourceId())
 		{
 			// expression refers to columns coming from different operators
 			return false;
