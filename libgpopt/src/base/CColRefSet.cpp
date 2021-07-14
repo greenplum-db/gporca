@@ -395,12 +395,13 @@ CColRefSet::ContainsOnlyTableColsOfCommonSource() const
 	while (iter.Advance())
 	{
 		CColRef *colref = iter.Pcr();
-		if (colref->Ecrt() != CColRef::EcrtTable)
+
+		ULONG source_id = colref->OpSourceId();
+		if (source_id == gpos::ulong_max)
 		{
-			// cannot make any claim for non-table columns
+			// cannot make any claim for columns with unknown source
 			return false;
 		}
-		ULONG source_id = colref->OpSourceId();
 		if (common_source_id == gpos::ulong_max)
 		{
 			// first match

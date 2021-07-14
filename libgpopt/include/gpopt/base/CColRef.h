@@ -231,6 +231,12 @@ public:
 		m_mdid_table = mdid_table;
 	}
 
+	void
+	SetOpSourceId(ULONG op_source_id)
+	{
+		m_op_source_id = op_source_id;
+	}
+
 #ifdef GPOS_DEBUG
 	void DbgPrint() const;
 #endif	// GPOS_DEBUG
