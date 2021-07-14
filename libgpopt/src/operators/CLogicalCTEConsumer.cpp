@@ -62,6 +62,12 @@ CLogicalCTEConsumer::CLogicalCTEConsumer(CMemoryPool *mp, ULONG id,
 	CreateInlinedExpr(mp);
 	m_pcrsLocalUsed->Include(m_pdrgpcr);
 
+	for(ULONG ul = 0; ul < colref_array->Size(); ++ul)
+	{
+		CColRef *cr = (*colref_array)[ul];
+		cr->SetOpSourceId(UlOpId());
+	}
+
 	// map consumer columns to their positions in consumer output
 	COptCtxt::PoctxtFromTLS()->Pcteinfo()->AddConsumerCols(id, m_pdrgpcr);
 }
