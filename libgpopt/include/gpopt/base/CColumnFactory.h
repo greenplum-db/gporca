@@ -61,7 +61,7 @@ private:
 
 	// implementation of factory methods
 	CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier, ULONG id,
-					   const CName &name);
+					   const CName &name, ULONG op_source_id = gpos::ulong_max);
 	CColRef *PcrCreate(const CColumnDescriptor *pcoldesc, ULONG id,
 					   const CName &name, ULONG ulOpSource,
 					   BOOL mark_as_used = true, IMDId *mdid_table = NULL);
@@ -81,7 +81,7 @@ public:
 
 	// create column reference given its type, type modifier, and name
 	CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier,
-					   const CName &name);
+					   const CName &name, ULONG op_source_id = gpos::ulong_max);
 
 	// create a column reference given its descriptor and name
 	CColRef *PcrCreate(const CColumnDescriptor *pcoldescr, const CName &name,

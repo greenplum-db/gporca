@@ -118,11 +118,11 @@ CColumnFactory::PcrCreate(const IMDType *pmdtype, INT type_modifier)
 //---------------------------------------------------------------------------
 CColRef *
 CColumnFactory::PcrCreate(const IMDType *pmdtype, INT type_modifier,
-						  const CName &name)
+						  const CName &name, ULONG op_source_id)
 {
 	ULONG id = m_aul++;
 
-	return PcrCreate(pmdtype, type_modifier, id, name);
+	return PcrCreate(pmdtype, type_modifier, id, name, op_source_id);
 }
 
 
@@ -138,7 +138,7 @@ CColumnFactory::PcrCreate(const IMDType *pmdtype, INT type_modifier,
 //---------------------------------------------------------------------------
 CColRef *
 CColumnFactory::PcrCreate(const IMDType *pmdtype, INT type_modifier, ULONG id,
-						  const CName &name)
+						  const CName &name, ULONG op_source_id)
 {
 	CName *pnameCopy = GPOS_NEW(m_mp) CName(m_mp, name);
 	CAutoP<CName> a_pnameCopy(pnameCopy);
@@ -152,6 +152,7 @@ CColumnFactory::PcrCreate(const IMDType *pmdtype, INT type_modifier, ULONG id,
 	GPOS_ASSERT(NULL == LookupColRef(id));
 	m_sht.Insert(colref);
 	colref->MarkAsUsed();
+	colref->SetOpSourceId(op_source_id);
 
 	return a_pcr.Reset();
 }
@@ -262,7 +263,7 @@ CColumnFactory::PcrCopy(const CColRef *colref)
 	CName name(colref->Name());
 	if (CColRef::EcrtComputed == colref->Ecrt())
 	{
-		return PcrCreate(colref->RetrieveType(), colref->TypeModifier(), name);
+		return PcrCreate(colref->RetrieveType(), colref->TypeModifier(), name, colref->OpSourceId());
 	}
 
 	GPOS_ASSERT(CColRef::EcrtTable == colref->Ecrt());
