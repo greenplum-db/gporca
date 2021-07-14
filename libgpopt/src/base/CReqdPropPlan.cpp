@@ -684,24 +684,12 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 	GPOS_ASSERT(NULL != prppInput);
 	GPOS_ASSERT(NULL != pdpplanInput);
 
-	// Remap derived sort order to a required sort order. Be careful not to mix
-	// multiple ColRefs, since those could come from different CTE consumers.
+	// Remap derived sort order to a required sort order.
 
-	CEnfdOrder *peo = NULL;
-
-	if (pdpplanInput->Pos()->UlSortColumns() <= 1)
-	{
-		// a single order column, remap it to the equivalent CTE producer column
-		COrderSpec *pos = pdpplanInput->Pos()->PosCopyWithRemappedColumns(
-			mp, colref_mapping, false /*must_exist*/);
-		peo = GPOS_NEW(mp) CEnfdOrder(pos, prppInput->Peo()->Eom());
-	}
-	else
-	{
-		// stick with the original required order
-		prppInput->Peo()->AddRef();
-		peo = prppInput->Peo();
-	}
+	// a single order column, remap it to the equivalent CTE producer column
+	COrderSpec *pos = pdpplanInput->Pos()->PosCopyWithRemappedColumns(
+		mp, colref_mapping, false /*must_exist*/);
+	CEnfdOrder *peo = GPOS_NEW(mp) CEnfdOrder(pos, prppInput->Peo()->Eom());
 
 	// Remap derived distribution only if it can be used as required distribution.
 	// Again, avoid distribution specs with more than one column, especially equivalent
@@ -713,9 +701,8 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 	// get into a situation where we treat columns a and b of the producer as equivalent.
 
 	CDistributionSpec *pdsDerived = pdpplanInput->Pds();
-	CColRefSet *distCols = pdsDerived->PcrsUsed(mp);
 	CEnfdDistribution *ped = NULL;
-	if (distCols->Size() <= 1 && pdsDerived->FRequirable())
+	if (pdsDerived->FRequirable())
 	{
 		CDistributionSpec *pdsNoEquiv = pdsDerived->StripEquivColumns(mp);
 		CDistributionSpec *pds = pdsNoEquiv->PdsCopyWithRemappedColumns(
@@ -728,7 +715,6 @@ CReqdPropPlan::PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppInput,
 		prppInput->Ped()->AddRef();
 		ped = prppInput->Ped();
 	}
-	distCols->Release();
 
 	// other properties are copied from input
 
