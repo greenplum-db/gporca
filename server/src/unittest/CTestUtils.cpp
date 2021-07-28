@@ -3239,6 +3239,7 @@ CTestUtils::EresRunMinidump(CMemoryPool *mp, CMDAccessor *md_accessor,
 
 	CHAR *szMinidumpFileName = SzMinidumpFileName(mp, file_name);
 
+	// 根据优化器的配置，生成相应的 Plan
 	pdxlnPlan = CMinidumperUtils::PdxlnExecuteMinidump(
 		mp, md_accessor, pdxlmd, szMinidumpFileName, ulSegments, ulSessionId,
 		ulCmdId, optimizer_config, pceeval);
@@ -3252,6 +3253,7 @@ CTestUtils::EresRunMinidump(CMemoryPool *mp, CMDAccessor *md_accessor,
 	GPOS_CHECK_ABORT;
 
 
+	// 下面用来比较新生成的 Plan 与原来的 Plan 是否相同
 	{
 		CAutoTrace at(mp);
 		if (!CTestUtils::FPlanCompare(
@@ -3303,7 +3305,7 @@ CTestUtils::EresRunMinidumps(CMemoryPool *,	 // pmpInput,
 	GPOS_RESULT eres = GPOS_OK;
 	BOOL fSuccess = true;
 
-	for (ULONG ul = *pulTestCounter; ul < ulTests; ul++)
+	for (ULONG ul = *pulTestCounter; ul < ulTests; ul++)  // 从起始位置开始，直到 rgszFileNames 的最大长度
 	{
 		// each test uses a new memory pool to keep total memory consumption low
 		CAutoMemoryPool amp;
@@ -3381,7 +3383,7 @@ CTestUtils::EresRunMinidumpsUsingOneMDFile(
 	// reset metadata cache
 	CMDCache::Reset();
 
-	// load metadata file
+	// load metadata file 加载元数据
 	CDXLMinidump *pdxlmd = CMinidumperUtils::PdxlmdLoad(mp, szMDFilePath);
 	GPOS_CHECK_ABORT;
 
@@ -4099,6 +4101,10 @@ CTestUtils::PexprOr(CMemoryPool *mp, CExpression *pexprActual,
 //
 //	@doc:
 //		Run  Minidump-based tests in the given array of files
+//	Args:
+//		rgszFileNames 要读取的文件列表
+//		pulTestCounter
+//		ulTests 字符数组 rgse*es 的长度
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
@@ -4108,7 +4114,7 @@ CTestUtils::EresUnittest_RunTests(const CHAR **rgszFileNames,
 	BOOL fMatchPlans = false;
 	BOOL fTestSpacePruning = false;
 #if defined(GPOS_Darwin) || defined(GPOS_Linux)
-	// restrict plan matching to OsX and Linux to avoid arithmetic operations differences
+	// restrict plan matching to OsX and Linux to avoid arithmetic operations(算术) differences
 	// across systems
 	fMatchPlans = true;
 	fTestSpacePruning = true;

@@ -18,7 +18,7 @@
 #define GPOS_UNITTEST_FUNC(x) gpos::CUnittest(#x, CUnittest::EttStandard, x)
 
 #define GPOS_UNITTEST_STD(x) \
-	gpos::CUnittest(#x, CUnittest::EttStandard, x::EresUnittest)
+	gpos::CUnittest(#x, CUnittest::EttStandard, x::EresUnittest)  // 每个函数的 EresUnittest 是默认执行的函数
 #define GPOS_UNITTEST_EXT(x) \
 	gpos::CUnittest(#x, CUnittest::EttExtended, x::EresUnittest)
 
