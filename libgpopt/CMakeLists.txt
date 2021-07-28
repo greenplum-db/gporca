@@ -1,5 +1,6 @@
 # Copyright (c) 2015, Pivotal Software, Inc. All Rights Reserved.
 
+# 设置包含目录
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgpcost/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libnaucrates/include)

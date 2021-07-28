@@ -119,7 +119,7 @@ using namespace gpnaucrates;
 using namespace gpdbcost;
 
 // static array of all known unittest routines
-static gpos::CUnittest rgut[] = {
+static gpos::CUnittest rgut[] = {  // rgut 是 CUnittest类组成的数组
 #include "unittest/gpopt/minidump/MinidumpTestArray.inl"  // auto generated inlining file
 
 	// naucrates
@@ -287,7 +287,7 @@ static void *
 PvExec(void *pv)
 {
 	CMainArgs *pma = (CMainArgs *) pv;
-	CBitVector bv(ITask::Self()->Pmp(), CUnittest::UlTests());
+	CBitVector bv(ITask::Self()->Pmp(), CUnittest::UlTests());  // 位向量
 
 	CHAR ch = '\0';
 
@@ -306,7 +306,7 @@ PvExec(void *pv)
 				szTestName = optarg;
 				// fallthru
 			case 'u':
-				CUnittest::FindTest(bv, CUnittest::EttStandard, szTestName);
+				CUnittest::FindTest(bv, CUnittest::EttStandard, szTestName);  // 调试时可以仔细查看这个函数的第二个参数
 				fUnittest = true;
 				break;
 
@@ -388,7 +388,7 @@ PvExec(void *pv)
 	else
 	{
 		GPOS_ASSERT(fUnittest);
-		tests_failed = CUnittest::Driver(&bv);
+		tests_failed = CUnittest::Driver(&bv);  // 这里调用的是 BitVector 的重载
 	}
 
 	return NULL;
@@ -408,28 +408,31 @@ INT
 main(INT iArgs, const CHAR **rgszArgs)
 {
 	// Use default allocator
-	struct gpos_init_params gpos_params = {NULL};
+	struct gpos_init_params gpos_params = {NULL};  // 包含用于 gpos 初始化参数的结构体
 
-	gpos_init(&gpos_params);
+	gpos_init(&gpos_params);  // 初始化 GPOS 的内存池，工作池和消息仓库
 	gpdxl_init();
 	gpopt_init();
 
 	GPOS_ASSERT(iArgs >= 0);
 
-	// setup args for unittest params
+	// setup args for unittest params  设置主要参数
 	CMainArgs ma(iArgs, rgszArgs, "uU:d:xT:i:");
 
 	// initialize unittest framework
+	// 初始化单元测试框架，在这里就初始化了测试中的向量长度
+	// rgut 定义在外面的全局变量，此处初始化该单元测试组，下面执行主要任务，该任务根据命令行参数选择相应的单元测试
 	CUnittest::Init(rgut, GPOS_ARRAY_SIZE(rgut), ConfigureTests, Cleanup);
 
-	gpos_exec_params params;
-	params.func = PvExec;
-	params.arg = &ma;
-	params.stack_start = &params;
+	gpos_exec_params params;  // 存储任务执行配置参数的结构
+	params.func = PvExec;  // 任务函数(这个是重点)
+	params.arg = &ma;  // 任务参数
+	params.stack_start = &params;  // 当前线程栈的起始
 	params.error_buffer = NULL;
 	params.error_buffer_size = -1;
 	params.abort_requested = NULL;
 
+	// gpos_exec 利用当前线程执行函数
 	if (gpos_exec(&params) || (tests_failed != 0))
 	{
 		return 1;

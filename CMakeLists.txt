@@ -17,18 +17,18 @@ set(GPORCA_VERSION_STRING "${GPORCA_VERSION_MAJOR}.${GPORCA_VERSION_MINOR}.${GPO
 # doubt, do the safe thing and increment this number.
 set(GPORCA_ABI_VERSION 3)
 
-# Default to shared libraries.
+# Default to shared libraries.  库的类型
 option(BUILD_SHARED_LIBS "build shared libraries" ON)
 
-# Configure CCache if available
+# Configure CCache if available  是否配置 ccache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-# Check build type
-if(NOT CMAKE_BUILD_TYPE)
+# Check build type  构建的类型，只对 single-configuration generators 起作用
+if(NOT CMAKE_BUILD_TYPE)  # 构建类型为空
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -41,6 +41,7 @@ endif()
 # Turn on compiler flags for all warnings if available.
 include(CheckCXXCompilerFlag)
 
+# 检查 c++ 编译器是否支持指定的 flag，先检查，如果存在，再将该标志加入到编译过程
 check_cxx_compiler_flag("-Wall" COMPILER_HAS_WALL)
 if (COMPILER_HAS_WALL)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -61,7 +62,7 @@ if (COMPILER_HAS_PEDANTIC_ERRORS)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors")
 endif()
 
-# Turn off warnings about variadic macros if for some reason the C++ dialect is
+# Turn off warnings about variadic macros(可变参数宏) if for some reason the C++ dialect(方言) is
 # not compatible with C99.
 check_cxx_compiler_flag("-Wno-variadic-macros" COMPILER_HAS_WNO_VARIADIC_MACROS)
 if (COMPILER_HAS_WNO_VARIADIC_MACROS)
@@ -75,7 +76,7 @@ if (COMPILER_HAS_G3)
   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g3")
 endif()
 
-# Do not omit frame pointer. Even with RELEASE builds, it is used for
+# Do not omit(省略) frame pointer. Even with RELEASE builds, it is used for
 # backtracing.
 check_cxx_compiler_flag("-fno-omit-frame-pointer"
                         COMPILER_HAS_FNO_OMIT_FRAME_POINTER)
@@ -83,9 +84,10 @@ if (COMPILER_HAS_FNO_OMIT_FRAME_POINTER)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
 endif()
 
-# Turn on GPOS_DEBUG define for DEBUG builds.
+# Turn on GPOS_DEBUG define for DEBUG builds.  设置策略为新策略
 cmake_policy(SET CMP0043 NEW)
 
+# 首先将 cmake_build_type 这个变量的值全部转换为小写，之后判断是否为 debug
 STRING(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
 if (CMAKE_BUILD_TYPE_LOWER STREQUAL  "debug")
   set(GPOS_DEBUG 1)
@@ -96,6 +98,7 @@ set(GPOS_${CMAKE_SYSTEM_NAME} 1)
 set(GPOS_${CMAKE_SYSTEM_PROCESSOR} 1)
 
 # Autodetect bit-width if not already set by toolchain file.
+# 如果 toolchain file 没有设置位宽的话，自动检测位宽
 if (NOT GPOS_ARCH_BITS)
   # Autodetect bit-width.
   if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
@@ -109,9 +112,10 @@ endif()
 
 set (GPOS_${GPOS_ARCH_BITS}BIT 1)
 
-# Library dependencies for optimizer.
+# Library dependencies for optimizer.  设置 cmake_module_path 的路径
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+# 检查 pthred 包
 # POSIX threads.
 find_package(Threads REQUIRED)
 if (NOT CMAKE_USE_PTHREADS_INIT)

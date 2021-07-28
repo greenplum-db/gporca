@@ -24,6 +24,7 @@ using namespace gpos;
 //	@doc:
 //		Set trace flags based on given bit set, and return two output bit
 //		sets of old trace flags values
+//		基于给定的 bit 集合设置追踪标志，并且返回两个关于旧的追踪标志的输出 bit 集
 //
 //---------------------------------------------------------------------------
 void

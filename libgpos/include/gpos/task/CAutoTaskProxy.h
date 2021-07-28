@@ -29,6 +29,8 @@ namespace gpos
 //		ATP operations are not thread-safe; only one worker can use each ATP
 //		object.
 //
+//		自动任务委托人，用来进行任务的创建、执行以及销毁
+//		这个操作不是线程安全的，只有一个工作者可以使用每一个 ATP
 //---------------------------------------------------------------------------
 class CAutoTaskProxy : CStackObject
 {

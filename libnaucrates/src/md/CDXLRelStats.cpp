@@ -7,6 +7,7 @@
 //
 //	@doc:
 //		Implementation of the class for representing relation stats in DXL
+//		代表 DXL 中关系状态的类
 //---------------------------------------------------------------------------
 
 

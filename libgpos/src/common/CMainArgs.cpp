@@ -78,7 +78,7 @@ CMainArgs::~CMainArgs()
 //
 //---------------------------------------------------------------------------
 BOOL
-CMainArgs::Getopt(CHAR *pch)
+CMainArgs::Getopt(CHAR *pch)  // pch 用来记录得到的参数
 {
 	GPOS_ASSERT(NULL != pch);
 

@@ -29,7 +29,7 @@ using namespace gpos;
 
 // initialize static members
 CUnittest *CUnittest::m_rgut = NULL;
-ULONG CUnittest::m_ulTests = 0;
+ULONG CUnittest::m_ulTests = 0;  // 需要执行的单元测试的个数
 ULONG CUnittest::m_ulNested = 0;
 void (*CUnittest::m_pfConfig)() = NULL;
 void (*CUnittest::m_pfCleanup)() = NULL;
@@ -43,7 +43,7 @@ void (*CUnittest::m_pfCleanup)() = NULL;
 //		Constructor for exception-free test
 //
 //---------------------------------------------------------------------------
-CUnittest::CUnittest(const CHAR *szTitle, ETestType ett,
+CUnittest::CUnittest(const CHAR *szTitle, ETestType ett,  // CHAR = char
 					 GPOS_RESULT (*pfunc)(void))
 	: m_szTitle(szTitle),
 	  m_ett(ett),

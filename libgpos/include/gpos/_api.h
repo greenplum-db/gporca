@@ -40,7 +40,7 @@ extern "C" {
 
 /*
  * struct with configuration parameters for task execution;
- * this needs to be in sync with the corresponding structure in optserver.h
+ * this needs to be in sync(同步) with the corresponding structure in optserver.h
  */
 struct gpos_exec_params
 {

@@ -47,6 +47,7 @@ class CTask;
 //	@doc:
 //		carries class name and function pointer to class' unittest
 //		plus info about expected exceptions
+//		携带类名以及指向类的单元测试的函数指针，并且具有关于异常的信息
 //
 //---------------------------------------------------------------------------
 class CUnittest
@@ -114,7 +115,7 @@ private:
 	ULONG m_ulMajor;
 	ULONG m_ulMinor;
 
-	// array of unittests to execute
+	// array of unittests to execute 将要被执行的 unittests 组成的数组
 	static CUnittest *m_rgut;
 
 	// number of unittests to execute
@@ -132,7 +133,7 @@ private:
 	// execution of individual UT
 	static GPOS_RESULT EresExecTest(const CUnittest &ut);
 
-	// check if exception was injected by simulation
+	// check if exception was injected(注入) by simulation
 	static BOOL FSimulated(CException ex);
 
 	// top-level loop around execution of individual UT;

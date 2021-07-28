@@ -187,6 +187,7 @@ gpos_exec(gpos_exec_params *params)
 
 	try
 	{
+		// 首先生成工作池的管理者
 		CWorkerPoolManager *pwpm = CWorkerPoolManager::WorkerPoolManager();
 
 		// check if worker pool is initialized
@@ -213,7 +214,7 @@ gpos_exec(gpos_exec_params *params)
 
 			// scope for ATP
 			{
-				// task handler for this process
+				// task handler for this process  
 				CAutoTaskProxy atp(mp, pwpm, true /*fPropagateError*/);
 
 				CTask *ptsk = atp.Create(params->func, params->arg,
@@ -243,7 +244,7 @@ gpos_exec(gpos_exec_params *params)
 				}
 
 				// execute function
-				atp.Execute(ptsk);
+				atp.Execute(ptsk);  // AutoTaskProxy(atp)  CTask(ptsk)
 
 				// export task result
 				params->result = ptsk->GetRes();

@@ -8,6 +8,7 @@
 //	@doc:
 //		Implementation of initialization and termination functions for
 //		libgpdxl.
+//      该文件实现了用于初始化和终止 libgpdxl 的相关函数，其中的内容用于解析 DXL
 //---------------------------------------------------------------------------
 
 #include "naucrates/init.h"
@@ -32,7 +33,7 @@ static CMemoryPool *pmpXerces = NULL;
 static CMemoryPool *pmpDXL = NULL;
 
 // safe-guard to prevent initializing DXL support more than once
-static ULONG_PTR m_ulpInitDXL = 0;
+static ULONG_PTR m_ulpInitDXL = 0;  // unsigned long
 
 // safe-guard to prevent shutting DXL support down more than once
 static ULONG_PTR m_ulpShutdownDXL = 0;
@@ -51,6 +52,7 @@ static ULONG_PTR m_ulpShutdownDXL = 0;
 void
 InitDXL()
 {
+	// 检查是否已经初始化
 	if (0 < m_ulpInitDXL)
 	{
 		// DXL support is already initialized by a previous call
@@ -62,9 +64,10 @@ InitDXL()
 
 	m_ulpInitDXL++;
 
-	// setup own memory manager
+	// setup own(自己的) memory manager，它是一个指针
 	dxl_memory_manager = GPOS_NEW(pmpXerces) CDXLMemoryManager(pmpXerces);
 
+	// 初始化 Xerces
 	// initialize Xerces, if this fails library initialization should crash here
 	XMLPlatformUtils::Initialize(XMLUni::fgXercescDefaultLocale,  // locale
 								 NULL,	// nlsHome: location for message files
@@ -72,7 +75,7 @@ InitDXL()
 								 dxl_memory_manager	 // memoryManager
 	);
 
-	// initialize DXL tokens
+	// initialize DXL tokens(标记，符号)
 	CDXLTokens::Init(pmpDXL);
 
 	// initialize parse handler mappings

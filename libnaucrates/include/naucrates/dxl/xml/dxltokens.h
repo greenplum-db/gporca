@@ -810,6 +810,7 @@ public:
 	static const XMLCh *XmlstrToken(Edxltoken token_type);
 
 	// initialize constants. Must be called before constants are accessed.
+	// 初始化常量，必须在常量被访问之前进行
 	static void Init(CMemoryPool *mp);
 
 	// cleanup tokens

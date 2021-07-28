@@ -28,8 +28,8 @@ namespace gpos
 //		CTask
 //
 //	@doc:
-//		Interface to abstract task (work unit);
-//		provides asynchronous task execution and error handling;
+//		Interface to abstract task (work unit);  抽线任务的接口
+//		provides asynchronous(异步的) task execution and error handling;
 //
 //---------------------------------------------------------------------------
 class CTask : public ITask

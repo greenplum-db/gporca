@@ -287,7 +287,7 @@ CAutoTaskProxy::Execute(CTask *task)
 	}
 	GPOS_CATCH_EX(ex)
 	{
-		// mark task as erroneous
+		// mark task as erroneous(错误的)
 		task->SetStatus(CTask::EtsError);
 
 		if (m_propagate_error)

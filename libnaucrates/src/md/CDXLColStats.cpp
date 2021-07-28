@@ -7,6 +7,7 @@
 //
 //	@doc:
 //		Implementation of the class for representing column stats in DXL
+//		代表 DXL 中列数据的类
 //---------------------------------------------------------------------------
 
 

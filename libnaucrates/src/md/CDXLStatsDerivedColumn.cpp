@@ -7,6 +7,7 @@
 //
 //	@doc:
 //		Implementation of the class for representing dxl derived column statistics
+//		用于表示 dxl 派生列统计信息的类的实现
 //---------------------------------------------------------------------------
 
 #include "naucrates/md/CDXLStatsDerivedColumn.h"

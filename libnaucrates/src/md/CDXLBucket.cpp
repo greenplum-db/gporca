@@ -7,6 +7,7 @@
 //
 //	@doc:
 //		Implementation of the class for representing buckets in DXL column stats
+//		代表DXL column stats 中的篮子的类
 //---------------------------------------------------------------------------
 
 

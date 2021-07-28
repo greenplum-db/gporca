@@ -6,7 +6,7 @@
 //		CIdGenerator.cpp
 //
 //	@doc:
-//		Implementing the ULONG Counter
+//		Implementing the ULONG Counter  实现 unsigned long 的计数器
 //---------------------------------------------------------------------------
 
 #include "naucrates/dxl/CIdGenerator.h"

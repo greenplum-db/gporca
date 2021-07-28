@@ -6,7 +6,7 @@
 //		CDXLUtils.cpp
 //
 //	@doc:
-//		Implementation of the utility methods for parsing and searializing DXL.
+//		Implementation of the utility methods(实用方法) for parsing and searializing DXL.
 //---------------------------------------------------------------------------
 
 #include "naucrates/dxl/CDXLUtils.h"

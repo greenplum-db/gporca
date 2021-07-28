@@ -7,6 +7,7 @@
 //
 //	@doc:
 //		Initialization of DXL-specific exception messages
+//		有关 DXL 特定异常信息的初始化
 //---------------------------------------------------------------------------
 
 #include "naucrates/exception.h"
