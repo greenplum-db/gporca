@@ -647,6 +647,45 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs(CMemoryPool *mp,
 			PexprRemoveSuperfluousOuterRefs(mp, (*newExpr)[ul]);
 		pdrgpexprChildren->Append(pexprChild);
 	}
+	// Adjust colref for ScalarSubqueryAll with CLogicalGbAgg having outer refs
+	if (COperator::EopScalarSubqueryAll == (pop)->Eopid())
+	{
+		CExpression *pexprChild = (*pdrgpexprChildren)[0];
+		if (COperator::EopLogicalGbAgg == (pexprChild->Pop())->Eopid() &&
+			CUtils::HasOuterRefs(pexprChild))
+		{
+			// Since grouping_cols with outer references now has an added
+			// project node below with newly produced ColRef, these newly
+			// produced ColRef need to be referenced in CScalarSubqueryAll
+			// The expression tree looks like below for an example query,
+			// select t.b from t where t.b not in (select distinct t.b where t.c>1 ):
+			// +--CScalarSubqueryAll(<>) <prev ColRef> -> <Update to adjusted ColRef>
+			// |--CLogicalGbAgg
+			// |  |--CLogicalProject
+			// |  |  |--...
+			// |  |  +--CScalarProjectList
+			// |  |     +--CScalarProjectElement <new ColRef>
+			// |  |        +--...
+			// |  +--...
+			// +--...
+			CExpression *projectExpr = (*pexprChild)[0];
+			if (COperator::EopLogicalProject == (projectExpr->Pop())->Eopid())
+			{
+				CExpression *projectListExpr = (*projectExpr)[1];
+				CExpression *projectElemExpr = (*projectListExpr)[0];
+				CColRef *pcrOuter = CUtils::PcrFromProjElem(projectElemExpr);
+				CScalarSubqueryAll *prevPop =
+					CScalarSubqueryAll::PopConvert(pop);
+				IMDId *mdid = prevPop->MdIdOp();
+				const CWStringConst *str = prevPop->PstrOp();
+				mdid->AddRef();
+				pop = GPOS_NEW(mp) CScalarSubqueryAll(
+					mp, mdid, GPOS_NEW(mp) CWStringConst(mp, str->GetBuffer()),
+					pcrOuter);
+				prevPop->Release();
+			}
+		}
+	}
 
 	if (newExpr != pexpr)
 	{
