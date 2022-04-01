@@ -51,9 +51,14 @@ private:
 	// private copy ctor
 	CDistributionSpecSingleton(const CDistributionSpecSingleton &);
 
+	// if this spec was created from the require on join child
+	BOOL m_reqdJoin;
+
 public:
 	// ctor
 	explicit CDistributionSpecSingleton(ESegmentType esegtype);
+
+	explicit CDistributionSpecSingleton(BOOL reqdJoin);
 
 	CDistributionSpecSingleton();
 

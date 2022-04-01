@@ -12,6 +12,7 @@
 #include "gpopt/base/CDistributionSpecSingleton.h"
 
 #include "gpopt/base/CDistributionSpecHashed.h"
+#include "gpopt/operators/CPhysicalMotionBroadcast.h"
 #include "gpopt/operators/CPhysicalMotionGather.h"
 #include "naucrates/traceflags/traceflags.h"
 
@@ -33,12 +34,17 @@ const CHAR *CDistributionSpecSingleton::m_szSegmentType[EstSentinel] = {
 //
 //---------------------------------------------------------------------------
 CDistributionSpecSingleton::CDistributionSpecSingleton(ESegmentType est)
-	: m_est(est)
+	: m_est(est), m_reqdJoin(false)
 {
 	GPOS_ASSERT(EstSentinel != est);
 }
 
-CDistributionSpecSingleton::CDistributionSpecSingleton()
+CDistributionSpecSingleton::CDistributionSpecSingleton(BOOL reqdJoin)
+	: m_est(EstMaster), m_reqdJoin(reqdJoin)
+{
+}
+
+CDistributionSpecSingleton::CDistributionSpecSingleton() : m_reqdJoin(false)
 {
 	m_est = EstMaster;
 
@@ -120,21 +126,53 @@ CDistributionSpecSingleton::AppendEnforcers(CMemoryPool *mp,
 		return;
 	}
 
-	pexpr->AddRef();
-	CExpression *pexprMotion = GPOS_NEW(mp)
-		CExpression(mp, GPOS_NEW(mp) CPhysicalMotionGather(mp, m_est), pexpr);
-	pdrgpexpr->Append(pexprMotion);
-
-	if (!prpp->Peo()->PosRequired()->IsEmpty() &&
-		CDistributionSpecSingleton::EstMaster == m_est)
+	// Following if block handles the case for inner join of external scan and
+	// function scan. Let's consider following tree (r=requires, d=derives):
+	//
+	//                  InnerNLJoin
+	//                   /       \        .
+	//  r:ANY           /         \   r:SINGLETON
+	//  d:UNIVERSAL    /           \  d:EXTERNAL
+	//                /             \     .
+	//        FunctionScan        ExternalScan
+	//
+	// On the outer side UNIVERSAL satisifies ANY, thus no enforcer is needed.
+	// However, on the inner side EXTERNAL doesn't satisfy SINGLETON. But we
+	// need to carefully consider how to implement the enforcer. If we apply a
+	// GATHER MOTION, then the function scan may end up executing on the
+	// coordinator node. Instead, we apply a BROADCAST MOTION to ensure that
+	// the function scan executes on the segment nodes.
+	//
+	// TODO: ORCA doesn't handle external scan on the corrdinator node. Once it
+	// does then we will need to store execlocation and use that information
+	// here. Following if block handles ALL_SEGMENTS case, but else block will
+	// be needed for MASTER_ONLY case.
+	if (pexpr->Pop()->Eopid() == COperator::EopPhysicalExternalScan &&
+		m_reqdJoin)
 	{
-		COrderSpec *pos = prpp->Peo()->PosRequired();
-		pos->AddRef();
 		pexpr->AddRef();
+		CExpression *pexprMotion = GPOS_NEW(mp)
+			CExpression(mp, GPOS_NEW(mp) CPhysicalMotionBroadcast(mp), pexpr);
+		pdrgpexpr->Append(pexprMotion);
+	}
+	else
+	{
+		pexpr->AddRef();
+		CExpression *pexprMotion = GPOS_NEW(mp) CExpression(
+			mp, GPOS_NEW(mp) CPhysicalMotionGather(mp, m_est), pexpr);
+		pdrgpexpr->Append(pexprMotion);
 
-		CExpression *pexprGatherMerge = GPOS_NEW(mp) CExpression(
-			mp, GPOS_NEW(mp) CPhysicalMotionGather(mp, m_est, pos), pexpr);
-		pdrgpexpr->Append(pexprGatherMerge);
+		if (!prpp->Peo()->PosRequired()->IsEmpty() &&
+			CDistributionSpecSingleton::EstMaster == m_est)
+		{
+			COrderSpec *pos = prpp->Peo()->PosRequired();
+			pos->AddRef();
+			pexpr->AddRef();
+
+			CExpression *pexprGatherMerge = GPOS_NEW(mp) CExpression(
+				mp, GPOS_NEW(mp) CPhysicalMotionGather(mp, m_est, pos), pexpr);
+			pdrgpexpr->Append(pexprGatherMerge);
+		}
 	}
 }
 
