@@ -142,11 +142,6 @@ CDistributionSpecSingleton::AppendEnforcers(CMemoryPool *mp,
 	// GATHER MOTION, then the function scan may end up executing on the
 	// coordinator node. Instead, we apply a BROADCAST MOTION to ensure that
 	// the function scan executes on the segment nodes.
-	//
-	// TODO: ORCA doesn't handle external scan on the corrdinator node. Once it
-	// does then we will need to store execlocation and use that information
-	// here. Following if block handles ALL_SEGMENTS case, but else block will
-	// be needed for MASTER_ONLY case.
 	if (pexpr->Pop()->Eopid() == COperator::EopPhysicalExternalScan &&
 		m_reqdJoin)
 	{
