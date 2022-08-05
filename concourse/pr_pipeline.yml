@@ -9,7 +9,7 @@ resources:
     type: pull_request
     source:
       repo: greenplum-db/gporca
-      access_token: {{gporcabot_access_token}}
+      access_token: ((qp/gporcabot_access_token))
       ignore_paths:
       - README.md
       - LICENSE
@@ -29,10 +29,10 @@ resources:
   - name: bin_xerces_centos5
     type: s3
     source:
-      access_key_id: {{s3_access_key_id}}
+      access_key_id: ((qp/s3_access_key_id))
       bucket: {{bucket-name}}
       region_name: {{aws-region}}
-      secret_access_key: {{s3_secret_access_key}}
+      secret_access_key: ((qp/s3_secret_access_key))
       versioned_file: bin_xerces_centos5.tar.gz
 
   - name: centos5-build

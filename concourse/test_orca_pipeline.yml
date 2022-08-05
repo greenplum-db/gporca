@@ -4,15 +4,15 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{slack-trigger-git-key}}
+    private_key: ((qp/slack-trigger-git-key))
     uri: {{slack-trigger-git-remote}}
 - name: regression_diffs
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: regression.diffs
 - name: orca_main_src
   type: git
@@ -32,18 +32,18 @@ resources:
 - name: regression_out
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: regression.out
 - name: bin_gpdb_centos6
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_gpdb_with_orca_centos6.tar.gz
 - name: gpdb_main_src
   type: git
@@ -58,42 +58,42 @@ resources:
 - name: gpdb_tarball
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: gpdb_src.tar.gz
 - name: bin_orca_centos5_debug
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos5_debug.tar.gz
 - name: bin_orca_centos5_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos5_release.tar.gz
 - name: bin_xerces_centos5
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_xerces_centos5.tar.gz
 - name: orca_tarball
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: orca_src.tar.gz
 - name: centos5-build
   type: registry-image

@@ -99,118 +99,118 @@ resources:
 - name: bin_xerces_centos5
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_xerces_centos5.tar.gz
 
 - name: bin_xerces_ubuntu18
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_xerces_ubuntu18.tar.gz
 
 - name: bin_orca_ubuntu18_debug
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_ubuntu18_debug.tar.gz
 
 - name: bin_orca_ubuntu18_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_ubuntu18_release.tar.gz
 
 - name: bin_orca_centos5_debug
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos5_debug.tar.gz
 
 - name: bin_orca_centos5_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos5_release.tar.gz
 
 - name: bin_orca_centos6_debug
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos6_debug.tar.gz
 
 - name: bin_orca_centos6_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos6_release.tar.gz
 
 - name: bin_orca_centos7_debug
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos7_debug.tar.gz
 
 - name: bin_orca_centos7_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos7_release.tar.gz
 
 - name: regression_diffs
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: regression.diffs
 
 - name: regression_out
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: regression.out
 
 - name: bin_gpdb_centos6
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{bucket-name}}
     region_name: {{aws-region}}
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_gpdb_with_orca_centos6.tar.gz
 
 ########

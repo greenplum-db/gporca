@@ -9,7 +9,7 @@ resources:
   type: git
   source:
     branch: {{branch_name}}
-    private_key: {{slack-trigger-git-key}}
+    private_key: ((qp/slack-trigger-git-key))
     uri: {{slack-trigger-git-remote}}
 - name: orca_main_src  # used for yml task files
   type: git
@@ -35,18 +35,18 @@ resources:
 - name: bin_gpdb_centos6
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_gpdb_with_orca_centos6.tar.gz
 - name: bin_gpdb_baseline_centos6
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_gpdb_baseline_with_orca_centos6.tar.gz
 - name: gpdb_main_src  # used for yml task files
   type: git
@@ -68,82 +68,82 @@ resources:
 - name: gpdb_tarball
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: gpdb_src.tar.gz
 - name: gpdb_baseline_tarball
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: gpdb_baseline_src.tar.gz
 - name: bin_orca_centos5_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_centos5_release.tar.gz
 - name: bin_orca_baseline_centos5_release
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_orca_baseline_centos5_release.tar.gz
 - name: bin_xerces_centos5
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: bin_xerces_centos5.tar.gz
 - name: orca_tarball
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: orca_src.tar.gz
 - name: explain_test_suite
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: {{explain_workload_tar}}
 - name: explain_output
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: explain_output.tar.gz
 - name: explain_output_baseline
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: explain_output_baseline.tar.gz
 - name: explain_test_results
   type: s3
   source:
-    access_key_id: {{s3_access_key_id}}
+    access_key_id: ((qp/s3_access_key_id))
     bucket: {{gporca-concourse-bucket-dev}}
     region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
+    secret_access_key: ((qp/s3_secret_access_key))
     versioned_file: {{explain_workload_results}}
 
 resource_types: []
