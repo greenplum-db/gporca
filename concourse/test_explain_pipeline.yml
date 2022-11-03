@@ -14,19 +14,19 @@ resources:
 - name: orca_main_src  # used for yml task files
   type: git
   source:
-    branch: master
+    branch: main
     paths: null
     uri: https://github.com/greenplum-db/gporca
 - name: orca_baseline_src # used for baseline build
   type: git
   source:
-    branch: master
+    branch: main
     paths: null
     uri: https://github.com/greenplum-db/gporca
 - name: xerces_patch
   type: git
   source:
-    branch: master
+    branch: main
     paths:
     - patches/xerces-c-gpdb.patch
     - concourse/xerces-c

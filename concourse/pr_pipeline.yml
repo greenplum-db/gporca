@@ -19,7 +19,7 @@ resources:
   - name: xerces_patch
     type: git
     source:
-      branch: master
+      branch: main
       paths:
       - patches/xerces-c-gpdb.patch
       - concourse/xerces-c

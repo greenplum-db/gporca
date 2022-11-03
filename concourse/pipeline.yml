@@ -83,7 +83,7 @@ resources:
 - name: xerces_patch
   type: git
   source:
-    branch: master
+    branch: main
     paths:
     - patches/xerces-c-gpdb.patch
     - concourse/xerces-c
@@ -93,7 +93,7 @@ resources:
 - name: orca_src
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/greenplum-db/gporca
 
 - name: bin_xerces_centos5
