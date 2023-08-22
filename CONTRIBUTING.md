@@ -3,7 +3,7 @@
 We accept contributions via [Github Pull requests](https://help.github.com/articles/using-pull-requests) only.
 
 Follow the steps below to open a PR:
-1. Sign the [Contributor License Agreement](https://cla.pivotal.io/sign/greenplum).
+1. Sign the [Contributor License Agreement](https://cla.vmware.com/cla/1/preview).
 2. Fork the project’s repository
 3. Create your own feature branch (e.g. `git checkout -b better_orca`) and make changes on this branch.
     * Follow the instructions in the [README](README.md) file to set up and build in your environment.
