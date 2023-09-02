@@ -172,7 +172,7 @@ CPhysicalInnerNLJoin::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 	if (CDistributionSpec::EdtUniversal == pdsOuter->Edt())
 	{
 		// first child is universal, request second child to execute on a single host to avoid duplicates
-		return GPOS_NEW(mp) CDistributionSpecSingleton();
+		return GPOS_NEW(mp) CDistributionSpecSingleton(true);
 	}
 
 	return GPOS_NEW(mp) CDistributionSpecNonSingleton();
